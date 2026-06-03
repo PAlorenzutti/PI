@@ -1,0 +1,283 @@
+
+<c-card>
+	<!-- CASO A REQUISIÇÃO FALHE -->
+	<c-card-header *ngIf="failureFlag">
+		<svg cIcon name="cilWarning"></svg>
+		<strong> &nbsp; Falha de comunicação</strong>
+	</c-card-header>
+
+	<c-card-body class="d-flex px-4" *ngIf="failureFlag">
+		<p>
+			Infelizmente ocorreu uma falha de comunicação no sistema. Tente
+			acessar novamente ou mais tarde. Caso persista, entre em contato com
+			os desenvolvedores
+		</p>
+	</c-card-body>
+	<!-- CASO A REQUISIÇÃO FALHE -->
+
+	<c-card-header *ngIf="!failureFlag">
+		<c-icon name="cil-list"></c-icon>
+		<strong> &nbsp; Lista de usuários cadastrados no sistema</strong>
+	</c-card-header>
+
+	<c-card-body *ngIf="!failureFlag">
+		<form cForm [formGroup]="userSettingsForm">
+			<c-row class="align-items-center">
+				<c-col lg="6" md="6" sm="6" xs="12">
+					<!-- <label cLabel cFormCheckLabel>Busca por nome do usuário:</label> -->
+					<div class="d-grid gap-2 d-flex justify-content-end">
+						<input
+							cFormControl
+							type="text"
+							placeholder="Buscar por nome do usuário"
+							formControlName="fullName"
+							(input)="searchUsersByName()"
+							>
+					</div>
+				</c-col>
+			</c-row>
+		</form>
+		<br>
+		<table cTable [responsive]="true">
+			<thead>
+				<tr>
+					<th scope="col">Nome</th>
+					<th scope="col">CPF</th>
+					<th scope="col">E-mail</th>
+					<th scope="col">Nível de acesso</th>
+					<th scope="col">Acesso liberado</th>
+					<th scope="col">Ação</th>
+				</tr>
+			</thead>
+
+			<tbody *ngFor="let user of users">
+				<tr scope="row">
+					<td>{{ user.fullName }}</td>
+					<td>{{ user.cpf }}</td>
+					<td>{{ user.email }}</td>
+					<td>
+						<span
+							*ngIf="user.role === 'USER'"
+							class="badge text-bg-light"
+							>USUÁRIO</span
+						>
+						<span
+							*ngIf="user.role === 'ADMIN'"
+							class="badge text-bg-success"
+							>ADMIN</span
+						>
+						<span
+							*ngIf="user.role === 'PROFESSIONAL'"
+							class="badge text-bg-primary"
+							>PROFISSIONAL</span
+						>
+						<span
+							*ngIf="user.role === 'SUPER'"
+							class="badge text-bg-dark"
+							>SUPER</span
+						>
+						<span
+							*ngIf="user.role === 'RECEPTIONIST'"
+							class="badge text-bg-warning"
+							>RECEPCIONISTA</span
+						>
+					</td>
+					<td>
+						<span *ngIf="user.allowed" class="badge text-bg-success"
+							>Sim</span
+						>
+						<span *ngIf="!user.allowed" class="badge text-bg-danger"
+							>Não</span
+						>
+					</td>
+					<td>
+						<!-- EDIÇAO DE USUARIO -->
+						<c-button-group>
+							<c-dropdown [autoClose]="'outside'">
+								<button
+									cButton
+									color="info"
+									cDropdownToggle
+									[disabled]="!canManage(user)"
+									(click)="setSelectedUser(user)"
+									class="me-2"
+								>
+									<c-icon name="cil-pencil"></c-icon>
+								</button>
+							</c-dropdown>
+
+							<c-dropdown>
+								<!-- EXCLUSAO DE USUARIO  -->
+								<button
+									cButton
+									color="danger"
+									cDropdownToggle
+									[disabled]="!canManage(user)"
+								>
+									<c-icon name="cil-trash"></c-icon>
+								</button>
+								<div
+									cDropdownMenu
+									[ngStyle]="{ 'min-width.px': 200 }"
+								>
+									<form cForm class="px-4 py-0">
+										<div class="mb-3">
+											<label cLabel for="delete"
+												>Deseja realmente excluir o
+												usuário?</label
+											>
+										</div>
+										<div class="mb-3">
+											<button
+												cButton
+												class="pad-btn"
+												color="success"
+												style="margin-right: 10px"
+												(click)="deleteUser(user)"
+											>
+												Sim
+											</button>
+											<button
+												cButton
+												class="pad-btn"
+												color="danger"
+											>
+												Não
+											</button>
+										</div>
+									</form>
+								</div>
+							</c-dropdown>
+						</c-button-group>
+						<!-- EDIÇAO DE USUARIO -->
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</c-card-body>
+
+	<c-card-body class="d-flex justify-content-center" *ngIf="!failureFlag">
+		<pagination
+			[totalItems]="totalItems"
+			[maxSize]="maxPageLinks"
+			(pageChanged)="pageChange($event)"
+			[itemsPerPage]="itemsPerPage"
+			previousText="Anterior"
+			nextText="Próxima"
+		>
+		</pagination>
+	</c-card-body>
+</c-card>
+<br>
+
+<c-modal backdrop="static" alignment="center" [visible]="flagModalEdit">
+	<c-modal-header>
+		<h5 cModalTitle>Gerenciamento de usuário</h5>
+	</c-modal-header>
+	<c-modal-body>
+		<label cLabel>Liberar acesso do usuário?</label>
+		<br />
+		<c-form-check sizing="xl" [switch]="true">
+			<input
+				cFormCheckInput
+				[checked]="selectedUser.allowed"
+				type="checkbox"
+				(click)="changeUserAccess()"
+			/>
+		</c-form-check>
+
+		<br />
+		<br />
+
+		<label cLabel>Nível de acesso do usuário:</label>
+		<br />
+
+		<c-form-check sizing="xl" inline>
+			<input
+				cFormCheckInput
+				type="radio"
+				value="ADMIN"
+				name="role"
+				[(ngModel)]="selectedUser.role"
+				(ngModelChange)="changeUserRole()"
+			/>
+			<label cFormCheckLabel>Admin</label>
+		</c-form-check>
+		<c-form-check sizing="xl" inline>
+			<input
+				cFormCheckInput
+				type="radio"
+				value="USER"
+				name="role"
+				[(ngModel)]="selectedUser.role"
+				(ngModelChange)="changeUserRole()"
+			/>
+			<label cFormCheckLabel>Usuário</label>
+		</c-form-check>
+		<c-form-check sizing="xl" inline>
+			<input
+				cFormCheckInput
+				type="radio"
+				value="PROFESSIONAL"
+				name="role"
+				[(ngModel)]="selectedUser.role"
+				(ngModelChange)="changeUserRole()"
+			/>
+			<label cFormCheckLabel>Profissional</label>
+		</c-form-check>
+		<c-form-check sizing="xl" inline>
+			<input
+				cFormCheckInput
+				type="radio"
+				value="RECEPTIONIST"
+				name="role"
+				[(ngModel)]="selectedUser.role"
+				(ngModelChange)="changeUserRole()"
+			/>
+			<label cFormCheckLabel>Recepcionista</label>
+		</c-form-check>
+		<c-form-check sizing="xl" inline>
+			<input
+				cFormCheckInput
+				type="radio"
+				value="SUPER"
+				name="role"
+				[(ngModel)]="selectedUser.role"
+				[disabled]="selectedUser.role !== 'SUPER'"
+				(ngModelChange)="changeUserRole()"
+			/>
+			<label cFormCheckLabel>Super</label>
+		</c-form-check>
+	</c-modal-body>
+	<c-modal-footer>
+		<div class="d-grid gap-2 d-flex justify-content-end">
+			<button
+				cButton
+				class="pad-btn"
+				(click)="closeEditModal()"
+				type="button"
+				color="primary"
+			>
+				Fechar
+			</button>
+		</div>
+	</c-modal-footer>
+</c-modal>
+<!-- Modal para quando os dados estiverem sendo carregados -->
+<c-modal backdrop="static" alignment="center" [visible]="modalLoadingFlag">
+	<c-modal-header>
+		<h5 cModalTitle>Carregando...</h5>
+	</c-modal-header>
+
+	<c-modal-body>
+		<p>
+			Aguarde alguns segundos enquanto os dados estão sendo carregados...
+		</p>
+
+		<div class="d-flex justify-content-center text-primary">
+			<div class="spinner-border spinner-border-lg" role="status">
+				<span class="sr-only"></span>
+			</div>
+		</div>
+	</c-modal-body>
+</c-modal>

@@ -1,0 +1,43 @@
+.logoAmamenta {
+	width: 50%;
+	height: 100%;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}
+
+.button-login {
+	border: none;
+	font-weight: bold;
+}
+
+.button-login:hover {
+	background-color: #274CB4;
+}
+
+.background-Amamenta {
+	background-color: #1e3a8a;
+}
+
+.justify {
+	text-align: justify;
+}
+
+.register-button:hover {
+	background-color: white;
+	border: 1px solid white;
+	color: black;
+}
+
+.forgot-password {
+	color: #1e3a8a;
+	background-color: white;
+	border: none;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.float-bottom {
+	float: bottom;
+}

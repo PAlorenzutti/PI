@@ -1,0 +1,26 @@
+<c-modal backdrop="static" alignment="center" [visible]="modalLoadingFlag">
+    <c-modal-header>
+        <h5 cModalTitle>Carregando...</h5>
+    </c-modal-header>
+
+    <c-modal-body>
+        <div *ngIf="!progressBarFlag">
+            <p>
+                Aguarde alguns segundos enquanto os dados estão sendo carregados...
+            </p>
+            <div class="d-flex justify-content-center text-primary">
+                <div class="spinner-border spinner-border-lg" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="progressBarFlag">
+            <p>
+                {{progressBarMessage}}
+            </p>
+            <c-progress class="mb-3">
+                <c-progress-bar [value]="progressBarValue">{{progressBarValue}}%</c-progress-bar>
+            </c-progress>
+        </div>
+    </c-modal-body>
+</c-modal>

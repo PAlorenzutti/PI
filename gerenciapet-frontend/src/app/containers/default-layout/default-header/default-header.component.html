@@ -1,0 +1,45 @@
+<!--<c-header class="mb-4 d-print-none" position="sticky">-->
+<ng-container>
+	<c-container [fluid]="true">
+		<button
+			toggle="visible"
+			cHeaderToggler
+			[cSidebarToggle]="sidebarId"
+			class="ps-1"
+		>
+			<svg cIcon name="cilMenu" size="xl"></svg>
+		</button>
+		<c-header-nav class="d-none d-lg-flex me-auto">
+			<ul class="nav navbar-nav d-md-down-none">
+				<li
+					style="margin-left: 10px; color: #1E3A8A; font-weight: bold"
+				>
+					<a
+						cPopover="O Software Gerencia PET é um programa desenvolvido pelos alunos Lucas D'Amato Nitz, João Vitor Soares dos Santos e Pedro Alexandre Simões Lorenzutti para a disciplina de Projeto Integrado I (Ufes)."
+						cPopoverPlacement="bottom"
+					>
+						Bem vindo ao Gerencia PET!
+					</a>
+				</li>
+			</ul>
+		</c-header-nav>
+
+		<c-header-nav>
+			<button
+				cButton
+				(click)="logout()"
+				variant="ghost"
+				color="light"
+				shape="rounded-pill"
+				style="color: #1E3A8A; font-weight: bold"
+			>
+				Sair
+			</button>
+		</c-header-nav>
+	</c-container>
+	<c-header-divider></c-header-divider>
+	<c-container [fluid]="true">
+		<c-breadcrumb-router class="ms-2"></c-breadcrumb-router>
+	</c-container>
+</ng-container>
+<!--</c-header>-->

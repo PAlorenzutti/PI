@@ -1,0 +1,150 @@
+<form cForm [formGroup]="simpleForm" novalidate (ngSubmit)="onSubmit()">
+    <c-card>
+        <c-card-header>
+            <svg [cIcon]="icons.cilUserFollow" size="lg" title="List Icon"></svg>
+            <strong> &nbsp; Cadastro de usuário</strong>
+        </c-card-header>
+
+        <c-card-body>
+            <c-container>
+                <c-row class="d-flex align-items-center">
+                    <c-col *ngIf="simpleForm.controls['fullName'] as ctrl">
+                        <label cLabel for="fullName">Nome Completo</label>
+                        <input cFormControl id="fullName" formControlName="fullName" placeholder="Nome Completo"
+                            autocomplete="off" required [autofocus]="true" [valid]="
+									ctrl.touched && ctrl.valid
+										? true
+										: (submitted || ctrl.touched) &&
+										  ctrl.invalid
+										? false
+										: undefined
+								" />
+                        <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors.required">
+                                    O nome completo é obrigatório!
+                                </div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+
+                    <c-col *ngIf="simpleForm.controls['email'] as ctrl">
+                        <label cLabel for="email">E-mail</label>
+                        <input cFormControl id="email" type="email" formControlName="email" placeholder="E-mail"
+                            autocomplete="off"
+                            [valid]="ctrl.touched && ctrl.valid ? true : ctrl.touched && ctrl.invalid ? false : undefined" />
+                        <c-form-feedback *ngIf="ctrl.touched && ctrl.invalid" [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors?.email">{{ formErrors.email?.email }}</div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+
+                    <c-col *ngIf="simpleForm.controls['cpf'] as ctrl">
+                        <label cLabel for="cpf">CPF</label>
+                        <input id="cpf" cFormControl type="text" formControlName="cpf" [valid]=isValid(ctrl)
+                            mask="000.000.000-00" [dropSpecialCharacters]="false" placeholder="000.000.000-00" />
+
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors?.required">
+                                    O CPF é obrigatório!
+                                </div>
+                                <div *ngIf="errors?.minlength">
+                                    CPF incompleto!
+                                </div>
+                                <div *ngIf="errors?.cpfInvalid">CPF inválido!</div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+                </c-row>
+
+                <c-row class="pt-3">
+                    <c-col>
+                        <label cLabel for="role">Nível de acesso</label>
+                        <select required id="role" cSelect cFormControl formControlName="role">
+                            <option value="USER">USUÁRIO EXTERNO</option>
+                            <option value="ADMIN">ADMINISTRADOR</option>
+                            <option value="PROFESSIONAL">PROFISSIONAL</option>
+                            <option value="RECEPTIONIST">RECEPCIONISTA</option>
+                        </select>
+                        <c-form-feedback [valid]="false">Por favor escolha um nível de
+                            acesso</c-form-feedback>
+                    </c-col>
+                </c-row>
+
+                <br>
+                <div class="d-grid gap-2 d-flex justify-content-end">
+                    <button cButton [disabled]="simpleForm.invalid" type="submit"
+                        class="btn btn-success btn-block pad-btn">
+                        <fa-icon [icon]="iconsFa.faCirclePlus" class="cardIcon fa-lg fa-fw"></fa-icon>&nbsp; Criar
+                        conta
+                    </button>
+                </div>
+            </c-container>
+        </c-card-body>
+
+    </c-card>
+</form>
+
+<!--MODAL DE LOADING-->
+<c-modal id="loadingModal" backdrop="static" [visible]="loadingVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Carregando...</h5>
+    </c-modal-header>
+    <c-modal-body>
+        <div class="alert alert-info" role="alert" style="font-size: 18px">
+            Aguarde alguns segundos enquanto o usuário está sendo cadastrado...
+        </div>
+        <div class="d-flex justify-content-center text-primary">
+            <div class="spinner-border spinner-border-lg" role="status">
+                <span class="sr-only"></span>
+            </div>
+        </div>
+    </c-modal-body>
+</c-modal>
+
+<!--MODAL DE SUCESSO-->
+<c-modal id="successModal" [visible]="successVisible" (visibleChange)="handleSuccessModalChange($event)">
+    <c-modal-header>
+        <h5 cModalTitle>Sucesso</h5>
+        <button (click)="toggleSuccessModal()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <!-- <div class="alert alert-success" role="alert" style="font-size: 18px">
+            {{
+                user?.role === 'USER' ?
+                    "O usuário foi criado com sucesso, porém ainda não possui acesso ao sistema." :
+                    "O usuário foi criado com sucesso e já possui acesso ao sistema."
+            }}
+        </div> -->
+        <div class="alert alert-success" role="alert" style="font-size: 18px">
+            {{
+                "O usuário foi criado com sucesso e já possui acesso ao sistema."
+            }}
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button class="pad-btn" (click)="toggleSuccessModal()" cButton color="success">
+            Fechar
+        </button>
+    </c-modal-footer>
+</c-modal>
+
+<!--MODAL DE ERRO-->
+<c-modal id="errorModal" [visible]="errorVisible" (visibleChange)="handleErrorModalChange($event)">
+    <c-modal-header>
+        <h5 cModalTitle>Ocorreu um erro</h5>
+        <button (click)="toggleErrorModal()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <div class="alert alert-danger" role="alert" style="font-size: 18px">
+            Já existe um usuário com o CPF ou e-mail fornecido. Por favor, verifique-o em "Gerenciar".
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button class="pad-btn" (click)="toggleErrorModal()" cButton color="danger">
+            Fechar
+        </button>
+    </c-modal-footer>
+</c-modal>

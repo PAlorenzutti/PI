@@ -1,0 +1,18 @@
+<c-modal backdrop="static" alignment="center" [visible]="modalErrorFlag">
+    <c-modal-header>
+        <h5 cModalTitle>Erro</h5>
+        <button
+			(click)="closeModal()"
+			cButtonClose
+		></button>
+    </c-modal-header>
+    
+    <c-modal-body>
+        <p *ngIf="errorMessage === ''">
+            Algo inesperado aconteceu. Por favor, tente novamente.
+        </p>
+        <p *ngIf="errorMessage !== ''">
+            {{ errorMessage }}
+        </p>
+    </c-modal-body>
+</c-modal>

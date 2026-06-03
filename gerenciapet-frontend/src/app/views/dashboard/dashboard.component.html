@@ -1,0 +1,44 @@
+<div *ngIf="loggedUser != undefined">
+	<c-row class="align-itens-center">
+		<c-col>
+			<app-widgets-general [loggedUser]="loggedUser">
+			</app-widgets-general>
+		</c-col>
+	</c-row>
+
+  <!--MODAL DE AVISO PARA COMPLETAR CADASTRO-->
+  <c-modal
+    [visible]="registerWarningVisible"
+  >
+    <c-modal-header>
+      <h3 cModalTitle>Cadastro incompleto</h3>
+      <button cButtonClose (click)="registerWarningVisible = false"></button>
+    </c-modal-header>
+    <c-modal-body>
+      <div
+        class="alert alert-warning"
+        role="alert"
+        style="font-size: 18px"
+      >
+        Identificamos que o seu cadastro ainda não foi concluído.
+        Por favor, complete suas informações para manter seus dados atualizados e garantir o uso completo do sistema.
+      </div>
+    </c-modal-body>
+    <c-modal-footer>
+      <button
+        cButton
+        class="pad-btn btn btn-secondary"
+        (click)="goToCompleteRegistration()"
+      >
+        Completar cadastro
+      </button>
+    </c-modal-footer>
+  </c-modal>
+
+  <!-- <c-row>
+		<c-col>
+			<app-recent-activities [loggedUser]="loggedUser">
+			</app-recent-activities>
+		</c-col>
+	</c-row> -->
+</div>

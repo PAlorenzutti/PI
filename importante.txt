@@ -1,0 +1,6 @@
+lembrar de trocar no front-end:
+url-api
+proxy.config.json
+
+lembrar de trocar no back-end:
+SecurityWebConfig.java

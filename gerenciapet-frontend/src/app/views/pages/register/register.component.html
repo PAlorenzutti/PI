@@ -1,0 +1,331 @@
+<div class="bg-light min-vh-100 d-flex flex-row align-items-center">
+    <c-container>
+        <c-row class="justify-content-center">
+            <c-col lg="7" md="9" xl="6">
+                <c-card class="mx-4">
+                    <c-card-body class="p-4">
+                        <button cButton size="lg" color="dark" variant="outline" routerLink="/login">
+                            <svg [cIcon]="icons.cilArrowLeft" size="lg" title="List Icon"></svg>
+                            Voltar
+                        </button>
+
+                        <br />
+                        <br />
+
+                        <h3 class="align-items-center">
+                            Cadastro de novo usuário
+                        </h3>
+                        <h6 class="text-muted">
+                            Crie sua conta para acessar o sistema
+                        </h6>
+                        <br />
+                        <form cForm [formGroup]="registerForm" novalidate (ngSubmit)="onSubmit()">
+                            <c-row class="mb-3">
+                                <label cCol [sm]="4" cLabel="col" for="fullName">Nome Completo</label>
+                                <c-col [sm]="8" *ngIf="
+										registerForm.controls[
+											'fullName'
+										] as ctrl
+									">
+                                    <input cFormControl id="fullName" formControlName="fullName"
+                                        placeholder="Nome Completo" autocomplete="off" required [autofocus]="true"
+                                        [valid]="
+											ctrl.touched && ctrl.valid
+												? true
+												: (submitted || ctrl.touched) &&
+												  ctrl.invalid
+												? false
+												: undefined
+										" />
+                                    <c-form-feedback *ngIf="submitted || ctrl.invalid"
+                                        [valid]="!(submitted || ctrl.invalid)">
+                                        <ng-container *ngIf="ctrl.errors as errors">
+                                            <div *ngIf="errors.required">
+                                                O nome completo é obrigatório!
+                                            </div>
+                                        </ng-container>
+                                    </c-form-feedback>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <label cCol [sm]="4" cLabel="col" for="cpf">CPF</label>
+                                <c-col [sm]="8" *ngIf="registerForm.controls['cpf'] as ctrl">
+                                    <input id="cpf" cFormControl type="text" formControlName="cpf"
+                                        [valid]="isValid(ctrl)" mask="000.000.000-00" [dropSpecialCharacters]="false"
+                                        placeholder="CPF" required />
+                                    <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                                        <ng-container *ngIf="ctrl.errors as errors">
+                                            <div *ngIf="errors?.required">
+                                                O CPF é obrigatório!
+                                            </div>
+                                            <div *ngIf="errors?.minlength">
+                                                CPF incompleto!
+                                            </div>
+                                            <div *ngIf="errors?.cpfInvalid">
+                                                CPF inválido!
+                                            </div>
+                                        </ng-container>
+                                    </c-form-feedback>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <label cCol [sm]="4" cLabel="col" for="email">E-mail</label>
+                                <c-col [sm]="8" *ngIf="
+										registerForm.controls['email'] as ctrl
+									">
+                                    <input cFormControl id="email" type="email" formControlName="email"
+                                        placeholder="E-mail" autocomplete="off"
+                                        [valid]="ctrl.touched && ctrl.valid ? true : ctrl.touched && ctrl.invalid ? false : undefined" />
+                                    <c-form-feedback *ngIf="ctrl.touched && ctrl.invalid" [valid]="false">
+                                        <ng-container *ngIf="ctrl.errors as errors">
+                                            <div *ngIf="errors?.email">{{ formErrors.email?.email }}</div>
+                                        </ng-container>
+                                    </c-form-feedback>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <label cCol [sm]="4" cLabel="col" for="password">Senha</label>
+                                <c-col [sm]="8" *ngIf="registerForm.controls['password'] as ctrl">
+                                    <div class="input-group">
+                                        <input
+                                            cFormControl
+                                            id="password"
+                                            [type]="showPassword ? 'text' : 'password'"
+                                            formControlName="password"
+                                            placeholder="Senha"
+                                            autocomplete="new-password"
+                                            required
+                                            [valid]="
+                                                ctrl.touched && ctrl.valid
+                                                    ? true
+                                                    : (submitted || ctrl.touched) && ctrl.invalid
+                                                    ? false
+                                                    : undefined
+                                                "
+                                        />
+                                        <button
+                                            cButton
+                                            type="button"
+                                            color="secondary"
+                                            variant="outline"
+                                            (click)="togglePasswordVisibility()"
+                                            tabindex="-1"
+                                        >
+                                            <fa-icon [icon]="showPassword ? icons.faEyeSlash : icons.faEye"></fa-icon>
+                                        </button>
+                                    </div>
+
+                                    <div
+                                        class="invalid-feedback d-block"
+                                        *ngIf="submitted || (ctrl.touched && ctrl.invalid)"
+                                    >
+							            <ng-container *ngIf="ctrl.errors as errors">
+                                            <div *ngIf="errors?.required">
+                                                A senha é obrigatória!
+                                            </div>
+                                            <div *ngIf="errors?.minlength">
+                                                {{ formErrors["password"].minLength }}
+                                            </div>
+                                            <div *ngIf="errors.pattern">
+                                                {{ formErrors["password"].pattern }}
+                                            </div>
+                                        </ng-container>
+						            </div>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <label cCol [sm]="4" cLabel="col" for="confirmPassword">Confirme a Senha</label>
+                                <c-col [sm]="8" *ngIf="registerForm.controls['confirmPassword'] as ctrl">
+                                    <div class="input-group">
+                                        <input
+                                            cFormControl
+                                            id="confirmPassword"
+                                            [type]="showConfirmPassword ? 'text' : 'password'"
+                                            formControlName="confirmPassword"
+                                            placeholder="Confirme a Senha"
+                                            autocomplete="off"
+                                            required
+                                            [valid]="
+                                                ctrl.touched && ctrl.valid
+                                                    ? true
+                                                    : (submitted || ctrl.touched) && ctrl.invalid
+                                                    ? false
+                                                    : undefined
+                                                "
+                                        />
+                                        <button
+                                            cButton
+                                            type="button"
+                                            color="secondary"
+                                            variant="outline"
+                                            (click)="toggleConfirmPasswordVisibility()"
+                                            tabindex="-1"
+                                        >
+                                            <fa-icon
+                                                [icon]="showConfirmPassword ? icons.faEyeSlash : icons.faEye"></fa-icon>
+                                        </button>
+                                    </div>
+
+                                    <div
+                                        class="invalid-feedback d-block"
+                                        *ngIf="submitted || (ctrl.touched && ctrl.invalid)"
+                                    >
+							            <ng-container *ngIf="ctrl.errors as errors">
+                                            <div *ngIf="errors?.passwordMismatch">
+                                                {{ formErrors["confirmPassword"].passwordMismatch }}
+                                            </div>
+                                            <div *ngIf="errors?.required">
+                                                Confirmação é requerida
+                                            </div>
+                                        </ng-container>
+						            </div>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <c-col *ngIf="
+										registerForm.controls['accept'] as ctrl
+									">
+                                    <c-form-check>
+                                        <input cFormCheckInput type="checkbox" id="accept" formControlName="accept"
+                                            required [valid]="
+												ctrl.valid
+													? true
+													: submitted && ctrl.invalid
+													? false
+													: undefined
+											" />
+                                        <label cFormCheckLabel custom for="accept">Eu aceito os
+                                            <a routerLink="/terms" target="_blank">Termos de Uso</a>
+                                        </label>
+                                        <c-form-feedback *ngIf="submitted && ctrl.invalid" [valid]="false">
+                                            <ng-container *ngIf="ctrl.errors as errors">
+                                                <div *ngIf="errors.required">
+                                                    Você tem que aceitar nossos
+                                                    termos de uso
+                                                </div>
+                                            </ng-container>
+                                        </c-form-feedback>
+                                    </c-form-check>
+                                </c-col>
+                            </c-row>
+                            <div class="d-grid gap-2">
+                                <button cButton [disabled]="registerForm.invalid" type="submit" color="success"
+                                    class="btn-success justify-content-center pad-btn">
+                                    Cadastrar
+                                </button>
+                            </div>
+                        </form>
+                    </c-card-body>
+                </c-card>
+            </c-col>
+        </c-row>
+        <!--MODAL DE SUCESSO EM SE REGISTRAR-->
+        <c-modal [visible]="RegisterSuccessVisible" (visibleChange)="handleRegisterSuccess($event)">
+            <c-modal-header>
+                <h3 cModalTitle>Sucesso</h3>
+                <button (click)="toggleRegisterSuccess()" cButtonClose></button>
+            </c-modal-header>
+            <c-modal-body>
+                <!-- <div class="alert alert-success" role="alert" style="font-size: 18px">
+                    Seu cadastro foi realizado com sucesso. Porém, você ainda
+                    não possui acesso ao sistema. É necessário que você verifique o seu e-mail pelo link que foi
+                    enviado.
+                </div> -->
+                <div class="alert alert-success" role="alert" style="font-size: 18px">
+                    Seu cadastro foi realizado com sucesso. Você já pode acessar o sistema.
+                </div>
+            </c-modal-body>
+            <c-modal-footer>
+                <button (click)="toggleRegisterSuccess()" cButton color="success" class="pad-btn">
+                    Fechar
+                </button>
+            </c-modal-footer>
+        </c-modal>
+
+        <!--MODAL DE ERRO EM SE REGISTRAR-->
+        <c-modal [visible]="RegisterErrorVisible" (visibleChange)="handleRegisterError($event)">
+            <c-modal-header>
+                <h3 cModalTitle>Erro ao se cadastrar</h3>
+                <button (click)="toggleRegisterError()" cButtonClose></button>
+            </c-modal-header>
+            <c-modal-body>
+                <div class="alert alert-danger" role="alert" style="font-size: 18px">
+                    O CPF e/ou e-mail que você está tentando
+                    utilizar já está cadastrado no sistema. Por favor, tente
+                    novamente como outro CPF e/ou e-mail. Se o erro
+                    persistir, entre em contato com a equipe do Gerencia PET.
+                </div>
+            </c-modal-body>
+            <c-modal-footer>
+                <button (click)="toggleRegisterError()" cButton color="danger" class="pad-btn">
+                    Fechar
+                </button>
+            </c-modal-footer>
+        </c-modal>
+
+        <!--MODAL DE REGISTRO EM PROGRESSO -->
+        <c-modal [visible]="RegisterInProgressVisible" (visibleChange)="handleRegisterInProgressVisible($event)">
+            <c-modal-header>
+                <h3 cModalTitle>Processando</h3>
+                <button (click)="toggleRegisterInProgressVisible()" cButtonClose></button>
+            </c-modal-header>
+            <c-modal-body>
+                <div class="alert alert-info" role="alert" style="font-size: 18px">
+                    Seu cadastro está sendo processado. Aguarde um momento.
+
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status"></div>
+                    </div>
+                </div>
+            </c-modal-body>
+            <c-modal-footer>
+                <button (click)="toggleRegisterInProgressVisible()" cButton color="secondary" class="pad-btn">
+                    Fechar
+                </button>
+            </c-modal-footer>
+        </c-modal>
+        <!--MODAL DE ERRO NO BANCO DE DADOS-->
+        <c-modal [visible]="DatabaseErrorVisible" (visibleChange)="handleDatabaseError($event)">
+            <c-modal-header>
+                <h3 cModalTitle>Erro ao se cadastrar</h3>
+                <button (click)="toggleDatabaseError()" cButtonClose></button>
+            </c-modal-header>
+            <c-modal-body>
+                <div class="alert alert-danger" role="alert" style="font-size: 18px">
+                    Ocorreu um erro no banco de dados ao tentar se cadastrar.
+                    Por favor, entre em contato com a equipe do Gerencia PET.
+                </div>
+            </c-modal-body>
+            <c-modal-footer>
+                <button (click)="toggleDatabaseError()" cButton color="danger" class="pad-btn">
+                    Fechar
+                </button>
+            </c-modal-footer>
+        </c-modal>
+        <!--MODAL DE ERRO NO ENVIO DE E-MAIL-->
+        <!-- <c-modal [visible]="SendEmailErrorVisible" (visibleChange)="handleSendEmailError($event)">
+            <c-modal-header>
+                <h3 cModalTitle>Sucesso ao se cadastrar</h3>
+                <button (click)="toggleSendEmailError()" cButtonClose></button>
+            </c-modal-header>
+            <c-modal-body>
+                <div class="alert alert-success" role="alert" style="font-size: 18px">
+                    Seu cadastro foi realizado com sucesso. Porém, você ainda
+                    não possui acesso ao sistema. É necessário que um
+                    administrador libere o seu acesso. Se você precisa de acesso
+                    imediato, entre em contato com a equipe do Gerencia PET.
+                </div>
+                <div class="alert alert-danger" role="alert" style="font-size: 18px">
+                    Erro ao enviar o e-mail com a confirmação de cadastro.
+                    Provavelmente o serviço de e-mail está indisponível. Por
+                    favor, entre em contato com a equipe do Gerencia PET.
+                </div>
+            </c-modal-body>
+            <c-modal-footer>
+                <button (click)="toggleSendEmailError()" cButton color="success" class="pad-btn">
+                    Fechar
+                </button>
+            </c-modal-footer>
+        </c-modal> -->
+    </c-container>
+</div>

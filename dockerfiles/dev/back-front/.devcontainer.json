@@ -1,0 +1,15 @@
+{
+    "name": "backfront-dev",
+    "workspaceFolder": "/app",
+    "service": "frontend",
+    "dockerComposeFile": "../docker-compose.yml",
+    "shutdownAction": "stopCompose",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "Angular.ng-template",
+                "ms-vscode.vscode-typescript-next"
+            ]
+        }
+    }
+}

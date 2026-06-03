@@ -1,0 +1,62 @@
+services:
+  database:
+    image: mysql
+    container_name: gerenciapet-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gerenciapet
+    env_file: .env
+    ports:
+      - 3309:3306
+    volumes:
+      - ${DATABASE_PATH}:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysql",
+          "-h",
+          "localhost",
+          "-P",
+          "3306",
+          "-u",
+          "root",
+          "--password=root",
+          "-e",
+          "select 1",
+          "gerenciapet",
+        ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+  phpmydamin:
+    image: phpmyadmin
+    container_name: gerenciapet-phpmyadmin
+    ports:
+      - 8891:80
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+      UPLOAD_LIMIT: 300M
+
+  frontend:
+    image: java_18_node_16
+    container_name: gerenciapet-backfront
+    ports:
+      - 8083:8080
+      - 4203:4200
+    build:
+      context: ./back-front
+      dockerfile: Dockerfile
+    volumes:
+      - ../../gerenciapet-frontend/:/app/gerenciapet-frontend
+      - ../../gerenciapet-backend/:/app/gerenciapet-backend
+      - ../../gerenciapet-backend/m2/repository:/root/.m2/repository
+    stdin_open: true
+
+

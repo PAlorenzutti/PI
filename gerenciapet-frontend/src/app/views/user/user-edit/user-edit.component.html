@@ -1,0 +1,358 @@
+<form cForm [formGroup]="editForm" novalidate (ngSubmit)="receiveFormData()">
+    <c-card class="bg-light">
+        <c-card-header>
+            <fa-icon [icon]="iconsFa.faUser" class="cardIcon fa-lg fa-fw"></fa-icon>
+            <strong> &nbsp; Editando meus dados</strong>
+        </c-card-header>
+
+        <c-card-body>
+            <c-container>
+                <c-row class="d-flex align-items-center">
+                    <c-col [sm]="6" *ngIf="editForm.controls['fullName'] as ctrl">
+                        <label cLabel for="fullName">Nome Completo</label>
+                        <input cFormControl id="fullName" formControlName="fullName" placeholder="Nome Completo"
+                            autocomplete="off" required [autofocus]="true" [valid]="
+								ctrl.touched && ctrl.valid
+									? true
+									: (submitted || ctrl.touched) &&
+									ctrl.invalid
+									? false
+									: undefined
+							" />
+                        <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors.required">
+                                    O nome completo é obrigatório!
+                                </div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+
+                    <c-col [sm]="6" *ngIf="editForm.controls['cpf'] as ctrl">
+                        <label cLabel for="cpf">CPF</label>
+                        <input id="cpf" cFormControl type="text" formControlName="cpf" [valid]=isValid(ctrl)
+                            mask="000.000.000-00" [dropSpecialCharacters]="false" placeholder="000.000.000-00" />
+
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors?.required">
+                                    O CPF é obrigatório!
+                                </div>
+                                <div *ngIf="errors?.minlength">
+                                    CPF incompleto!
+                                </div>
+                                <div *ngIf="errors?.cpfInvalid">CPF inválido!</div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+                </c-row>
+            </c-container>
+        </c-card-body>
+    </c-card>
+
+    <br>
+
+    <c-card class="bg-light">
+        <c-card-header>
+            <fa-icon [icon]="iconsFa.faPhone" class="cardIcon fa-lg fa-fw"></fa-icon>
+            <strong> &nbsp; Contato</strong>
+        </c-card-header>
+        <c-card-body>
+            <c-container>
+                <c-row class="d-flex align-items-center">
+                    <c-col>
+                        <label cLabel for="phoneNumber">Telefone fixo</label>
+                        <input id="phoneNumber" cFormControl type="text" formControlName="phoneNumber"
+                            placeholder="(00) 0000-0000" mask="(00) 0000-0000" [dropSpecialCharacters]="false" />
+                    </c-col>
+                    <c-col *ngIf="editForm.controls['cellPhoneNumber'] as ctrl">
+                        <label cLabel for="cellPhoneNumber">Celular</label>
+                        <input id="cellPhoneNumber" cFormControl type="text" formControlName="cellPhoneNumber"
+                            placeholder="(00) 00000-0000" [valid]=isValid(ctrl) mask="(00) 00000-0000"
+                            [dropSpecialCharacters]="false" />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors?.required">
+                                    O celular é obrigatório!
+                                </div>
+                                <div *ngIf="errors?.minlength">
+                                    Celular incompleto!
+                                </div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+                    <c-col *ngIf="editForm.controls['email'] as ctrl">
+                        <label cLabel for="email">E-mail</label>
+                        <input id="email" cFormControl type="text" formControlName="email" [valid]=isValid(ctrl) />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors?.email">
+                                    Endereço de email inválido
+                                </div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+                </c-row>
+            </c-container>
+        </c-card-body>
+    </c-card>
+
+    <br>
+
+    <c-card class="bg-light">
+        <c-card-header>
+            <fa-icon [icon]="iconsFa.faAddressBook" class="cardIcon fa-lg fa-fw"></fa-icon>
+            <strong> &nbsp; Endereço</strong>
+        </c-card-header>
+        <c-card-body>
+            <c-container>
+                <c-row class="d-flex align-items-center">
+                    <c-col md="3" *ngIf="editForm.controls['cep'] as ctrl">
+                        <label cLabel for="cep">CEP</label>
+                        <input id="cep" cFormControl type="text" formControlName="cep" [valid]=isValid(ctrl)
+                            placeholder="00.000-000" mask="00.000-000" [dropSpecialCharacters]="true"
+                            (blur)="fetchAddressByCep()" />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors?.required">
+                                    O CEP é obrigatório!
+                                </div>
+                                <div *ngIf="errors?.minlength">
+                                    CEP inválido!
+                                </div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+                    <c-col *ngIf="editForm.controls['street'] as ctrl">
+                        <label cLabel for="street">Rua</label>
+                        <input id="street" cFormControl type="text" formControlName="street" [valid]=isValid(ctrl) />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            A rua é obrigatória!
+                        </c-form-feedback>
+                    </c-col>
+                    <c-col md="2" *ngIf="editForm.controls['houseNumber'] as ctrl">
+                        <label cLabel for="houseNumber">Número</label>
+                        <input id="houseNumber" cFormControl type="houseNumber" formControlName="houseNumber"
+                            [valid]=isValid(ctrl) />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            O número é obrigatório!
+                        </c-form-feedback>
+                    </c-col>
+                    <c-col md="2" *ngIf="editForm.controls['city'] as ctrl">
+                        <label cLabel for="city">Cidade</label>
+                        <input id="city" cFormControl type="text" formControlName="city" [valid]=isValid(ctrl)
+                            [ngbTypeahead]="this.listCitiesBrazil" />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            A cidade é obrigatória!
+                        </c-form-feedback>
+                    </c-col>
+                    <c-col md="1" *ngIf="editForm.controls['state'] as ctrl">
+                        <label cLabel for="state">Estado</label>
+                        <input id="state" cFormControl type="text" formControlName="state" [valid]=isValid(ctrl)
+                            [ngbTypeahead]="this.listCitiesBrazil" />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            O estado é obrigatório!
+                        </c-form-feedback>
+                    </c-col>
+                </c-row>
+
+
+                <c-row class="pt-3">
+                    <c-col md="4" *ngIf="editForm.controls['neighborhood'] as ctrl">
+                        <label cLabel for="neighborhood">Bairro</label>
+                        <input id="neighborhood" cFormControl type="text" formControlName="neighborhood"
+                            [valid]=isValid(ctrl) />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                            O bairro é obrigatório!
+                        </c-form-feedback>
+                    </c-col>
+                    <c-col>
+                        <label cLabel for="addInfo">Complemento</label>
+                        <input id="addInfo" cFormControl type="text" formControlName="addInfo" />
+                    </c-col>
+                </c-row>
+                <c-row>
+                    <c-col class="pt-3">
+                        <label for="refPoint" class="mb-2">Ponto de referência</label>
+                        <input id="refPoint" cFormControl type="text" formControlName="refPoint">
+                    </c-col>
+                </c-row>
+            </c-container>
+
+            <br>
+
+            <div class="d-grid gap-2 d-flex justify-content-end">
+                <button cButton type="submit" class="pad-btn btn-success">
+                    <fa-icon [icon]="iconsFa.faCircleCheck" class="cardIcon fa-lg fa-fw"></fa-icon>&nbsp; Atualizar
+                    cadastro
+                </button>
+            </div>
+        </c-card-body>
+    </c-card>
+
+    <br>
+</form>
+
+<form cForm [formGroup]="editPassForm" novalidate (ngSubmit)="receiveFormPass()">
+    <c-card class="bg-light">
+        <c-card-header>
+            <fa-icon [icon]="iconsFa.faUser" class="cardIcon fa-lg fa-fw"></fa-icon>
+            <strong> &nbsp; Atualizar senha</strong>
+        </c-card-header>
+
+        <c-card-body>
+            <c-container>
+                <c-row>
+                    <c-col *ngIf="editPassForm.controls['password'] as ctrl">
+                        <label cLabel for="password">Senha Atual</label>
+                        <div class="input-group">
+                            <input cFormControl id="password" [type]="showCurrentPassword ? 'text' : 'password'"
+                                formControlName="password" autocomplete="new-password" required
+                                (input)="checkUserPassword()" [valid]="
+                                    ctrl.touched &&
+                                    ctrl.valid &&
+                                    !incorrectPasswordFlag
+                                        ? true
+                                        : (submitted || ctrl.touched) &&
+                                        ctrl.invalid
+                                        ? false
+                                        : undefined
+                                " />
+                            <button cButton type="button" color="secondary" variant="outline"
+                                (click)="toggleCurrentPasswordVisibility()">
+                                <fa-icon [icon]="showCurrentPassword ? iconsFa.faEyeSlash : iconsFa.faEye"></fa-icon>
+                            </button>
+                        </div>
+                        <small *ngIf="incorrectPasswordFlag && ctrl.touched" class="form-text text-danger">
+                            Sua senha está incorreta
+                        </small>
+                        <small *ngIf="!incorrectPasswordFlag && ctrl.touched" class="form-text text-success">
+                            Sua senha está correta
+                        </small>
+                    </c-col>
+
+                    <c-col *ngIf="editPassForm.controls['newPassword'] as ctrl">
+                        <label cLabel for="newPassword">Nova Senha</label>
+                        <div class="input-group">
+                            <input cFormControl id="newPassword" [type]="showNewPassword ? 'text' : 'password'"
+                                formControlName="newPassword" autocomplete="off" [autofocus]="true"
+                                (input)="checkNewUserPassword()" [valid]="
+                                    ctrl.touched && ctrl.valid
+                                        ? true
+                                        : (submitted || ctrl.touched) &&
+                                        ctrl.invalid
+                                        ? false
+                                        : undefined
+                                " />
+                            <button cButton type="button" color="secondary" variant="outline"
+                                (click)="toggleNewPasswordVisibility()">
+                                <fa-icon [icon]="showNewPassword ? iconsFa.faEyeSlash : iconsFa.faEye"></fa-icon>
+                            </button>
+                        </div>
+                        <c-form-feedback *ngIf="(submitted || ctrl.touched) && ctrl.invalid" class="d-block"
+                            [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors['required']">
+                                    Você precisa inserir a nova senha.
+                                </div>
+                                <div *ngIf="errors['minlength']">
+                                    A nova senha deve ter 5 caracteres ou mais
+                                </div>
+                                <div *ngIf="errors['pattern']">
+                                    A nova senha deve conter: números, letras
+                                    maiúsculas e minúsculas
+                                </div>
+                            </ng-container>
+                        </c-form-feedback>
+                    </c-col>
+
+                    <c-col *ngIf="editPassForm.controls['confirmNewPassword'] as ctrl">
+                        <label cLabel for="confirmNewPassword">Confirme a Nova Senha</label>
+                        <div class="input-group">
+                            <input cFormControl id="confirmNewPassword"
+                                [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmNewPassword"
+                                autocomplete="off" [autofocus]="true" [valid]="isValid(ctrl) && !incorrectNewPassFlag"
+                                (input)="checkNewUserPassword()" />
+                            <button cButton type="button" color="secondary" variant="outline"
+                                (click)="toggleConfirmPasswordVisibility()">
+                                <fa-icon [icon]="showConfirmPassword ? iconsFa.faEyeSlash : iconsFa.faEye"></fa-icon>
+                            </button>
+                        </div>
+                        <c-form-feedback *ngIf="(submitted || ctrl.touched) && (ctrl.invalid || incorrectNewPassFlag)"
+                            class="d-block" [valid]="false">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors['required']">
+                                    Você precisa confirmar a nova senha.
+                                </div>
+                                <div *ngIf="errors['minlength']">
+                                    A nova senha deve ter 5 caracteres ou mais
+                                </div>
+                                <div *ngIf="errors['pattern']">
+                                    A nova senha deve conter: números, letras
+                                    maiúsculas e minúsculas
+                                </div>
+                            </ng-container>
+                            <div *ngIf="incorrectNewPassFlag && !ctrl.errors">
+                                As senhas não coincidem
+                            </div>
+                        </c-form-feedback>
+                    </c-col>
+                </c-row>
+            </c-container>
+
+            <br>
+
+            <div class="d-grid gap-2 d-flex justify-content-end">
+                <button cButton type="submit" class="pad-btn btn-success">
+                    <fa-icon [icon]="iconsFa.faCircleCheck" class="cardIcon fa-lg fa-fw"></fa-icon>&nbsp; Atualizar
+                    senha
+                </button>
+            </div>
+        </c-card-body>
+    </c-card>
+
+    <br>
+</form>
+
+
+<!--MODAL DE ERRO EM ATUALIZAR USUARIO-->
+<c-modal id="responseModal" [visible]="editErrorVisible" (visibleChange)="handleEditError($event)">
+    <c-modal-header>
+        <h3 cModalTitle>Erro editar usuário</h3>
+        <button (click)="toggleEditError()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <div class="alert alert-danger" role="alert" style="font-size: 18px">
+            Erro em atualizar os dados, verifique os campos e tente novamente!
+            Se o erro persistir, entre em contato com os administradores do
+            sistema.
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button (click)="toggleEditError()" cButton color="danger" class="pad-btn">
+            Fechar
+        </button>
+    </c-modal-footer>
+</c-modal>
+
+<!--MODAL DE SUCESSO EM ATUALIZAR USUARIO-->
+<c-modal id="responseModal" [visible]="editSuccessVisible" (visibleChange)="handleEditSuccess($event)">
+    <c-modal-header>
+        <h3 cModalTitle>Sucesso</h3>
+        <button (click)="toggleEditSuccess()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <div class="alert alert-success" role="alert" style="font-size: 18px">
+            Seus dados foram atualizados com sucesso!
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button (click)="toggleCompleteEditSuccess()" cButton color="success" class="pad-btn">
+            Fechar
+        </button>
+    </c-modal-footer>
+</c-modal>
+
+<!--MODAL DE CONFIRMAÇÃO PARA ATUALIZAR A SENHA-->
+<!--MODAL DE ERRO EM ATUALIZAR A SENHA-->
+<!--MODAL DE SUCESSO EM ATUALIZAR A SENHA-->

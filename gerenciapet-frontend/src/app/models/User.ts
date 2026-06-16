@@ -5,7 +5,7 @@ export default class User {
     public senha?: string = '';
     public dataNascimento: string = '';
     public isEstudanteUfes: boolean = false;
-    public tipoUsuario: string = '';
+    public tipoUsuario: string = 'ALUNO';
     public href: string = '';
 
     constructor(object?: any) {
@@ -21,7 +21,7 @@ export default class User {
         this.senha = object.senha;
         this.dataNascimento = object.dataNascimento ?? '';
         this.isEstudanteUfes = object.isEstudanteUfes ?? false;
-        this.tipoUsuario = object.tipoUsuario ?? (object.siape ? 'TutorCoordenador' : (object.bolsista !== undefined ? 'MembroPet' : 'AlunoTutorado'));
+        this.tipoUsuario = object.tipoUsuario ?? (object.siape ? 'TUTOR' : (object.bolsista !== undefined ? 'EXTENSIONISTA' : 'ALUNO'));
 
         if (object._links !== undefined) {
             this.href = object._links.self?.href || this.href;

@@ -20,19 +20,25 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import br.ufes.gerenciapet.backend.utils.enums.TipoUsuario;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
     property = "tipoUsuario",
-    defaultImpl = AlunoTutorado.class
+    visible = true,
+    defaultImpl = Aluno.class
 )
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = AlunoTutorado.class, name = "AlunoTutorado"),
-    @JsonSubTypes.Type(value = MembroPet.class, name = "MembroPet"),
-    @JsonSubTypes.Type(value = TutorCoordenador.class, name = "TutorCoordenador")
+    @JsonSubTypes.Type(value = Admin.class, name = "ADMIN"),
+    @JsonSubTypes.Type(value = Aluno.class, name = "ALUNO"),
+    @JsonSubTypes.Type(value = Extensionista.class, name = "EXTENSIONISTA"),
+    @JsonSubTypes.Type(value = Tutor.class, name = "TUTOR")
 })
 public abstract class User implements UserDetails {
 
@@ -57,6 +63,10 @@ public abstract class User implements UserDetails {
 
     @Column(nullable = false)
     private Boolean isEstudanteUfes;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_usuario")
+    private TipoUsuario tipoUsuario;
 
     public User() {}
 
@@ -123,4 +133,6 @@ public abstract class User implements UserDetails {
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
     public Boolean getIsEstudanteUfes() { return isEstudanteUfes; }
     public void setIsEstudanteUfes(Boolean isEstudanteUfes) { this.isEstudanteUfes = isEstudanteUfes; }
+    public TipoUsuario getTipoUsuario() { return tipoUsuario; }
+    public void setTipoUsuario(TipoUsuario tipoUsuario) { this.tipoUsuario = tipoUsuario; }
 }

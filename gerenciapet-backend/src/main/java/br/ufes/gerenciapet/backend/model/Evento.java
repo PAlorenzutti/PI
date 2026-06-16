@@ -62,9 +62,11 @@ public class Evento {
 
     @ManyToOne
     @JoinColumn(name = "grupo_pet_id")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("eventos")
     private GrupoPet grupoPet;
 
     @OneToMany(mappedBy = "evento")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Inscricao> inscricoes = new ArrayList<>();
 
     public Evento() {}

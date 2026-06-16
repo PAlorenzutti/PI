@@ -1,7 +1,8 @@
-import AlunoTutorado from "./AlunoTutorado";
+import Aluno from "./Aluno";
 import Evento from "./Evento";
 import Certificado from "./Certificado";
 import { StatusInscricao } from "./enums/StatusInscricao";
+
 
 export default class Inscricao {
     public id: number = 0;
@@ -9,7 +10,7 @@ export default class Inscricao {
     public frequencia: number = 0;
     public nota: number = 0;
     public status: StatusInscricao = StatusInscricao.MATRICULADO;
-    public aluno?: AlunoTutorado;
+    public aluno?: Aluno;
     public evento?: Evento;
     public certificado?: Certificado;
     public href: string = '';

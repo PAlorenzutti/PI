@@ -1,7 +1,7 @@
-import AlunoTutorado from "./AlunoTutorado";
+import Aluno from "./Aluno";
 import GrupoPet from "./GrupoPet";
 
-export default class MembroPet extends AlunoTutorado {
+export default class Extensionista extends Aluno {
     public dataIngresso?: Date;
     public bolsista: boolean = false;
     public grupoPet?: GrupoPet;
@@ -9,11 +9,11 @@ export default class MembroPet extends AlunoTutorado {
     constructor(object?: any) {
         super(object);
         if (object !== undefined) {
-            this.updateMembroPet(object);
+            this.updateExtensionista(object);
         }
     }
 
-    public updateMembroPet(object: any) {
+    public updateExtensionista(object: any) {
         this.dataIngresso = object.dataIngresso ? new Date(object.dataIngresso) : undefined;
         this.bolsista = object.bolsista ?? false;
         if (object.grupoPet) {

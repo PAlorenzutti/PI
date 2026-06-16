@@ -7,15 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class AlunoTutorado extends User {
+public class Aluno extends User {
 
     @Column(nullable = true, length = 20)
     private String matricula;
 
     @OneToMany(mappedBy = "aluno")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Inscricao> inscricoes = new ArrayList<>();
 
-    public AlunoTutorado() {}
+    public Aluno() {}
 
     public void inscreverEmEvento(Evento evento) {
         // Implementação futura

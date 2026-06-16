@@ -2,6 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { UserService } from "../../../services/user.service";
 import { faCirclePlus, faEye, faEyeSlash, faHandshakeAngle, faPhone, faUser } from "@fortawesome/free-solid-svg-icons";
 import User from "../../../models/User";
+import Aluno from "../../../models/Aluno";
+import Extensionista from "../../../models/Extensionista";
+import Tutor from "../../../models/Tutor";
 import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ValidationFormsService } from "../../../services/validation-forms.service";
 import { faCircleCheck, faAddressBook, faIdBadge, faIdCard } from "@fortawesome/free-regular-svg-icons";
@@ -70,6 +73,10 @@ export class UserEditComponent implements OnInit {
             dataNascimento: ["", [Validators.required]],
             isEstudanteUfes: [false],
             email: ["", [Validators.email]],
+            matricula: [""],
+            siape: [""],
+            departamento: [""],
+            bolsista: [false],
         });
 
         this.formControls = Object.keys(this.editForm.controls);
@@ -108,15 +115,19 @@ export class UserEditComponent implements OnInit {
     ngOnInit() {
         let loggedUser = this.userService.getLoggedUser();
 
-        this.editForm.patchValue({
-            email: loggedUser.email,
-            nome: loggedUser.nome,
-            dataNascimento: loggedUser.dataNascimento,
-            isEstudanteUfes: loggedUser.isEstudanteUfes,
-        });
         this.userService.findByEmail(loggedUser.email).subscribe({
             next: (resp2: any) => {
                 this.user = resp2;
+                this.editForm.patchValue({
+                    email: this.user.email,
+                    nome: this.user.nome,
+                    dataNascimento: this.user.dataNascimento,
+                    isEstudanteUfes: this.user.isEstudanteUfes,
+                    matricula: this.user.matricula,
+                    siape: this.user.siape,
+                    departamento: this.user.departamento,
+                    bolsista: this.user.bolsista
+                });
             },
             error: (error: any) => {
                 console.log(
@@ -125,19 +136,6 @@ export class UserEditComponent implements OnInit {
                 this.user = loggedUser;
             },
         });
-
-        // this.editForm.controls["fullName"].markAsTouched();
-        // this.editForm.controls["email"].markAsTouched();
-        // this.editForm.controls["cpf"].markAsTouched();
-        // this.editForm.controls["phoneNumber"].markAsTouched();
-        // this.editForm.controls["cellPhoneNumber"].markAsTouched();
-        // this.editForm.controls["cep"].markAsTouched();
-        // this.editForm.controls["street"].markAsTouched();
-        // this.editForm.controls["houseNumber"].markAsTouched();
-        // this.editForm.controls["addInfo"].markAsTouched();
-        // this.editForm.controls["neighborhood"].markAsTouched();
-        // this.editForm.controls["city"].markAsTouched();
-        // this.editForm.controls["refPoint"].markAsTouched();
     }
 
     public checkUserPassword(): void {
@@ -169,10 +167,27 @@ export class UserEditComponent implements OnInit {
             return;
         }
 
-        const url = this.user._links.self.href;
-        let attUser: User;
+        // Fix Spring Data REST self-link bug with polymorphism where it uses the subclass name
+        let url = this.user._links.self.href;
+        url = url.replace(/\/api\/[a-zA-Z]+\//, '/api/user/');
 
-        attUser = new User(this.editForm.getRawValue());
+        let attUser: any;
+
+        const formValue = this.editForm.getRawValue();
+        const mergedData = { ...this.user, ...formValue };
+
+        if (this.user.tipoUsuario === 'TUTOR') {
+            attUser = new Tutor(mergedData);
+        } else if (this.user.tipoUsuario === 'EXTENSIONISTA') {
+            attUser = new Extensionista(mergedData);
+        } else {
+            attUser = new Aluno(mergedData);
+        }
+
+        const idMatch = url.match(/\/(\d+)$/);
+        if (idMatch) {
+            attUser.id = parseInt(idMatch[1], 10);
+        }
 
         // console.log("Usuário a ser atualizado: ", attUser);
 
@@ -201,10 +216,26 @@ export class UserEditComponent implements OnInit {
             return;
         }
 
-        const url = this.user._links.self.href;
-        let attUser: User;
+        let url = this.user._links.self.href;
+        url = url.replace(/\/api\/[a-zA-Z]+\//, '/api/user/');
+        let attUser: any;
 
-        attUser = new User(this.editForm.value);
+        const formValue = this.editForm.getRawValue();
+        const mergedData = { ...this.user, ...formValue };
+
+        if (this.user.tipoUsuario === 'TUTOR') {
+            attUser = new Tutor(mergedData);
+        } else if (this.user.tipoUsuario === 'EXTENSIONISTA') {
+            attUser = new Extensionista(mergedData);
+        } else {
+            attUser = new Aluno(mergedData);
+        }
+
+        const idMatch = url.match(/\/(\d+)$/);
+        if (idMatch) {
+            attUser.id = parseInt(idMatch[1], 10);
+        }
+
         attUser.senha = this.editPassForm.value.newPassword;
 
         this.formControls = Object.keys(this.editPassForm.controls);

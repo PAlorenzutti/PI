@@ -1,136 +1,9 @@
 import { INavData } from "@coreui/angular";
-import { IconComponent } from "@coreui/icons-angular";
-
-/**
- * Aqui são definidos os itens do menu lateral. Cada item tem um nome, uma url, um ícone e pode ter filhos.
- * A maneira que o menu lateral aparece é definida no arquivo default-layout.component.html.
- * O menu deve ser diferente de acordo com a ROLE do usuário. Por exemplo, um usuário com ROLE_SUPER, tem acesso a tudo.
- * Por conta disso, existe uma variação de navItems para cada ROLE.
- */
-
-// ##################################################################################################################
-// ROLE_SUPER
-// ##################################################################################################################
-export const navItems: INavData[] = [
-	{
-		name: "Início",
-		url: "/dashboard",
-		iconComponent: { name: "cil-home" },
-	},
-	{
-		title: true,
-		name: "ATENDIMENTO",
-	},
-	{
-		name: "Serviços",
-		url: "dashboard",
-		iconComponent: { name: "cil-clipboard" },
-		children: [
-			{
-				name: "Histórico da Mulher",
-				url: "/dashboard/historico",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Consulta da Mulher",
-				url: "/dashboard/consulta/mulher",
-				iconComponent: { name: "" }
-			},
-			{
-				name: "Consulta da Criança",
-				url: "/dashboard/consulta/crianca",
-				iconComponent: { name: "" }
-			}
-		]
-	},
-	{
-		title: true,
-		name: "USO INTERNO",
-	},
-	{
-		name: "Cadastrar",
-		url: "dashboard/cadastrar",
-		iconComponent: { name: "cil-library-add" },
-		children: [
-			{
-				name: "Mulher",
-				url: "/dashboard/cadastrar/mulher",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Criança",
-				url: "/dashboard/cadastrar/criança",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Profissional",
-				url: "/dashboard/cadastrar/profissional",
-				iconComponent: { name: "" },
-			}
-		],
-	},
-	{
-		name: "Visualizar",
-		url: "dashboard/visualizar",
-		iconComponent: { name: "cil-magnifying-glass" },
-		children: [
-			{
-				name: "Mulher",
-				url: "/dashboard/visualizar/mulher",
-				iconComponent: {name: ""},
-			},
-			{
-				name: "Profissional",
-				url: "/dashboard/visualizar/profissional",
-				iconComponent: {name: ""}
-			}
-		],
-	},
-	{
-		title: true,
-		name: "SISTEMA",
-	},
-	{
-		name: "Usuário",
-		url: "dashboard/usuario",
-		iconComponent: { name: "cil-contact" },
-		children: [
-			{
-				name: "Adicionar",
-				url: "/dashboard/usuario/novo",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Gerenciar",
-				url: "/dashboard/usuario/visualizar",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Meus dados",
-				url: "/dashboard/usuario/editar",
-				iconComponent: { name: "" },
-			},
-		],
-	},
-	{
-		name: "Configurações",
-		url: "dashboard/configuracoes",
-		iconComponent: { name: "cil-cog" },
-		children: [
-			{
-				name: "Atualizar sistema",
-				url: "/dashboard/configuracoes/atualizar-sistema",
-				iconComponent: { name: "" },
-			},
-		],
-	}
-];
 
 // ##################################################################################################################
 // ROLE_ADMIN
 // ##################################################################################################################
-
-export const navItemsRoleAdmin: INavData[] = [
+export const navItemsAdmin: INavData[] = [
 	{
 		name: "Início",
 		url: "/dashboard",
@@ -138,134 +11,61 @@ export const navItemsRoleAdmin: INavData[] = [
 	},
 	{
 		title: true,
-		name: "ATENDIMENTO",
+		name: "CADASTRAR",
 	},
 	{
-		name: "Serviços",
+		name: "Cadastros",
 		url: "dashboard",
-		iconComponent: { name: "cil-clipboard" },
+		iconComponent: { name: "cil-library-add" },
 		children: [
 			{
-				name: "Histórico da Mulher",
-				url: "/dashboard/historico",
+				name: "Grupo PET",
+				url: "/dashboard/cadastrar/grupo-pet",
 				iconComponent: { name: "" },
 			},
 			{
-				name: "Consulta da Mulher",
-				url: "/dashboard/consulta/mulher",
-				iconComponent: { name: "" }
-			},
-			{
-				name: "Consulta da Criança",
-				url: "/dashboard/consulta/crianca",
+				name: "Tutor",
+				url: "/dashboard/cadastrar/tutor",
 				iconComponent: { name: "" }
 			}
 		]
 	},
 	{
 		title: true,
-		name: "USO INTERNO",
+		name: "VISUALIZAR / GERENCIAR",
 	},
 	{
-		name: "Cadastrar",
-		url: "dashboard/cadastrar",
-		iconComponent: { name: "cil-library-add" },
-		children: [
-			{
-				name: "Mulher",
-				url: "/dashboard/cadastrar/mulher",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Criança",
-				url: "/dashboard/cadastrar/criança",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Profissional",
-				url: "/dashboard/cadastrar/profissional",
-				iconComponent: { name: "" },
-			}
-		],
-	},
-	{
-		name: "Visualizar",
+		name: "Gerenciar",
 		url: "dashboard/visualizar",
 		iconComponent: { name: "cil-magnifying-glass" },
 		children: [
 			{
-				name: "Mulher",
-				url: "/dashboard/visualizar/mulher",
-				iconComponent: {name: ""},
-			},
-			{
-				name: "Profissional",
-				url: "/dashboard/visualizar/profissional",
-				iconComponent: {name: ""}
-			}
-		],
-	},
-	{
-		title: true,
-		name: "SISTEMA",
-	},
-	{
-		name: "Usuário",
-		url: "dashboard/usuario",
-		iconComponent: { name: "cil-contact" },
-		children: [
-			{
-				name: "Adicionar",
-				url: "/dashboard/usuario/novo",
+				name: "Grupos PET",
+				url: "/dashboard/visualizar/grupos-pet",
 				iconComponent: { name: "" },
 			},
 			{
-				name: "Gerenciar",
+				name: "Todos os Usuários",
 				url: "/dashboard/usuario/visualizar",
 				iconComponent: { name: "" },
-			},
-			{
-				name: "Meus dados",
-				url: "/dashboard/usuario/editar",
-				iconComponent: { name: "" },
-			},
+			}
 		],
-	},
-];
-
-// ##################################################################################################################
-// ROLE_USER
-// ##################################################################################################################
-
-export const navItemsRoleUser: INavData[] = [
-	{
-		name: "Home",
-		url: "/dashboard",
-		iconComponent: { name: "cil-home" },
 	},
 	{
 		title: true,
 		name: "SISTEMA",
 	},
 	{
-		name: "Usuário",
-		url: "dashboard/usuario",
-		iconComponent: { name: "cil-contact" },
-		children: [
-			{
-				name: "Meus dados",
-				url: "/dashboard/usuario/editar",
-				iconComponent: { name: "" },
-			},
-		],
-	},
+		name: "Meus dados",
+		url: "/dashboard/usuario/editar",
+		iconComponent: { name: "cil-contact" }
+	}
 ];
 
 // ##################################################################################################################
-// ROLE_PROFESSIONAL
+// ROLE_TUTOR
 // ##################################################################################################################
-
-export const navItemsRoleProfessional: INavData[] = [
+export const navItemsTutor: INavData[] = [
 	{
 		name: "Início",
 		url: "/dashboard",
@@ -273,66 +73,48 @@ export const navItemsRoleProfessional: INavData[] = [
 	},
 	{
 		title: true,
-		name: "ATENDIMENTO",
+		name: "MEU PET",
 	},
 	{
-		name: "Serviços",
-		url: "dashboard",
-		iconComponent: { name: "cil-clipboard" },
+		name: "Gestão do Grupo",
+		url: "dashboard/meu-pet",
+		iconComponent: { name: "cil-group" },
 		children: [
 			{
-				name: "Histórico da Mulher",
-				url: "/dashboard/historico",
+				name: "Equipe",
+				url: "/dashboard/meu-pet/equipe",
 				iconComponent: { name: "" },
 			},
 			{
-				name: "Consulta da Mulher",
-				url: "/dashboard/consulta/mulher",
-				iconComponent: { name: "" }
-			},
-			{
-				name: "Consulta da Criança",
-				url: "/dashboard/consulta/crianca",
-				iconComponent: { name: "" }
-			}
-		]
-	},
-	{
-		name: "Cadastrar",
-		url: "dashboard/cadastrar",
-		iconComponent: { name: "cil-library-add" },
-		children: [
-			{
-				name: "Mulher",
-				url: "/dashboard/cadastrar/mulher",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Criança",
-				url: "/dashboard/cadastrar/criança",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Profissional",
-				url: "/dashboard/cadastrar/profissional",
+				name: "Dados do Grupo",
+				url: "/dashboard/meu-pet/dados",
 				iconComponent: { name: "" },
 			}
 		],
 	},
 	{
-		name: "Visualizar",
-		url: "dashboard/visualizar",
-		iconComponent: { name: "cil-magnifying-glass" },
+		title: true,
+		name: "EVENTOS E CURSOS",
+	},
+	{
+		name: "Eventos",
+		url: "dashboard/eventos",
+		iconComponent: { name: "cil-calendar" },
 		children: [
 			{
-				name: "Mulher",
-				url: "/dashboard/visualizar/mulher",
-				iconComponent: {name: ""},
+				name: "Criar Novo Evento",
+				url: "/dashboard/eventos/novo",
+				iconComponent: { name: "" },
 			},
 			{
-				name: "Profissional",
-				url: "/dashboard/visualizar/profissional",
-				iconComponent: {name: ""}
+				name: "Gerenciar Eventos",
+				url: "/dashboard/eventos/gerenciar",
+				iconComponent: { name: "" },
+			},
+			{
+				name: "Emitir Certificados",
+				url: "/dashboard/eventos/certificados",
+				iconComponent: { name: "" },
 			}
 		],
 	},
@@ -341,29 +123,16 @@ export const navItemsRoleProfessional: INavData[] = [
 		name: "SISTEMA",
 	},
 	{
-		name: "Usuário",
-		url: "dashboard/usuario",
-		iconComponent: { name: "cil-contact" },
-		children: [
-			{
-				name: "Adicionar",
-				url: "/dashboard/usuario/novo",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Meus dados",
-				url: "/dashboard/usuario/editar",
-				iconComponent: { name: "" },
-			},
-		],
-	},
+		name: "Meus dados",
+		url: "/dashboard/usuario/editar",
+		iconComponent: { name: "cil-contact" }
+	}
 ];
 
 // ##################################################################################################################
-// ROLE_RECEPTIONIST
+// ROLE_EXTENSIONISTA
 // ##################################################################################################################
-
-export const navItemsRoleReceptionist: INavData[] = [
+export const navItemsExtensionista: INavData[] = [
 	{
 		name: "Início",
 		url: "/dashboard",
@@ -371,66 +140,80 @@ export const navItemsRoleReceptionist: INavData[] = [
 	},
 	{
 		title: true,
-		name: "USO INTERNO",
+		name: "GESTÃO DE EVENTOS",
 	},
 	{
-		name: "Cadastrar",
-		url: "dashboard/cadastrar",
-		iconComponent: { name: "cil-library-add" },
+		name: "Eventos",
+		url: "dashboard/eventos",
+		iconComponent: { name: "cil-calendar" },
 		children: [
 			{
-				name: "Mulher",
-				url: "/dashboard/cadastrar/mulher",
+				name: "Novo Evento",
+				url: "/dashboard/eventos/novo",
 				iconComponent: { name: "" },
 			},
 			{
-				name: "Criança",
-				url: "/dashboard/cadastrar/criança",
+				name: "Controle de Frequência",
+				url: "/dashboard/eventos/frequencia",
 				iconComponent: { name: "" },
 			},
 			{
-				name: "Profissional",
-				url: "/dashboard/cadastrar/profissional",
+				name: "Lançar Notas",
+				url: "/dashboard/eventos/notas",
 				iconComponent: { name: "" },
 			}
 		],
 	},
 	{
-		name: "Visualizar",
-		url: "dashboard/visualizar",
-		iconComponent: { name: "cil-magnifying-glass" },
-		children: [
-			{
-				name: "Mulher",
-				url: "/dashboard/visualizar/mulher",
-				iconComponent: {name: ""},
-			},
-			{
-				name: "Profissional",
-				url: "/dashboard/visualizar/profissional",
-				iconComponent: {name: ""}
-			}
-		],
+		title: true,
+		name: "MEU DESEMPENHO",
+	},
+	{
+		name: "Certificados",
+		url: "/dashboard/desempenho/certificados",
+		iconComponent: { name: "cil-star" }
 	},
 	{
 		title: true,
 		name: "SISTEMA",
 	},
 	{
-		name: "Usuário",
-		url: "dashboard/usuario",
-		iconComponent: { name: "cil-contact" },
-		children: [
-			{
-				name: "Adicionar",
-				url: "/dashboard/usuario/novo",
-				iconComponent: { name: "" },
-			},
-			{
-				name: "Meus dados",
-				url: "/dashboard/usuario/editar",
-				iconComponent: { name: "" },
-			},
-		],
+		name: "Meus dados",
+		url: "/dashboard/usuario/editar",
+		iconComponent: { name: "cil-contact" }
+	}
+];
+
+// ##################################################################################################################
+// ROLE_ALUNO
+// ##################################################################################################################
+export const navItemsAluno: INavData[] = [
+	{
+		name: "Início / Catálogo",
+		url: "/dashboard",
+		iconComponent: { name: "cil-home" },
 	},
+	{
+		title: true,
+		name: "MINHA ÁREA",
+	},
+	{
+		name: "Meus Cursos",
+		url: "/dashboard/minha-area/cursos",
+		iconComponent: { name: "cil-book" }
+	},
+	{
+		name: "Meus Certificados",
+		url: "/dashboard/minha-area/certificados",
+		iconComponent: { name: "cil-star" }
+	},
+	{
+		title: true,
+		name: "SISTEMA",
+	},
+	{
+		name: "Meus dados",
+		url: "/dashboard/usuario/editar",
+		iconComponent: { name: "cil-contact" }
+	}
 ];

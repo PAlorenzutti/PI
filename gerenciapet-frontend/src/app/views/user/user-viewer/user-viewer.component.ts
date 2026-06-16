@@ -21,7 +21,7 @@ export class UserViewerComponent implements OnInit {
     public failureFlag: boolean = false;
     public selectedUser: any = {
         allowed: false,
-        tipoUsuario: "AlunoTutorado",
+        tipoUsuario: "ALUNO",
     };
     public flagModalEdit: boolean = false;
 
@@ -43,7 +43,7 @@ export class UserViewerComponent implements OnInit {
         this.userSettingsForm = this.formBuilder.group({
             allowedAccessToAll: [],
             fullName: [""],
-            tipoUsuario: ["AlunoTutorado"],
+            tipoUsuario: ["ALUNO"],
         })
     }
 
@@ -64,9 +64,9 @@ export class UserViewerComponent implements OnInit {
         if (!this.loggedUserTipo) return false;
         const isSelf = this.loggedUserHref && target?._links?.user?.href === this.loggedUserHref;
         if (isSelf) return false;
-        if (this.loggedUserTipo === "TutorCoordenador") return true;
-        if (this.loggedUserTipo === "MembroPet") {
-            return target?.tipoUsuario !== "TutorCoordenador" && target?.tipoUsuario !== "MembroPet";
+        if (this.loggedUserTipo === "ADMIN" || this.loggedUserTipo === "TUTOR") return true;
+        if (this.loggedUserTipo === "EXTENSIONISTA") {
+            return target?.tipoUsuario !== "ADMIN" && target?.tipoUsuario !== "TUTOR" && target?.tipoUsuario !== "EXTENSIONISTA";
         }
         return false;
     }

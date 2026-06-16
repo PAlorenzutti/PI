@@ -1,9 +1,9 @@
-import { UserService } from "src/app/services/user.service";
-import { Component } from "@angular/core";
-import User from "src/app/models/User";
-import { navItems, navItemsRoleAdmin, navItemsRoleProfessional, navItemsRoleReceptionist, navItemsRoleUser } from "./_nav";
 
-import { DEFAULT_ROLE } from "src/environments/environment";
+import { Component } from "@angular/core";
+import { navItemsAdmin, navItemsTutor, navItemsExtensionista, navItemsAluno } from "./_nav";
+import { UserService } from "../../services/user.service";
+import User from "../../models/User";
+
 
 @Component({
 	selector: "app-dashboard",
@@ -11,9 +11,8 @@ import { DEFAULT_ROLE } from "src/environments/environment";
 	providers: [UserService],
 })
 export class DefaultLayoutComponent {
-	public navItems = navItems;
+	public navItems: any[] = [];
 	public loggedUser!: User;
-	
 
 	constructor(private userService: UserService) {
 		this.loggedUser = this.userService.getLoggedUser();
@@ -22,19 +21,15 @@ export class DefaultLayoutComponent {
 
 	ngOnInit() {}
 
-	/**
-	 * Método que troca o menu de navegação lateral de acordo com a ROLE do usuário logado
-	 * Importante: não é ele que garante a segurança do sistema, apenas muda o menu de navegação
-	 * Para garantir a segurança, é necessário definir o arquivo de guardas (guard.ts) e definir as rotas
-	 * @author Andre Pacheco
-	 */
 	public changeNavItens(): void {
-		if (this.loggedUser.tipoUsuario === "TutorCoordenador") {
-			this.navItems = navItemsRoleAdmin;
-		} else if (this.loggedUser.tipoUsuario === "MembroPet") {
-			this.navItems = navItemsRoleProfessional;
+		if (this.loggedUser.tipoUsuario === "ADMIN") {
+			this.navItems = navItemsAdmin;
+		} else if (this.loggedUser.tipoUsuario === "TUTOR") {
+			this.navItems = navItemsTutor;
+		} else if (this.loggedUser.tipoUsuario === "EXTENSIONISTA") {
+			this.navItems = navItemsExtensionista;
 		} else {
-			this.navItems = navItemsRoleUser;
+			this.navItems = navItemsAluno;
 		}
 	}
 }

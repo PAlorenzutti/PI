@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
 @Entity
-public class TutorCoordenador extends User {
+public class Tutor extends User {
 
     @Column(nullable = false, length = 50)
     private String siape;
@@ -14,9 +14,10 @@ public class TutorCoordenador extends User {
     private String departamento;
 
     @OneToOne(mappedBy = "tutorCoordenador")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private GrupoPet grupoPetCoordena;
 
-    public TutorCoordenador() {}
+    public Tutor() {}
 
     public void aprovarEvento(Evento evento) {
         // Implementação futura

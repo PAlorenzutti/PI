@@ -1,6 +1,7 @@
 import GrupoPet from "./GrupoPet";
 import Inscricao from "./Inscricao";
 import { StatusEvento } from "./enums/StatusEvento";
+
 import { TipoEvento } from "./enums/TipoEvento";
 
 export default class Evento {

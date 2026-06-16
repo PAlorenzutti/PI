@@ -9,7 +9,7 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
-public class MembroPet extends AlunoTutorado {
+public class Extensionista extends Aluno {
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
@@ -20,9 +20,10 @@ public class MembroPet extends AlunoTutorado {
 
     @ManyToOne
     @JoinColumn(name = "grupo_pet_id")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("membros")
     private GrupoPet grupoPet;
 
-    public MembroPet() {}
+    public Extensionista() {}
 
     public void registrarFrequencia(Inscricao inscricao, Double presenca) {
         inscricao.setFrequencia(presenca);

@@ -26,22 +26,25 @@ public class GrupoPet {
 
     @OneToOne
     @JoinColumn(name = "tutor_id")
-    private TutorCoordenador tutorCoordenador;
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("grupoPetCoordena")
+    private Tutor tutorCoordenador;
 
     @OneToMany(mappedBy = "grupoPet")
-    private List<MembroPet> membros = new ArrayList<>();
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<Extensionista> membros = new ArrayList<>();
 
     @OneToMany(mappedBy = "grupoPet")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Evento> eventos = new ArrayList<>();
 
     public GrupoPet() {}
 
-    public void adicionarMembro(MembroPet membro) {
+    public void adicionarMembro(Extensionista membro) {
         membros.add(membro);
         membro.setGrupoPet(this);
     }
 
-    public void removerMembro(MembroPet membro) {
+    public void removerMembro(Extensionista membro) {
         membros.remove(membro);
         membro.setGrupoPet(null);
     }
@@ -52,10 +55,10 @@ public class GrupoPet {
     public void setSigla(String sigla) { this.sigla = sigla; }
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
-    public TutorCoordenador getTutorCoordenador() { return tutorCoordenador; }
-    public void setTutorCoordenador(TutorCoordenador tutorCoordenador) { this.tutorCoordenador = tutorCoordenador; }
-    public List<MembroPet> getMembros() { return membros; }
-    public void setMembros(List<MembroPet> membros) { this.membros = membros; }
+    public Tutor getTutorCoordenador() { return tutorCoordenador; }
+    public void setTutorCoordenador(Tutor tutorCoordenador) { this.tutorCoordenador = tutorCoordenador; }
+    public List<Extensionista> getMembros() { return membros; }
+    public void setMembros(List<Extensionista> membros) { this.membros = membros; }
     public List<Evento> getEventos() { return eventos; }
     public void setEventos(List<Evento> eventos) { this.eventos = eventos; }
 }

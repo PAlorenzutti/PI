@@ -61,6 +61,37 @@
                             </ng-container>
                         </c-form-feedback>
                     </c-col>
+
+                    <c-col [sm]="6" *ngIf="user?.tipoUsuario !== 'TUTOR' && editForm.controls['isEstudanteUfes'] as ctrl">
+                        <c-form-check>
+                            <input cFormCheckInput id="isEstudanteUfes" type="checkbox" formControlName="isEstudanteUfes" />
+                            <label cFormCheckLabel for="isEstudanteUfes">Estudante da UFES</label>
+                        </c-form-check>
+                    </c-col>
+                </c-row>
+
+                <c-row class="d-flex align-items-center mt-3">
+                    <c-col [sm]="6" *ngIf="user?.tipoUsuario !== 'TUTOR' && editForm.controls['isEstudanteUfes'].value && editForm.controls['matricula'] as ctrl">
+                        <label cLabel for="matricula">Matrícula</label>
+                        <input id="matricula" cFormControl type="text" formControlName="matricula" placeholder="Ex: 2021101234" />
+                    </c-col>
+
+                    <c-col [sm]="6" *ngIf="user?.tipoUsuario === 'EXTENSIONISTA' && editForm.controls['bolsista'] as ctrl">
+                        <c-form-check>
+                            <input cFormCheckInput id="bolsista" type="checkbox" formControlName="bolsista" />
+                            <label cFormCheckLabel for="bolsista">Bolsista</label>
+                        </c-form-check>
+                    </c-col>
+
+                    <c-col [sm]="6" *ngIf="user?.tipoUsuario === 'TUTOR' && editForm.controls['siape'] as ctrl">
+                        <label cLabel for="siape">SIAPE</label>
+                        <input id="siape" cFormControl type="text" formControlName="siape" placeholder="SIAPE" />
+                    </c-col>
+
+                    <c-col [sm]="6" *ngIf="user?.tipoUsuario === 'TUTOR' && editForm.controls['departamento'] as ctrl">
+                        <label cLabel for="departamento">Departamento</label>
+                        <input id="departamento" cFormControl type="text" formControlName="departamento" placeholder="Ex: Departamento de Informática" />
+                    </c-col>
                 </c-row>
             </c-container>
             

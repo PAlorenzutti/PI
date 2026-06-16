@@ -1,7 +1,7 @@
 import User from "./User";
 import GrupoPet from "./GrupoPet";
 
-export default class TutorCoordenador extends User {
+export default class Tutor extends User {
     public siape: string = '';
     public departamento: string = '';
     public grupoPetCoordena?: GrupoPet;
@@ -9,11 +9,11 @@ export default class TutorCoordenador extends User {
     constructor(object?: any) {
         super(object);
         if (object !== undefined) {
-            this.updateTutorCoordenador(object);
+            this.updateTutor(object);
         }
     }
 
-    public updateTutorCoordenador(object: any) {
+    public updateTutor(object: any) {
         this.siape = object.siape ?? '';
         this.departamento = object.departamento ?? '';
         if (object.grupoPetCoordena) {

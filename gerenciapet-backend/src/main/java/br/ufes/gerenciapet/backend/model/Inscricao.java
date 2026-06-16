@@ -39,7 +39,8 @@ public class Inscricao {
 
     @ManyToOne
     @JoinColumn(name = "aluno_id")
-    private AlunoTutorado aluno;
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("inscricoes")
+    private Aluno aluno;
 
     @ManyToOne
     @JoinColumn(name = "evento_id")
@@ -70,8 +71,8 @@ public class Inscricao {
     public void setNota(Double nota) { this.nota = nota; }
     public StatusInscricao getStatus() { return status; }
     public void setStatus(StatusInscricao status) { this.status = status; }
-    public AlunoTutorado getAluno() { return aluno; }
-    public void setAluno(AlunoTutorado aluno) { this.aluno = aluno; }
+    public Aluno getAluno() { return aluno; }
+    public void setAluno(Aluno aluno) { this.aluno = aluno; }
     public Evento getEvento() { return evento; }
     public void setEvento(Evento evento) { this.evento = evento; }
     public Certificado getCertificado() { return certificado; }

@@ -1,5 +1,6 @@
-import Inscricao from "./Inscricao";
 import { TipoCertificado } from "./enums/TipoCertificado";
+import Inscricao from "./Inscricao";
+
 
 export default class Certificado {
     public id: number = 0;

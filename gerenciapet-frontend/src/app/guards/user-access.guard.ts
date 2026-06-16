@@ -24,7 +24,7 @@ export class UserAccessGuard  {
 		let loggedUser = this.userService.getLoggedUser();
 		const tipoUsuario = loggedUser.tipoUsuario;
 
-		if (tipoUsuario === "TutorCoordenador" || tipoUsuario === "MembroPet") {
+		if (tipoUsuario === "ADMIN" || tipoUsuario === "TUTOR" || tipoUsuario === "EXTENSIONISTA") {
 			return true;
 		} else {
 			if (

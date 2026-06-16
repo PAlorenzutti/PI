@@ -1,13 +1,13 @@
-import TutorCoordenador from "./TutorCoordenador";
-import MembroPet from "./MembroPet";
+import Tutor from "./Tutor";
+import Extensionista from "./Extensionista";
 import Evento from "./Evento";
 
 export default class GrupoPet {
     public id: number = 0;
     public sigla: string = '';
     public descricao: string = '';
-    public tutorCoordenador?: TutorCoordenador;
-    public membros: MembroPet[] = [];
+    public tutorCoordenador?: Tutor;
+    public membros: Extensionista[] = [];
     public eventos: Evento[] = [];
     public href: string = '';
 

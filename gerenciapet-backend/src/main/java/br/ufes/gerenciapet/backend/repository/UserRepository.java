@@ -13,13 +13,9 @@ import br.ufes.gerenciapet.backend.model.User;
 @RepositoryRestResource(collectionResourceRel="user", path="user")
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
-    List<User> findByRole(@Param("role") String role);
-
     User findByEmail(@Param("email") String email);
 
-    User findByCpf(@Param("cpf") String cpf);
-
-    Page<User> findByFullNameContaining(@Param("fullName") String fullName, Pageable pageable);
+    Page<User> findByNomeContainingIgnoreCase(@Param("nome") String nome, Pageable pageable);
 
     @Override
     List<User> findAll();

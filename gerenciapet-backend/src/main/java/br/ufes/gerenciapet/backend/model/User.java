@@ -1,221 +1,126 @@
 package br.ufes.gerenciapet.backend.model;
 
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.time.LocalDate;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+
 @Entity
-public class User implements UserDetails {
+@Inheritance(strategy = InheritanceType.JOINED)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "tipoUsuario",
+    defaultImpl = AlunoTutorado.class
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = AlunoTutorado.class, name = "AlunoTutorado"),
+    @JsonSubTypes.Type(value = MembroPet.class, name = "MembroPet"),
+    @JsonSubTypes.Type(value = TutorCoordenador.class, name = "TutorCoordenador")
+})
+public abstract class User implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public User(String fullName, String email, String cpf, String passwd, boolean allowed, String role) {
-        this.fullName = fullName;
-        this.email = email;
-        this.cpf = cpf;
-        this.setPasswd(passwd); // O nome precisa ser diferente para nao ter o mesmo nome do password do UserDetails
-        this.allowed = allowed;
-        this.role = role;
-    }
-
-    public User () {
-
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length=150, nullable = false)
-    private String fullName;
+    @Column(length = 150, nullable = false)
+    private String nome;
 
-    @Column(length=50, nullable = true, unique=true)
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 15)
-    private String cpf;
+    @Column(nullable = false)
+    private String senha;
 
     @Column(nullable = false)
-    private String passwd;
+    private LocalDate dataNascimento;
 
     @Column(nullable = false)
-    private boolean allowed;
+    private Boolean isEstudanteUfes;
 
-    @Column(nullable = false)
-    private String role; // SUPER, ADMIN, USER, CITY, EXTERN
+    public User() {}
 
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "street", column = @Column(nullable = true)),
-        @AttributeOverride(name = "houseNumber", column = @Column(nullable = true)),
-        @AttributeOverride(name = "cep", column = @Column(nullable = true)),
-        @AttributeOverride(name = "neighborhood", column = @Column(nullable = true)),
-        @AttributeOverride(name = "city", column = @Column(nullable = true)),
-        @AttributeOverride(name = "state", column = @Column(nullable = true)),
-        @AttributeOverride(name = "addInfo", column = @Column(nullable = true)),
-        @AttributeOverride(name = "refPoint", column = @Column(nullable = true)),
-    })
-    private Address address;
-
-    @Column(nullable = true, length = 15)
-    private String cellPhoneNumber;
-
-    @Column(nullable = true, length = 15)
-    private String phoneNumber;
-
-    //##############################################################################################
-    // IMPLEMENTAÇÃO DE MÉTODOS DA CLASSE
-    //##############################################################################################
-
-    public void print(User user){
-        System.out.println("Nome: " + user.getFullName());
-        System.out.println("Email: " + user.getEmail());
-        System.out.println("CPF: " + user.getCpf());
-        System.out.println("Senha: " + user.getPassword());
-        System.out.println("Apto: " + user.isAllowed());
-        System.out.println("Papel: " + user.getRole());
+    @SuppressWarnings("OverridableMethodCallInConstructor")
+    public User(String nome, String email, String senha, LocalDate dataNascimento, Boolean isEstudanteUfes) {
+        this.nome = nome;
+        this.email = email;
+        this.setSenha(senha);
+        this.dataNascimento = dataNascimento;
+        this.isEstudanteUfes = isEstudanteUfes;
     }
 
-    //##############################################################################################
-    // IMPLEMENTACAO METODOS DO USERDETAILS
-    //##############################################################################################
+    public boolean login(String email, String senha) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return this.email.equals(email) && encoder.matches(senha, this.senha);
+    }
 
+    public void atualizarDados(User novosDados) {
+        this.nome = novosDados.getNome();
+        this.dataNascimento = novosDados.getDataNascimento();
+        this.isEstudanteUfes = novosDados.getIsEstudanteUfes();
+    }
+
+    // USER DETAILS IMPLEMENTATION
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<UserRoles> roles = new ArrayList<>();
-        roles.add(new UserRoles(this.role));
-        return roles;
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.getClass().getSimpleName().toUpperCase()));
     }
 
     @Override
     public String getPassword() {
-        return this.passwd;
+        return this.senha;
     }
 
     @Override
     public String getUsername() {
-        return this.cpf;
+        return this.email; // Authentication will be based on email
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() { return true; }
 
-    //##################################################################################################################
     // GETTERS AND SETTERS
-    //##################################################################################################################
-
-    public Long getId() {
-        return id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) {
+        this.senha = new BCryptPasswordEncoder().encode(senha);
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getPasswd() {
-        return passwd;
-    }
-
-    public void setPasswd(String passwd) {
-        this.passwd = new BCryptPasswordEncoder().encode(passwd);
-    }
-
-    public boolean isAllowed() {
-        return allowed;
-    }
-
-    public void setAllowed(boolean allowed) {
-        this.allowed = allowed;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public String getCellPhoneNumber() {
-        return cellPhoneNumber;
-    }
-
-    public void setCellPhoneNumber(String cellPhoneNumber) {
-        this.cellPhoneNumber = cellPhoneNumber;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+    public LocalDate getDataNascimento() { return dataNascimento; }
+    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
+    public Boolean getIsEstudanteUfes() { return isEstudanteUfes; }
+    public void setIsEstudanteUfes(Boolean isEstudanteUfes) { this.isEstudanteUfes = isEstudanteUfes; }
 }
-
-

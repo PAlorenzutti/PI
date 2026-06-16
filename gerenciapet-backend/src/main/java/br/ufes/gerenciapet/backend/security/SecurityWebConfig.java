@@ -24,18 +24,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-/**
- * @author André Pacheco
- *
- *         Essa classe configura o spring boot para realizar a autenticação de
- *         usuário do sistema
- *         Caso o usuário exista, esteja apto e a senha esteja correta, a
- *         requisição para /login retorna
- *         200 com um JSON 'usuario-autenticado'. Caso contrário, retorna 401 e
- *         'falha-autenticacao'.
- *
- */
-
 @Configuration
 @EnableWebSecurity
 public class SecurityWebConfig {
@@ -49,7 +37,7 @@ public class SecurityWebConfig {
         http.authorizeRequests(requests -> requests.anyRequest().permitAll()).csrf(csrf -> csrf.disable());
 
         http.formLogin(login -> login.loginPage("/login")
-                .passwordParameter("password").usernameParameter("cpf")
+                .passwordParameter("password").usernameParameter("email")
                 .successHandler(successHandler()).failureHandler(failureHandler()));
 
         return http.build();
@@ -70,8 +58,6 @@ public class SecurityWebConfig {
         return source;
     }
 
-    // Retorna 200 e 'user-authenticated' sucesso para aqueles usuarios que
-    // conseguirem logar
     private AuthenticationSuccessHandler successHandler() {
         return (HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                 Authentication authentication) -> {
@@ -80,14 +66,10 @@ public class SecurityWebConfig {
         };
     }
 
-    /// Retorna 401 e 'authentication-fail' para aqueles usuarios que não
-    /// conseguirem
-    // logar
     private AuthenticationFailureHandler failureHandler() {
         return (HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                 AuthenticationException e) -> {
-
-            // Verifica se temos um motivo específico da falha armazenado no request
+                    
             Object failureReason = httpServletRequest.getAttribute("authenticationFailureReason");
 
             if (failureReason != null) {
@@ -96,16 +78,6 @@ public class SecurityWebConfig {
                     switch (reason) {
                         case "user-not-found" -> {
                             httpServletResponse.getWriter().append("{\"status\": \"user-not-found\"}");
-                            httpServletResponse.setStatus(200);
-                            return;
-                        }
-                        case "user-not-verified" -> {
-                            httpServletResponse.getWriter().append("{\"status\": \"user-not-verified\"}");
-                            httpServletResponse.setStatus(200);
-                            return;
-                        }
-                        case "user-not-allowed" -> {
-                            httpServletResponse.getWriter().append("{\"status\": \"user-not-allowed\"}");
                             httpServletResponse.setStatus(200);
                             return;
                         }
@@ -121,12 +93,6 @@ public class SecurityWebConfig {
 
     @Bean
     protected AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
-        // Descomente as duas linha abaixo para usar o modo de autenticação em memória,
-        // ou seja, sem banco de dados
-        /*
-         * auth.inMemoryAuthentication()
-         * .withUser("Andre").password("123").roles("ADMIN");
-         */
         return auth.getAuthenticationManager();
     }
 

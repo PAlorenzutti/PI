@@ -29,16 +29,12 @@ export class DefaultLayoutComponent {
 	 * @author Andre Pacheco
 	 */
 	public changeNavItens(): void {
-		if (this.loggedUser.role === "SUPER") {
-			this.navItems = navItems;
-		} else if (this.loggedUser.role === "ADMIN") {
+		if (this.loggedUser.tipoUsuario === "TutorCoordenador") {
 			this.navItems = navItemsRoleAdmin;
-		} else if (this.loggedUser.role === "USER") {
-			this.navItems = navItemsRoleUser;
-		} else if (this.loggedUser.role === "PROFESSIONAL") {
+		} else if (this.loggedUser.tipoUsuario === "MembroPet") {
 			this.navItems = navItemsRoleProfessional;
-		} else if (this.loggedUser.role === "RECEPTIONIST") {
-			this.navItems = navItemsRoleReceptionist;
+		} else {
+			this.navItems = navItemsRoleUser;
 		}
 	}
 }

@@ -24,7 +24,7 @@ export class DashboardComponent {
 		this.flagError = false;
 		this.loggedUser = this.userService.getLoggedUser();
 
-		this.registerWarningVisible = !this.loggedUser.isRegistrationComplete();
+		this.registerWarningVisible = false;
 	}
 
 	ngOnInit() {}

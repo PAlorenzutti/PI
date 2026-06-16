@@ -6,7 +6,7 @@
                     <c-card class="p-4">
                         <c-card-body>
                             <form (ngSubmit)="getAuthForm()" [formGroup]="loginForm" cForm>
-                                <img src="../../../assets/img/brand/logo-nome.png" class="logoAmamenta" />
+                                <img src="../../../assets/img/brand/logo-nome.png" class="logoAmamenta d-block mx-auto" />
                                 <br /><br />
                                 <p class="text-medium-emphasis">
                                     Entre com seu nome de usuário e senha para
@@ -17,8 +17,8 @@
                                     <span cInputGroupText>
                                         <fa-icon [icon]="icons.faUser" class="fa-sm"></fa-icon>
                                     </span>
-                                    <input autoComplete="cpf" formControlName="cpf" cFormControl required
-                                        placeholder="CPF" mask="000.000.000-00" [dropSpecialCharacters]="false" />
+                                    <input autoComplete="email" formControlName="email" cFormControl required
+                                        placeholder="E-mail" type="email" />
                                 </c-input-group>
                                 <c-input-group class="mb-4">
                                     <span cInputGroupText>
@@ -39,17 +39,6 @@
                                         </button>
                                     </div>
                                     <br />
-                                    <br />
-                                    <div>
-                                        <br />
-                                        <br />
-                                        <div class="d-flex justify-content-center">
-                                            <a (click)="toggleRetrievePassword()"
-                                                class="p-2 justify-content-center forgot-password">
-                                                Esqueceu a senha?
-                                            </a>
-                                        </div>
-                                    </div>
                                 </c-row>
                             </form>
                         </c-card-body>
@@ -91,44 +80,6 @@
     </c-container>
 </div>
 
-<!--MODAL DE SUCESSO EM RECUPERAR SENHA-->
-<c-modal id="responseModal" [visible]="SuccessRetrieveVisible" (visibleChange)="handleSuccessRetrieve($event)">
-    <c-modal-header>
-        <h5 cModalTitle>Sucesso</h5>
-        <button (click)="toggleSuccessRetrieve()" cButtonClose></button>
-    </c-modal-header>
-    <c-modal-body>
-        <div class="alert alert-success" role="alert" style="font-size: 18px">
-            As instruções para recuperação de senha foram enviadas para o e-mail
-            cadastrado.
-        </div>
-    </c-modal-body>
-    <c-modal-footer>
-        <button (click)="toggleSuccessRetrieve()" cButton color="success">
-            Fechar
-        </button>
-    </c-modal-footer>
-</c-modal>
-
-<!--MODAL DE ERRO EM RECUPERAR SENHA-->
-<c-modal id="responseModal2" [visible]="ErrorRetrieveVisible" (visibleChange)="handleErrorRetrieve($event)">
-    <c-modal-header>
-        <h5 cModalTitle>Erro</h5>
-        <button (click)="toggleErrorRetrieve()" cButtonClose></button>
-    </c-modal-header>
-    <c-modal-body>
-        <div class="alert alert-danger" role="alert" style="font-size: 18px">
-            Erro ao recuperar senha. O e-mail fornecido não está cadastrado no
-            sistema
-        </div>
-    </c-modal-body>
-    <c-modal-footer>
-        <button (click)="toggleErrorRetrieve()" cButton color="danger">
-            Fechar
-        </button>
-    </c-modal-footer>
-</c-modal>
-
 <!--MODAL DE ERRO EM FAZER LOGIN-->
 <c-modal [visible]="LoginErrorVisible" (visibleChange)="handleLoginError($event)">
     <c-modal-header>
@@ -143,49 +94,6 @@
     <c-modal-footer>
         <button (click)="toggleLoginError()" cButton class="pad-btn" color="danger">
             Fechar
-        </button>
-    </c-modal-footer>
-</c-modal>
-
-<!--MODAL DE RECUPERAR SENHA-->
-<c-modal id="liveDemoModal" [visible]="RetrievePasswordVisible" (visibleChange)="handleRetrievePassword($event)">
-    <c-modal-header>
-        <h5 cModalTitle>Recuperação de senha</h5>
-        <button (click)="toggleRetrievePassword()" cButtonClose></button>
-    </c-modal-header>
-    <c-modal-body>Para recuperar sua senha, insira seu e-mail abaixo:<br /><br />
-        <c-row class="mb-3">
-            <form [formGroup]="retrievePasswordForm" (ngSubmit)="retrievePassword()" cForm>
-                <c-col *ngIf="retrievePasswordForm.controls['email'] as ctrl">
-                    <input cFormControl id="email" type="email" formControlName="email" placeholder="E-mail"
-                        autocomplete="off" required [valid]="
-							ctrl.touched && ctrl.valid
-								? true
-								: (submitted || ctrl.touched) && ctrl.invalid
-								? false
-								: undefined
-						" />
-                    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
-                        <ng-container *ngIf="ctrl.errors as errors">
-                            <div *ngIf="errors?.required">
-                                O email é obrigatório!
-                            </div>
-                            <div *ngIf="errors?.email">
-                                {{ formErrors.email?.email }}
-                            </div>
-                        </ng-container>
-                    </c-form-feedback>
-                </c-col>
-            </form>
-        </c-row>
-    </c-modal-body>
-    <c-modal-footer>
-        <button cButton color="secondary" (click)="toggleRetrievePassword()" class="pad-btn">
-            Fechar
-        </button>
-        <button cButton color="success" [disabled]="retrievePasswordForm.invalid" (click)="retrievePassword()"
-            class="pad-btn">
-            Recuperar Senha
         </button>
     </c-modal-footer>
 </c-modal>

@@ -12,7 +12,7 @@ import User from "../../../models/User";
 })
 export class UserViewerComponent implements OnInit {
 
-    public loggedUserRole: string = "";
+    public loggedUserTipo: string = "";
     public loggedUserHref?: string;
 
 
@@ -21,7 +21,7 @@ export class UserViewerComponent implements OnInit {
     public failureFlag: boolean = false;
     public selectedUser: any = {
         allowed: false,
-        role: "USER",
+        tipoUsuario: "AlunoTutorado",
     };
     public flagModalEdit: boolean = false;
 
@@ -43,7 +43,7 @@ export class UserViewerComponent implements OnInit {
         this.userSettingsForm = this.formBuilder.group({
             allowedAccessToAll: [],
             fullName: [""],
-            role: ["USER"],
+            tipoUsuario: ["AlunoTutorado"],
         })
     }
 
@@ -53,21 +53,20 @@ export class UserViewerComponent implements OnInit {
         const logged = this.userService.getLoggedUser?.();
 
         if (logged) {
-            this.loggedUserRole = logged.role;
+            this.loggedUserTipo = logged.tipoUsuario;
             this.loggedUserHref = logged.href;
         }
 
         this.getUsersByName(this.currentPage);
     }
 
-    // Permissão: SUPER gerencia todos (menos ele mesmo). ADMIN gerencia apenas USER.
     public canManage(target: any): boolean {
-        if (!this.loggedUserRole) return false;
+        if (!this.loggedUserTipo) return false;
         const isSelf = this.loggedUserHref && target?._links?.user?.href === this.loggedUserHref;
         if (isSelf) return false;
-        if (this.loggedUserRole === "SUPER") return true;
-        if (this.loggedUserRole === "ADMIN") {
-            return target?.role !== "SUPER" && target?.role !== "ADMIN";
+        if (this.loggedUserTipo === "TutorCoordenador") return true;
+        if (this.loggedUserTipo === "MembroPet") {
+            return target?.tipoUsuario !== "TutorCoordenador" && target?.tipoUsuario !== "MembroPet";
         }
         return false;
     }
@@ -137,7 +136,7 @@ export class UserViewerComponent implements OnInit {
         this.modalLoadingFlag = true;
         this.userService
             .changeUserRole(
-                this.selectedUser.role,
+                this.selectedUser.tipoUsuario,
                 this.selectedUser._links.user.href
             )
             .subscribe({

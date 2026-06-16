@@ -72,9 +72,10 @@ export class RegisterComponent {
     public createForm() {
         this.registerForm = this.formBuilder.group(
             {
-                fullName: ["", [Validators.required]],
-                email: ["", [Validators.email]],
-                cpf: ["", [Validators.required, Validators.minLength(11)], this.registerService.cpfValidator()],
+                nome: ["", [Validators.required]],
+                email: ["", [Validators.required, Validators.email]],
+                dataNascimento: ["", [Validators.required]],
+                isEstudanteUfes: [false],
                 password: [
                     "",
                     [
@@ -132,12 +133,11 @@ export class RegisterComponent {
             //atribuição dos valores do formulário para o modelo "user"
 
             this.user = new User();
-            this.user.fullName = this.registerForm.value.fullName;
-            this.user.passwd = this.registerForm.value.password;
-            this.user.email = this.registerForm.value.email || null;
-            this.user.cpf = this.registerForm.value.cpf;
-            this.user.allowed = true;
-            this.user.role = "USER";
+            this.user.nome = this.registerForm.value.nome;
+            this.user.email = this.registerForm.value.email;
+            this.user.dataNascimento = this.registerForm.value.dataNascimento;
+            this.user.isEstudanteUfes = this.registerForm.value.isEstudanteUfes;
+            this.user.senha = this.registerForm.value.password;
             //  CHAMADA PARA O SERVIÇO DE CADASTRO DE USUÁRIO
 
             this.userService.userLoginRegister(this.user).subscribe({

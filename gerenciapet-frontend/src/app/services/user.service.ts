@@ -43,19 +43,18 @@ export class UserService {
                         } else {
                             // pega o principal retornado pelo endpoint de auth
                             const principal = resp.principal;
-
-                            // busca o usuário completo (com _links/href) por CPF e usa isso como currentUser
-                            this.findByCpf(principal.cpf).subscribe({
-                                next: (fullUserResp) => {
+                            // busca o usuário completo (com _links/href) por email e usa isso como currentUser
+                            this.findByEmail(principal.username || principal.email).subscribe({
+                                next: (fullUserResp: any) => {
                                     // tenta criar User a partir do retorno completo da API
                                     UserService.currentUser = new User(fullUserResp);
-                                    observer.next(principal.fullName);
+                                    observer.next(principal.nome || principal.fullName || principal.username);
                                     observer.complete();
                                 },
-                                error: (err) => {
+                                error: (err: any) => {
                                     // fallback: usar o principal (pode não ter href)
                                     UserService.currentUser = new User(principal);
-                                    observer.next(principal.fullName);
+                                    observer.next(principal.nome || principal.fullName || principal.username);
                                     observer.complete();
                                 },
                             });
@@ -131,18 +130,18 @@ export class UserService {
         return this.http.patch(url, user);
     }
 
-    public findByCpf(cpf: string): Observable<any> {
+    public findByEmail(email: string): Observable<any> {
         return this.http.get(
-            `${URL_API}/api/user/search/findByCpf?cpf=${cpf}`
+            `${URL_API}/api/user/search/findByEmail?email=${email}`
         );
     }
 
     public comparePasswords(
-        cpf: string,
+        email: string,
         password: string
     ): Observable<any> {
         const data = {
-            cpf: cpf,
+            email: email,
             password: password,
         };
         return this.http.post(`${URL_API}/api/user/compare-passwords`, data);

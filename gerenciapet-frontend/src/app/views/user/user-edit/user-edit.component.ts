@@ -5,8 +5,6 @@ import User from "../../../models/User";
 import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ValidationFormsService } from "../../../services/validation-forms.service";
 import { faCircleCheck, faAddressBook, faIdBadge, faIdCard } from "@fortawesome/free-regular-svg-icons";
-import { ViaCepService } from "../../../services/via-cep.service";
-import { AutocompleteService } from "../../../services/autocomplete.service";
 import { RegisterService } from "../../../services/register.service";
 import { Router } from "@angular/router";
 
@@ -55,15 +53,10 @@ export class UserEditComponent implements OnInit {
     showNewPassword = false;
     showConfirmPassword = false;
 
-    public listStatesBrazil: any;
-    public listCitiesBrazil: any;
-
     constructor(
         public validationFormsService: ValidationFormsService,
         private formBuilder: FormBuilder,
         private userService: UserService,
-        private viaCepService: ViaCepService,
-        private autocompleteService: AutocompleteService,
         private registerService: RegisterService,
         private router: Router,
     ) {
@@ -73,28 +66,13 @@ export class UserEditComponent implements OnInit {
 
     createForm() {
         this.editForm = this.formBuilder.group({
-            fullName: ["", [Validators.required]],
-            cpf: ["", [Validators.required, Validators.minLength(11)], this.registerService.cpfValidator()],
-
-            // Contact
-            phoneNumber: ["", [Validators.minLength(10)]],
-            cellPhoneNumber: ["", [Validators.required, Validators.minLength(11)]],
+            nome: ["", [Validators.required]],
+            dataNascimento: ["", [Validators.required]],
+            isEstudanteUfes: [false],
             email: ["", [Validators.email]],
-
-            // Address
-            cep: ["", [Validators.required, Validators.minLength(8)]],
-            street: ["", [Validators.required]],
-            houseNumber: ["", [Validators.required]],
-            addInfo: ["", []],
-            neighborhood: ["", [Validators.required]],
-            city: ["", [Validators.required]],
-            state: ["", [Validators.required]],
-            refPoint: ["", []],
         });
 
         this.formControls = Object.keys(this.editForm.controls);
-        this.listStatesBrazil = this.autocompleteService.completeStateBrazil;
-        this.listCitiesBrazil = this.autocompleteService.completeCityBrazil;
 
         this.editPassForm = this.formBuilder.group({
             password: ["", [Validators.required]],
@@ -132,25 +110,15 @@ export class UserEditComponent implements OnInit {
 
         this.editForm.patchValue({
             email: loggedUser.email,
-            fullName: loggedUser.fullName,
-            cpf: loggedUser.cpf,
-            phoneNumber: loggedUser.phoneNumber,
-            cellPhoneNumber: loggedUser.cellPhoneNumber,
-            cep: loggedUser.address.cep,
-            street: loggedUser.address.street,
-            state: loggedUser.address.state,
-            houseNumber: loggedUser.address.houseNumber,
-            addInfo: loggedUser.address.addInfo,
-            neighborhood: loggedUser.address.neighborhood,
-            city: loggedUser.address.city,
-            refPoint: loggedUser.address.refPoint,
+            nome: loggedUser.nome,
+            dataNascimento: loggedUser.dataNascimento,
+            isEstudanteUfes: loggedUser.isEstudanteUfes,
         });
-
-        this.userService.findByCpf(loggedUser.cpf).subscribe({
-            next: (resp2) => {
+        this.userService.findByEmail(loggedUser.email).subscribe({
+            next: (resp2: any) => {
                 this.user = resp2;
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.log(
                     "Nome de usuario nao encontrado. Provavelmente, voce esta no modo de desenvolvimento."
                 );
@@ -174,7 +142,7 @@ export class UserEditComponent implements OnInit {
 
     public checkUserPassword(): void {
         this.userService
-            .comparePasswords(this.user.cpf, this.editPassForm.value.password)
+            .comparePasswords(this.user.email, this.editPassForm.value.password)
             .subscribe({
                 next: (resp) => {
                     if (resp.state === "correct-password") {
@@ -205,7 +173,6 @@ export class UserEditComponent implements OnInit {
         let attUser: User;
 
         attUser = new User(this.editForm.getRawValue());
-        attUser.role = this.userService.getLoggedUser().role;
 
         // console.log("Usuário a ser atualizado: ", attUser);
 
@@ -238,8 +205,7 @@ export class UserEditComponent implements OnInit {
         let attUser: User;
 
         attUser = new User(this.editForm.value);
-        attUser.passwd = this.editPassForm.value.newPassword;
-        attUser.role = this.userService.getLoggedUser().role;
+        attUser.senha = this.editPassForm.value.newPassword;
 
         this.formControls = Object.keys(this.editPassForm.controls);
         this.userService.update(attUser, url).subscribe({
@@ -279,31 +245,6 @@ export class UserEditComponent implements OnInit {
         if (ctrl.touched && ctrl.valid) return true;
         else if ((ctrl.touched || this.submitted) && ctrl.invalid) return false;
         else return undefined;
-    }
-
-    fetchAddressByCep() {
-        const cepControl = this.editForm.get("cep");
-        if (cepControl && cepControl.valid) {
-            this.viaCepService.getAddress(cepControl.value).subscribe({
-                next: (address) => {
-                    this.editForm.patchValue({
-                        street: address.street,
-                        neighborhood: address.neighborhood,
-                        city: address.city,
-                        state: address.uf,
-                    });
-                },
-                error: () => {
-                    this.editForm.patchValue({
-                        street: "",
-                        neighborhood: "",
-                        city: "",
-                        state: "",
-                        birthState: "",
-                    });
-                },
-            });
-        }
     }
 
     toggleCurrentPasswordVisibility() {

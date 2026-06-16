@@ -22,15 +22,11 @@ export class LoginComponent implements OnInit {
 
     public submitted = false;
     public formErrors: any;
-    public retrievePasswordForm!: FormGroup;
     public loginForm: FormGroup;
     public formControls!: string[];
 
     //Variáveis de visualização dos modais de erros e de sucesso
     public LoginErrorVisible = false;
-    public RetrievePasswordVisible = false;
-    public SuccessRetrieveVisible = false;
-    public ErrorRetrieveVisible = false;
     public spinnerVisible = false;
     public showPassword = false;
     public loginErrorMessage = "";
@@ -46,14 +42,9 @@ export class LoginComponent implements OnInit {
         this.formErrors = this.validationFormsService.errorMessages;
 
         this.loginForm = this.authForm.group({
-            cpf: ["", [Validators.required]],
+            email: ["", [Validators.required, Validators.email]],
             password: ["", [Validators.required]],
         });
-
-        this.retrievePasswordForm = this.formBuilder.group({
-            email: ["", [Validators.required, Validators.email]],
-        });
-        this.formControls = Object.keys(this.retrievePasswordForm.controls);
     }
 
     ngOnInit() { }
@@ -62,7 +53,7 @@ export class LoginComponent implements OnInit {
     public getAuthForm() {
         this.toggleSpinnerVisible();
         this.LoginService.loginAuth(
-            this.loginForm.get("cpf")?.value,
+            this.loginForm.get("email")?.value,
             this.loginForm.get("password")?.value
         ).subscribe({
             next: (response) => {
@@ -98,62 +89,6 @@ export class LoginComponent implements OnInit {
                 this.toggleLoginError();
             },
         });
-    }
-
-    //Chamada para o serviço de recuperação de senha
-    public retrievePassword() {
-        this.toggleSpinnerVisible();
-        this.LoginService.retrievePassword(
-            this.retrievePasswordForm.get("email")?.value
-        ).subscribe({
-            next: (response) => {
-                this.toggleSpinnerVisible();
-                if (response.status == "sent") {
-                    this.toggleRetrievePassword();
-                    this.toggleSuccessRetrieve();
-                } else if (response.status == "user-not-registered") {
-                    this.toggleRetrievePassword();
-                    this.toggleErrorRetrieve();
-                }
-            },
-            error: (err) => {
-                this.toggleSpinnerVisible();
-                if (err.error.text == "sent") {
-                    this.toggleRetrievePassword();
-                    this.toggleSuccessRetrieve();
-                }
-                else {
-                    this.toggleRetrievePassword();
-                    this.loginErrorMessage =
-                        "Ocorreu um erro ao recuperar o e-mail, por favor entre em contato com a equipe do Gerencia PET.";
-                    this.toggleLoginError();
-                }
-            },
-        });
-    }
-
-    public toggleRetrievePassword() {
-        this.RetrievePasswordVisible = !this.RetrievePasswordVisible;
-    }
-
-    public handleRetrievePassword(event: any) {
-        this.RetrievePasswordVisible = event;
-    }
-
-    public toggleSuccessRetrieve() {
-        this.SuccessRetrieveVisible = !this.SuccessRetrieveVisible;
-    }
-
-    public handleSuccessRetrieve(event: any) {
-        this.SuccessRetrieveVisible = event;
-    }
-
-    public toggleErrorRetrieve() {
-        this.ErrorRetrieveVisible = !this.ErrorRetrieveVisible;
-    }
-
-    public handleErrorRetrieve(event: any) {
-        this.ErrorRetrieveVisible = event;
     }
 
     public toggleLoginError() {

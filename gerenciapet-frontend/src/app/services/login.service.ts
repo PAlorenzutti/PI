@@ -9,9 +9,9 @@ import { Observable } from "rxjs";
 export class LoginService {
 	constructor(private http: HttpClient) {}
 
-	public loginAuth(cpf: string, password: string): Observable<any> {
+	public loginAuth(email: string, password: string): Observable<any> {
 		const credentials = new FormData();
-		credentials.append("cpf", cpf);
+		credentials.append("email", email);
 		credentials.append("password", password);
 
 		return this.http.post(`${URL_API}/login`, credentials, { withCredentials: true });

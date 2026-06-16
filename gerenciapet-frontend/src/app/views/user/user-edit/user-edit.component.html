@@ -8,9 +8,9 @@
         <c-card-body>
             <c-container>
                 <c-row class="d-flex align-items-center">
-                    <c-col [sm]="6" *ngIf="editForm.controls['fullName'] as ctrl">
-                        <label cLabel for="fullName">Nome Completo</label>
-                        <input cFormControl id="fullName" formControlName="fullName" placeholder="Nome Completo"
+                    <c-col [sm]="6" *ngIf="editForm.controls['nome'] as ctrl">
+                        <label cLabel for="nome">Nome Completo</label>
+                        <input cFormControl id="nome" formControlName="nome" placeholder="Nome Completo"
                             autocomplete="off" required [autofocus]="true" [valid]="
 								ctrl.touched && ctrl.valid
 									? true
@@ -28,60 +28,29 @@
                         </c-form-feedback>
                     </c-col>
 
-                    <c-col [sm]="6" *ngIf="editForm.controls['cpf'] as ctrl">
-                        <label cLabel for="cpf">CPF</label>
-                        <input id="cpf" cFormControl type="text" formControlName="cpf" [valid]=isValid(ctrl)
-                            mask="000.000.000-00" [dropSpecialCharacters]="false" placeholder="000.000.000-00" />
-
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                    <c-col [sm]="6" *ngIf="editForm.controls['dataNascimento'] as ctrl">
+                        <label cLabel for="dataNascimento">Data de Nascimento</label>
+                        <input cFormControl id="dataNascimento" type="date" formControlName="dataNascimento" required
+                            [valid]="
+								ctrl.touched && ctrl.valid
+									? true
+									: (submitted || ctrl.touched) &&
+									ctrl.invalid
+									? false
+									: undefined
+							" />
+                        <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
                             <ng-container *ngIf="ctrl.errors as errors">
-                                <div *ngIf="errors?.required">
-                                    O CPF é obrigatório!
+                                <div *ngIf="errors.required">
+                                    A data de nascimento é obrigatória!
                                 </div>
-                                <div *ngIf="errors?.minlength">
-                                    CPF incompleto!
-                                </div>
-                                <div *ngIf="errors?.cpfInvalid">CPF inválido!</div>
                             </ng-container>
                         </c-form-feedback>
                     </c-col>
                 </c-row>
-            </c-container>
-        </c-card-body>
-    </c-card>
-
-    <br>
-
-    <c-card class="bg-light">
-        <c-card-header>
-            <fa-icon [icon]="iconsFa.faPhone" class="cardIcon fa-lg fa-fw"></fa-icon>
-            <strong> &nbsp; Contato</strong>
-        </c-card-header>
-        <c-card-body>
-            <c-container>
-                <c-row class="d-flex align-items-center">
-                    <c-col>
-                        <label cLabel for="phoneNumber">Telefone fixo</label>
-                        <input id="phoneNumber" cFormControl type="text" formControlName="phoneNumber"
-                            placeholder="(00) 0000-0000" mask="(00) 0000-0000" [dropSpecialCharacters]="false" />
-                    </c-col>
-                    <c-col *ngIf="editForm.controls['cellPhoneNumber'] as ctrl">
-                        <label cLabel for="cellPhoneNumber">Celular</label>
-                        <input id="cellPhoneNumber" cFormControl type="text" formControlName="cellPhoneNumber"
-                            placeholder="(00) 00000-0000" [valid]=isValid(ctrl) mask="(00) 00000-0000"
-                            [dropSpecialCharacters]="false" />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                            <ng-container *ngIf="ctrl.errors as errors">
-                                <div *ngIf="errors?.required">
-                                    O celular é obrigatório!
-                                </div>
-                                <div *ngIf="errors?.minlength">
-                                    Celular incompleto!
-                                </div>
-                            </ng-container>
-                        </c-form-feedback>
-                    </c-col>
-                    <c-col *ngIf="editForm.controls['email'] as ctrl">
+                
+                <c-row class="d-flex align-items-center mt-3">
+                    <c-col [sm]="6" *ngIf="editForm.controls['email'] as ctrl">
                         <label cLabel for="email">E-mail</label>
                         <input id="email" cFormControl type="text" formControlName="email" [valid]=isValid(ctrl) />
                         <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
@@ -94,93 +63,8 @@
                     </c-col>
                 </c-row>
             </c-container>
-        </c-card-body>
-    </c-card>
-
-    <br>
-
-    <c-card class="bg-light">
-        <c-card-header>
-            <fa-icon [icon]="iconsFa.faAddressBook" class="cardIcon fa-lg fa-fw"></fa-icon>
-            <strong> &nbsp; Endereço</strong>
-        </c-card-header>
-        <c-card-body>
-            <c-container>
-                <c-row class="d-flex align-items-center">
-                    <c-col md="3" *ngIf="editForm.controls['cep'] as ctrl">
-                        <label cLabel for="cep">CEP</label>
-                        <input id="cep" cFormControl type="text" formControlName="cep" [valid]=isValid(ctrl)
-                            placeholder="00.000-000" mask="00.000-000" [dropSpecialCharacters]="true"
-                            (blur)="fetchAddressByCep()" />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                            <ng-container *ngIf="ctrl.errors as errors">
-                                <div *ngIf="errors?.required">
-                                    O CEP é obrigatório!
-                                </div>
-                                <div *ngIf="errors?.minlength">
-                                    CEP inválido!
-                                </div>
-                            </ng-container>
-                        </c-form-feedback>
-                    </c-col>
-                    <c-col *ngIf="editForm.controls['street'] as ctrl">
-                        <label cLabel for="street">Rua</label>
-                        <input id="street" cFormControl type="text" formControlName="street" [valid]=isValid(ctrl) />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                            A rua é obrigatória!
-                        </c-form-feedback>
-                    </c-col>
-                    <c-col md="2" *ngIf="editForm.controls['houseNumber'] as ctrl">
-                        <label cLabel for="houseNumber">Número</label>
-                        <input id="houseNumber" cFormControl type="houseNumber" formControlName="houseNumber"
-                            [valid]=isValid(ctrl) />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                            O número é obrigatório!
-                        </c-form-feedback>
-                    </c-col>
-                    <c-col md="2" *ngIf="editForm.controls['city'] as ctrl">
-                        <label cLabel for="city">Cidade</label>
-                        <input id="city" cFormControl type="text" formControlName="city" [valid]=isValid(ctrl)
-                            [ngbTypeahead]="this.listCitiesBrazil" />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                            A cidade é obrigatória!
-                        </c-form-feedback>
-                    </c-col>
-                    <c-col md="1" *ngIf="editForm.controls['state'] as ctrl">
-                        <label cLabel for="state">Estado</label>
-                        <input id="state" cFormControl type="text" formControlName="state" [valid]=isValid(ctrl)
-                            [ngbTypeahead]="this.listCitiesBrazil" />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                            O estado é obrigatório!
-                        </c-form-feedback>
-                    </c-col>
-                </c-row>
-
-
-                <c-row class="pt-3">
-                    <c-col md="4" *ngIf="editForm.controls['neighborhood'] as ctrl">
-                        <label cLabel for="neighborhood">Bairro</label>
-                        <input id="neighborhood" cFormControl type="text" formControlName="neighborhood"
-                            [valid]=isValid(ctrl) />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                            O bairro é obrigatório!
-                        </c-form-feedback>
-                    </c-col>
-                    <c-col>
-                        <label cLabel for="addInfo">Complemento</label>
-                        <input id="addInfo" cFormControl type="text" formControlName="addInfo" />
-                    </c-col>
-                </c-row>
-                <c-row>
-                    <c-col class="pt-3">
-                        <label for="refPoint" class="mb-2">Ponto de referência</label>
-                        <input id="refPoint" cFormControl type="text" formControlName="refPoint">
-                    </c-col>
-                </c-row>
-            </c-container>
-
+            
             <br>
-
             <div class="d-grid gap-2 d-flex justify-content-end">
                 <button cButton type="submit" class="pad-btn btn-success">
                     <fa-icon [icon]="iconsFa.faCircleCheck" class="cardIcon fa-lg fa-fw"></fa-icon>&nbsp; Atualizar
@@ -189,6 +73,8 @@
             </div>
         </c-card-body>
     </c-card>
+
+    <br>
 
     <br>
 </form>

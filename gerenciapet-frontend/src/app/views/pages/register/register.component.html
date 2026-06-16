@@ -21,66 +21,52 @@
                         <br />
                         <form cForm [formGroup]="registerForm" novalidate (ngSubmit)="onSubmit()">
                             <c-row class="mb-3">
-                                <label cCol [sm]="4" cLabel="col" for="fullName">Nome Completo</label>
-                                <c-col [sm]="8" *ngIf="
-										registerForm.controls[
-											'fullName'
-										] as ctrl
-									">
-                                    <input cFormControl id="fullName" formControlName="fullName"
-                                        placeholder="Nome Completo" autocomplete="off" required [autofocus]="true"
-                                        [valid]="
-											ctrl.touched && ctrl.valid
-												? true
-												: (submitted || ctrl.touched) &&
-												  ctrl.invalid
-												? false
-												: undefined
-										" />
-                                    <c-form-feedback *ngIf="submitted || ctrl.invalid"
-                                        [valid]="!(submitted || ctrl.invalid)">
+                                <label cCol [sm]="4" cLabel="col" for="nome">Nome</label>
+                                <c-col [sm]="8" *ngIf="registerForm.controls['nome'] as ctrl">
+                                    <input cFormControl id="nome" formControlName="nome"
+                                        placeholder="Nome" autocomplete="off" required [autofocus]="true"
+                                        [valid]="ctrl.touched && ctrl.valid ? true : (submitted || ctrl.touched) && ctrl.invalid ? false : undefined" />
+                                    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
                                         <ng-container *ngIf="ctrl.errors as errors">
-                                            <div *ngIf="errors.required">
-                                                O nome completo é obrigatório!
-                                            </div>
-                                        </ng-container>
-                                    </c-form-feedback>
-                                </c-col>
-                            </c-row>
-                            <c-row class="mb-3">
-                                <label cCol [sm]="4" cLabel="col" for="cpf">CPF</label>
-                                <c-col [sm]="8" *ngIf="registerForm.controls['cpf'] as ctrl">
-                                    <input id="cpf" cFormControl type="text" formControlName="cpf"
-                                        [valid]="isValid(ctrl)" mask="000.000.000-00" [dropSpecialCharacters]="false"
-                                        placeholder="CPF" required />
-                                    <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
-                                        <ng-container *ngIf="ctrl.errors as errors">
-                                            <div *ngIf="errors?.required">
-                                                O CPF é obrigatório!
-                                            </div>
-                                            <div *ngIf="errors?.minlength">
-                                                CPF incompleto!
-                                            </div>
-                                            <div *ngIf="errors?.cpfInvalid">
-                                                CPF inválido!
-                                            </div>
+                                            <div *ngIf="errors['required']">O nome é obrigatório!</div>
                                         </ng-container>
                                     </c-form-feedback>
                                 </c-col>
                             </c-row>
                             <c-row class="mb-3">
                                 <label cCol [sm]="4" cLabel="col" for="email">E-mail</label>
-                                <c-col [sm]="8" *ngIf="
-										registerForm.controls['email'] as ctrl
-									">
+                                <c-col [sm]="8" *ngIf="registerForm.controls['email'] as ctrl">
                                     <input cFormControl id="email" type="email" formControlName="email"
-                                        placeholder="E-mail" autocomplete="off"
-                                        [valid]="ctrl.touched && ctrl.valid ? true : ctrl.touched && ctrl.invalid ? false : undefined" />
-                                    <c-form-feedback *ngIf="ctrl.touched && ctrl.invalid" [valid]="false">
+                                        placeholder="E-mail" autocomplete="off" required
+                                        [valid]="ctrl.touched && ctrl.valid ? true : (submitted || ctrl.touched) && ctrl.invalid ? false : undefined" />
+                                    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
                                         <ng-container *ngIf="ctrl.errors as errors">
-                                            <div *ngIf="errors?.email">{{ formErrors.email?.email }}</div>
+                                            <div *ngIf="errors['required']">O e-mail é obrigatório!</div>
+                                            <div *ngIf="errors['email']">E-mail inválido!</div>
                                         </ng-container>
                                     </c-form-feedback>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <label cCol [sm]="4" cLabel="col" for="dataNascimento">Data de Nascimento</label>
+                                <c-col [sm]="8" *ngIf="registerForm.controls['dataNascimento'] as ctrl">
+                                    <input cFormControl id="dataNascimento" type="date" formControlName="dataNascimento"
+                                        required
+                                        [valid]="ctrl.touched && ctrl.valid ? true : (submitted || ctrl.touched) && ctrl.invalid ? false : undefined" />
+                                    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+                                        <ng-container *ngIf="ctrl.errors as errors">
+                                            <div *ngIf="errors['required']">A data de nascimento é obrigatória!</div>
+                                        </ng-container>
+                                    </c-form-feedback>
+                                </c-col>
+                            </c-row>
+                            <c-row class="mb-3">
+                                <c-col [sm]="4"></c-col>
+                                <c-col [sm]="8" *ngIf="registerForm.controls['isEstudanteUfes'] as ctrl">
+                                    <c-form-check>
+                                        <input cFormCheckInput type="checkbox" id="isEstudanteUfes" formControlName="isEstudanteUfes" />
+                                        <label cFormCheckLabel for="isEstudanteUfes">Sou estudante da UFES</label>
+                                    </c-form-check>
                                 </c-col>
                             </c-row>
                             <c-row class="mb-3">
@@ -250,9 +236,9 @@
             </c-modal-header>
             <c-modal-body>
                 <div class="alert alert-danger" role="alert" style="font-size: 18px">
-                    O CPF e/ou e-mail que você está tentando
+                    O e-mail que você está tentando
                     utilizar já está cadastrado no sistema. Por favor, tente
-                    novamente como outro CPF e/ou e-mail. Se o erro
+                    novamente com outro e-mail. Se o erro
                     persistir, entre em contato com a equipe do Gerencia PET.
                 </div>
             </c-modal-body>

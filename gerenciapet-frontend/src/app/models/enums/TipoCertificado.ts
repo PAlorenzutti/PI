@@ -1,0 +1,4 @@
+export enum TipoCertificado {
+    HORAS_COMPLEMENTARES = 'HORAS_COMPLEMENTARES',
+    HORAS_EXTENSAO = 'HORAS_EXTENSAO'
+}

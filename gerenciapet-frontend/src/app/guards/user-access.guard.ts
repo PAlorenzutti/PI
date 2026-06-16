@@ -22,16 +22,11 @@ export class UserAccessGuard  {
 		// const role = storedRole ? atob(storedRole) : null;
 
 		let loggedUser = this.userService.getLoggedUser();
-		const role = loggedUser.role;
+		const tipoUsuario = loggedUser.tipoUsuario;
 
-		// console.log("UserAccessGuard", role);
-
-		// Se o usuário for um SUPER, tudo deve ser liberado
-		if (role === "SUPER") {
+		if (tipoUsuario === "TutorCoordenador" || tipoUsuario === "MembroPet") {
 			return true;
-		} else if (role === "ADMIN") {
-			return true;
-		} else if (role === "USER") {
+		} else {
 			if (
 				state.url.includes("dashboard/usuario/editar")
 			) {
@@ -40,9 +35,6 @@ export class UserAccessGuard  {
 				this.router.navigate(["/dashboard"]);
 				return false;
 			}
-		} else {
-			this.router.navigate(["/"]);
-			return false;
 		}
 	}
 }

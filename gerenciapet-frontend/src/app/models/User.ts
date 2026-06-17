@@ -1,3 +1,5 @@
+import Inscricao from "./Inscricao";
+
 export default class User {
     public id: number = 0;
     public nome: string = '';
@@ -6,6 +8,8 @@ export default class User {
     public dataNascimento: string = '';
     public isEstudanteUfes: boolean = false;
     public tipoUsuario: string = 'ALUNO';
+    public matricula: string = '';
+    public inscricoes: Inscricao[] = [];
     public href: string = '';
 
     constructor(object?: any) {
@@ -22,6 +26,10 @@ export default class User {
         this.dataNascimento = object.dataNascimento ?? '';
         this.isEstudanteUfes = object.isEstudanteUfes ?? false;
         this.tipoUsuario = object.tipoUsuario ?? (object.siape ? 'TUTOR' : (object.bolsista !== undefined ? 'EXTENSIONISTA' : 'ALUNO'));
+        this.matricula = object.matricula ?? '';
+        if (object.inscricoes) {
+            this.inscricoes = object.inscricoes;
+        }
 
         if (object._links !== undefined) {
             this.href = object._links.self?.href || this.href;

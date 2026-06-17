@@ -1,13 +1,18 @@
 package br.ufes.gerenciapet.backend.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,28 +31,15 @@ public class GrupoPet {
 
     @OneToOne
     @JoinColumn(name = "tutor_id")
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("grupoPetCoordena")
+    @JsonIgnore
     private Tutor tutorCoordenador;
 
-    @OneToMany(mappedBy = "grupoPet")
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @OneToMany(mappedBy = "grupoPet", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Extensionista> membros = new ArrayList<>();
 
     @OneToMany(mappedBy = "grupoPet")
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @JsonIgnore
     private List<Evento> eventos = new ArrayList<>();
-
-    public GrupoPet() {}
-
-    public void adicionarMembro(Extensionista membro) {
-        membros.add(membro);
-        membro.setGrupoPet(this);
-    }
-
-    public void removerMembro(Extensionista membro) {
-        membros.remove(membro);
-        membro.setGrupoPet(null);
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

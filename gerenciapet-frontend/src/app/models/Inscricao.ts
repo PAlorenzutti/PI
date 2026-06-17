@@ -1,4 +1,4 @@
-import Aluno from "./Aluno";
+import User from "./User";
 import Evento from "./Evento";
 import Certificado from "./Certificado";
 import { StatusInscricao } from "./enums/StatusInscricao";
@@ -10,7 +10,7 @@ export default class Inscricao {
     public frequencia: number = 0;
     public nota: number = 0;
     public status: StatusInscricao = StatusInscricao.MATRICULADO;
-    public aluno?: Aluno;
+    public user?: User;
     public evento?: Evento;
     public certificado?: Certificado;
     public href: string = '';
@@ -34,8 +34,8 @@ export default class Inscricao {
             this.href = object.href ?? '';
         }
 
-        if (object.aluno) {
-            this.aluno = object.aluno;
+        if (object.user) {
+            this.user = new User(object.user);
         }
         if (object.evento) {
             this.evento = object.evento;

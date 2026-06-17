@@ -12,16 +12,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
-/**
- * @author André Pacheco
- *
- * Classe que configura o caminhos das URLs do angular. Sempre que chegar uma requisição
- * aqui no Spring ele verifica se a URL é válida para ele, ou seja, se ela existe. Caso não exista,
- * ele redireciona para o angular. O angular por sua vez utiliza o seu próprio arquivo de rotas para
- * definir qual ação tomar. Dessa maneira, tanto os dois frameworks trabalham em conjunto.
- *
- */
-
 @Configuration
 public class AngularConfiguration implements WebMvcConfigurer {
 

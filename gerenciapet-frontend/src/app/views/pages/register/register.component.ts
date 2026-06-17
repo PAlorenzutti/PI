@@ -76,6 +76,7 @@ export class RegisterComponent {
                 email: ["", [Validators.required, Validators.email]],
                 dataNascimento: ["", [Validators.required]],
                 isEstudanteUfes: [false],
+                matricula: [""],
                 password: [
                     "",
                     [
@@ -137,6 +138,7 @@ export class RegisterComponent {
             this.user.email = this.registerForm.value.email;
             this.user.dataNascimento = this.registerForm.value.dataNascimento;
             this.user.isEstudanteUfes = this.registerForm.value.isEstudanteUfes;
+            this.user.matricula = this.registerForm.value.matricula;
             this.user.senha = this.registerForm.value.password;
             //  CHAMADA PARA O SERVIÇO DE CADASTRO DE USUÁRIO
 

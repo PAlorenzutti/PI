@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { UserService } from "../../../services/user.service";
 import { faCirclePlus, faEye, faEyeSlash, faHandshakeAngle, faPhone, faUser } from "@fortawesome/free-solid-svg-icons";
 import User from "../../../models/User";
-import Aluno from "../../../models/Aluno";
 import Extensionista from "../../../models/Extensionista";
 import Tutor from "../../../models/Tutor";
 import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -171,32 +170,21 @@ export class UserEditComponent implements OnInit {
         let url = this.user._links.self.href;
         url = url.replace(/\/api\/[a-zA-Z]+\//, '/api/user/');
 
-        let attUser: any;
-
         const formValue = this.editForm.getRawValue();
         const mergedData = { ...this.user, ...formValue };
 
-        if (this.user.tipoUsuario === 'TUTOR') {
-            attUser = new Tutor(mergedData);
-        } else if (this.user.tipoUsuario === 'EXTENSIONISTA') {
-            attUser = new Extensionista(mergedData);
-        } else {
-            attUser = new Aluno(mergedData);
-        }
-
+        let finalUser = new User(mergedData);
         const idMatch = url.match(/\/(\d+)$/);
         if (idMatch) {
-            attUser.id = parseInt(idMatch[1], 10);
+            finalUser.id = parseInt(idMatch[1], 10);
         }
 
-        // console.log("Usuário a ser atualizado: ", attUser);
-
         this.formControls = Object.keys(this.editForm.controls);
-        this.userService.update(attUser, url).subscribe({
+        this.userService.update(finalUser, url).subscribe({
             next: (resp) => {
                 this.responseRegisterFlag = "success";
                 this.toggleEditSuccess();
-                this.userService.updateCurrentUserLocally(attUser);
+                this.userService.updateCurrentUserLocally(finalUser);
             },
             error: (error) => {
                 this.responseRegisterFlag = "error";
@@ -218,24 +206,15 @@ export class UserEditComponent implements OnInit {
 
         let url = this.user._links.self.href;
         url = url.replace(/\/api\/[a-zA-Z]+\//, '/api/user/');
-        let attUser: any;
 
         const formValue = this.editForm.getRawValue();
         const mergedData = { ...this.user, ...formValue };
 
-        if (this.user.tipoUsuario === 'TUTOR') {
-            attUser = new Tutor(mergedData);
-        } else if (this.user.tipoUsuario === 'EXTENSIONISTA') {
-            attUser = new Extensionista(mergedData);
-        } else {
-            attUser = new Aluno(mergedData);
-        }
-
+        let attUser = new User(mergedData);
         const idMatch = url.match(/\/(\d+)$/);
         if (idMatch) {
             attUser.id = parseInt(idMatch[1], 10);
         }
-
         attUser.senha = this.editPassForm.value.newPassword;
 
         this.formControls = Object.keys(this.editPassForm.controls);

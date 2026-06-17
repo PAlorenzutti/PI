@@ -6,7 +6,7 @@
                     <c-card class="p-4">
                         <c-card-body>
                             <form (ngSubmit)="getAuthForm()" [formGroup]="loginForm" cForm>
-                                <img src="../../../assets/img/brand/logo-nome.png" class="logoAmamenta d-block mx-auto" />
+                                <img src="../../../assets/img/brand/logo-nome.png" class="logoGerenciaPet d-block mx-auto" />
                                 <br /><br />
                                 <p class="text-medium-emphasis">
                                     Entre com seu nome de usuário e senha para
@@ -34,7 +34,7 @@
                                 <c-row class="float-bottom">
                                     <div class="d-grid gap-2">
                                         <button cButton [disabled]="loginForm.invalid" type="submit"
-                                            class="px-4 background-Amamenta button-login">
+                                            class="px-4 background-GerenciaPet button-login">
                                             Login
                                         </button>
                                     </div>
@@ -44,7 +44,7 @@
                         </c-card-body>
                     </c-card>
 
-                    <c-card [ngStyle]="{ 'width.%': 100 }" class="text-white background-Amamenta py-5">
+                    <c-card [ngStyle]="{ 'width.%': 100 }" class="text-white background-GerenciaPet py-5">
                         <c-card-body class="text-center">
                             <div>
                                 <h2>Cadastrar no sistema</h2>

@@ -6,10 +6,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
 @Entity
-public class Extensionista extends Aluno {
+public class Extensionista {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
@@ -20,20 +37,13 @@ public class Extensionista extends Aluno {
 
     @ManyToOne
     @JoinColumn(name = "grupo_pet_id")
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("membros")
+    @JsonIgnore
     private GrupoPet grupoPet;
 
-    public Extensionista() {}
-
-    public void registrarFrequencia(Inscricao inscricao, Double presenca) {
-        inscricao.setFrequencia(presenca);
-    }
-
-    public void lancarNota(Inscricao inscricao, Double nota) {
-        inscricao.setNota(nota);
-        inscricao.verificarAprovacao();
-    }
-
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
     public Date getDataIngresso() { return dataIngresso; }
     public void setDataIngresso(Date dataIngresso) { this.dataIngresso = dataIngresso; }
     public Boolean getBolsista() { return bolsista; }

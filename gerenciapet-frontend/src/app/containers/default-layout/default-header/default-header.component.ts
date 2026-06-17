@@ -1,9 +1,8 @@
-import { UserService } from "src/app/services/user.service";
 import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { HeaderComponent } from "@coreui/angular";
-import { LoginService } from "src/app/services/login.service";
-
+import { UserService } from "../../../services/user.service";
+import { LoginService } from "../../../services/login.service";
 @Component({
 	selector: "app-default-header",
 	templateUrl: "./default-header.component.html",
@@ -21,10 +20,6 @@ export class DefaultHeaderComponent extends HeaderComponent {
 		super();
 	}
 
-	/**
-	 * Método que realiza o logout do usuário
-	 * @author Andre Pacheco
-	 */
 	public logout(): void {
 		this.loginService.logout().subscribe({
 			next: (resp) => {

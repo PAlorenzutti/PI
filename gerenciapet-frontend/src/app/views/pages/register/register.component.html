@@ -69,6 +69,12 @@
                                     </c-form-check>
                                 </c-col>
                             </c-row>
+                            <c-row class="mb-3" *ngIf="registerForm.controls['isEstudanteUfes'].value">
+                                <label cCol [sm]="4" cLabel="col" for="matricula">Matrícula</label>
+                                <c-col [sm]="8" *ngIf="registerForm.controls['matricula'] as ctrl">
+                                    <input cFormControl id="matricula" type="text" formControlName="matricula" placeholder="Ex: 2021101234" autocomplete="off" />
+                                </c-col>
+                            </c-row>
                             <c-row class="mb-3">
                                 <label cCol [sm]="4" cLabel="col" for="password">Senha</label>
                                 <c-col [sm]="8" *ngIf="registerForm.controls['password'] as ctrl">

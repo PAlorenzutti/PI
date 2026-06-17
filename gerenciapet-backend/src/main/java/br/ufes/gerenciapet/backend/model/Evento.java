@@ -1,9 +1,11 @@
 package br.ufes.gerenciapet.backend.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +17,8 @@ import javax.persistence.TemporalType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.ufes.gerenciapet.backend.utils.enums.StatusEvento;
 import br.ufes.gerenciapet.backend.utils.enums.TipoEvento;
@@ -62,22 +66,11 @@ public class Evento {
 
     @ManyToOne
     @JoinColumn(name = "grupo_pet_id")
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("eventos")
+    @JsonIgnore
     private GrupoPet grupoPet;
 
-    @OneToMany(mappedBy = "evento")
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @OneToMany(mappedBy = "evento", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inscricao> inscricoes = new ArrayList<>();
-
-    public Evento() {}
-
-    public void abrirInscricoes() {
-        this.status = StatusEvento.ABERTO;
-    }
-
-    public void encerrarEvento() {
-        this.status = StatusEvento.ENCERRADO;
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

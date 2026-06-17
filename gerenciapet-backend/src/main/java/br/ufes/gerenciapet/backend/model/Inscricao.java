@@ -1,9 +1,11 @@
 package br.ufes.gerenciapet.backend.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,6 +15,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.ufes.gerenciapet.backend.utils.enums.StatusInscricao;
 
@@ -38,28 +42,17 @@ public class Inscricao {
     private StatusInscricao status;
 
     @ManyToOne
-    @JoinColumn(name = "aluno_id")
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("inscricoes")
-    private Aluno aluno;
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "evento_id")
+    @JsonIgnore
     private Evento evento;
 
-    @OneToOne(mappedBy = "inscricao")
+    @OneToOne(mappedBy = "inscricao", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Certificado certificado;
-
-    public Inscricao() {}
-
-    public boolean verificarAprovacao() {
-        if (this.frequencia != null && this.nota != null && this.frequencia >= 75.0 && this.nota >= 7.0) {
-            this.status = StatusInscricao.APROVADO;
-            return true;
-        } else {
-            this.status = StatusInscricao.REPROVADO;
-            return false;
-        }
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -71,8 +64,8 @@ public class Inscricao {
     public void setNota(Double nota) { this.nota = nota; }
     public StatusInscricao getStatus() { return status; }
     public void setStatus(StatusInscricao status) { this.status = status; }
-    public Aluno getAluno() { return aluno; }
-    public void setAluno(Aluno aluno) { this.aluno = aluno; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
     public Evento getEvento() { return evento; }
     public void setEvento(Evento evento) { this.evento = evento; }
     public Certificado getCertificado() { return certificado; }

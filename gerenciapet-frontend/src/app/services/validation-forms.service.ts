@@ -5,8 +5,7 @@ import { of } from "rxjs";
 @Injectable({
 	providedIn: "root",
 })
-// @author Gabriel Schettino
-// Importado do CoreUI, apenas traduzido
+
 export class ValidationFormsService {
 	errorMessages: any;
 

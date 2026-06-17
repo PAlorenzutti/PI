@@ -13,6 +13,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.ufes.gerenciapet.backend.utils.enums.TipoCertificado;
 
 @Entity
@@ -35,17 +37,8 @@ public class Certificado {
 
     @OneToOne
     @JoinColumn(name = "inscricao_id")
+    @JsonIgnore
     private Inscricao inscricao;
-
-    public Certificado() {}
-
-    public void gerarDocumentoPdf() {
-        // Implementação futura
-    }
-
-    public void validarAutenticidade() {
-        // Implementação futura
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

@@ -22,17 +22,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import br.ufes.gerenciapet.backend.model.User;
 import br.ufes.gerenciapet.backend.repository.UserRepository;
 
+/**
+ * Controlador responsável pelas operações de usuário expostas pela API.
+ */
 @Controller
 public class UserController {
     @Autowired
     UserRepository userRepo;
 
+    /**
+     * Retorna o usuário autenticado na sessão atual.
+     *
+     * @param principal representação do usuário autenticado pelo Spring Security.
+     * @return principal recebido na requisição.
+     */
     @GetMapping("/api/user/logged-user")
     @ResponseBody
     public Principal user(Principal principal) {
         return principal;
     }
 
+    /**
+     * Registra um novo usuário no sistema.
+     *
+     * @param user dados do usuário enviados no corpo da requisição.
+     * @return JSON textual com o estado do cadastro.
+     */
     @PostMapping("/api-open/user-register")
     @ResponseBody
     public String userRegister(@RequestBody User user) {
@@ -46,6 +61,13 @@ public class UserController {
         }
     }
 
+    /**
+     * Compara a senha informada com a senha criptografada armazenada para o
+     * usuário.
+     *
+     * @param usuJson mapa contendo email e password.
+     * @return JSON textual com o resultado da comparacao.
+     */
     @PostMapping("/api/user/compare-passwords")
     @ResponseBody
     public String comparePasswords(@RequestBody Map<String, String> usuJson) {
@@ -71,6 +93,12 @@ public class UserController {
         }
     }
 
+    /**
+     * Remove um usuário pelo identificador.
+     *
+     * @param id identificador do usuário que será removido.
+     * @return resposta HTTP 204 quando removido ou 404 quando inexistente.
+     */
     @DeleteMapping("/api/user/delete/{id}")
     @Transactional
     public ResponseEntity<Object> delete(@PathVariable Long id) {
@@ -87,6 +115,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Conta a quantidade total de usuários cadastrados.
+     *
+     * @return número de usuários persistidos.
+     */
     @GetMapping("api/user/count-users")
     @ResponseBody
     public long countUsers() {

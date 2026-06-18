@@ -24,10 +24,23 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+/**
+ * Configuração de segurança da aplicação.
+ *
+ * <p>Define regras de autenticação, CORS, handlers de login e codificação de
+ * senhas.</p>
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityWebConfig {
 
+    /**
+     * Cria a cadeia de filtros de segurança HTTP.
+     *
+     * @param http objeto de configuração de segurança do Spring.
+     * @return cadeia de filtros configurada.
+     * @throws Exception quando a cadeia não puder ser montada.
+     */
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(withDefaults());
@@ -43,6 +56,11 @@ public class SecurityWebConfig {
         return http.build();
     }
 
+    /**
+     * Define as regras de CORS aceitas pelo backend.
+     *
+     * @return fonte de configuração CORS aplicada a todas as rotas.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -58,6 +76,11 @@ public class SecurityWebConfig {
         return source;
     }
 
+    /**
+     * Cria o handler executado após login bem-sucedido.
+     *
+     * @return handler que escreve a resposta JSON de autenticação.
+     */
     private AuthenticationSuccessHandler successHandler() {
         return (HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                 Authentication authentication) -> {
@@ -66,6 +89,11 @@ public class SecurityWebConfig {
         };
     }
 
+    /**
+     * Cria o handler executado quando o login falha.
+     *
+     * @return handler que escreve o motivo de falha em formato JSON.
+     */
     private AuthenticationFailureHandler failureHandler() {
         return (HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                 AuthenticationException e) -> {
@@ -91,11 +119,23 @@ public class SecurityWebConfig {
         };
     }
 
+    /**
+     * Expõe o gerenciador de autenticação configurado pelo Spring.
+     *
+     * @param auth configuração de autenticação do Spring Security.
+     * @return gerenciador de autenticação da aplicação.
+     * @throws Exception quando o gerenciador não puder ser obtido.
+     */
     @Bean
     protected AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
         return auth.getAuthenticationManager();
     }
 
+    /**
+     * Cria o codificador usado para armazenar e comparar senhas.
+     *
+     * @return codificador BCrypt.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

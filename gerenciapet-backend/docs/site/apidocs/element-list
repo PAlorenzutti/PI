@@ -1,0 +1,7 @@
+br.ufes.gerenciapet.backend
+br.ufes.gerenciapet.backend.config
+br.ufes.gerenciapet.backend.controller
+br.ufes.gerenciapet.backend.model
+br.ufes.gerenciapet.backend.repository
+br.ufes.gerenciapet.backend.security
+br.ufes.gerenciapet.backend.utils.enums

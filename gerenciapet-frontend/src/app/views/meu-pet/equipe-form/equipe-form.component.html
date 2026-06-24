@@ -1,0 +1,75 @@
+<!-- Carregando -->
+<div *ngIf="loading" class="d-flex justify-content-center my-5">
+    <c-spinner color="primary"></c-spinner>
+</div>
+
+<!-- Tutor sem grupo -->
+<div *ngIf="!loading && !hasGrupoPet" class="text-center mt-4 mb-4">
+    <h4 class="text-danger">Você não está vinculado a nenhum Grupo PET!</h4>
+    <p>Apenas tutores coordenadores podem adicionar membros à equipe.</p>
+</div>
+
+<!-- Form -->
+<form cForm [formGroup]="equipeForm" *ngIf="!loading && hasGrupoPet">
+    <c-card class="mb-4">
+        <c-card-header>
+            <fa-icon [icon]="faIcons.faPlus" class="fa-lg fa-fw"></fa-icon>
+            <strong>&nbsp;Cadastrar Extensionista</strong>
+        </c-card-header>
+        <c-card-body>
+            <c-container>
+                <!-- Search Component -->
+                <c-row class="mb-1">
+                    <c-col md="12">
+                        <app-search-user
+                            [parentForm]="equipeForm"
+                            [searchMode]="'USER'"
+                            marginClass="mb-2"
+                            (onUserFound)="onUserFound($event)"
+                            (onUserNotFound)="onUserNotFound()">
+                        </app-search-user>
+                        <div *ngIf="loadingUserCheck" class="text-info mt-2">
+                            <c-spinner size="sm"></c-spinner> Verificando disponibilidade do aluno...
+                        </div>
+                    </c-col>
+                </c-row>
+
+                <!-- Rest of form -->
+                <c-row class="mb-3 justify-content-center" *ngIf="foundUser">
+                    <c-col md="4" class="text-center">
+                        <label cLabel for="dataIngresso">Data de Ingresso</label>
+                        <input cFormControl id="dataIngresso" type="date" formControlName="dataIngresso" [valid]="isValid('dataIngresso')">
+                        <c-form-feedback [valid]="false">A data de ingresso é obrigatória.</c-form-feedback>
+                    </c-col>
+                    <c-col md="4" class="d-flex justify-content-center align-items-center mt-4">
+                        <c-form-check>
+                            <input cFormCheckInput id="bolsista" type="checkbox" formControlName="bolsista">
+                            <label cFormCheckLabel for="bolsista">Membro Bolsista</label>
+                        </c-form-check>
+                    </c-col>
+                </c-row>
+
+                <div *ngIf="invalidUserType" class="text-danger mt-2 text-center fw-bold">
+                    Apenas alunos regularmente matriculados na UFES podem atuar como extensionistas.
+                </div>
+                <div *ngIf="userAlreadyExtensionista" class="text-danger mt-2 text-center fw-bold">
+                    Este aluno já está cadastrado como extensionista em um Grupo PET!
+                </div>
+                <div *ngIf="submitted && !foundUser && !invalidUserType && !userAlreadyExtensionista && equipeForm.get('email')?.valid" class="text-danger mt-2 text-center fw-bold">
+                    Você deve selecionar um usuário válido antes de salvar.
+                </div>
+
+            </c-container>
+        </c-card-body>
+            <c-card-footer>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2 mb-2">
+                    <button cButton color="danger" class="hyperlog-btn me-md-2 text-white fw-bold" routerLink="/dashboard/meu-pet/equipe">
+                        <fa-icon [icon]="faIcons.faTimes"></fa-icon> &nbsp; Cancelar
+                    </button>
+                    <button cButton color="success" class="hyperlog-btn text-white fw-bold" type="button" (click)="submit()" [disabled]="!equipeForm.valid || !foundUser || invalidUserType || userAlreadyExtensionista || loadingUserCheck">
+                        <fa-icon [icon]="faIcons.faFloppyDisk"></fa-icon> &nbsp; Salvar Extensionista
+                    </button>
+                </div>
+            </c-card-footer>
+    </c-card>
+</form>

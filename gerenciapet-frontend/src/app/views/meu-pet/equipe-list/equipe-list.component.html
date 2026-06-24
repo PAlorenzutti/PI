@@ -1,0 +1,95 @@
+<c-card class="mb-4">
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <fa-icon [icon]="faIcons.faUsers" class="cardIcon fa-lg fa-fw"></fa-icon>
+                <strong> &nbsp; Membros da Equipe do Grupo PET</strong>
+            </div>
+        </div>
+    </c-card-header>
+
+    <c-card-body>
+        <!-- Carregando -->
+        <div *ngIf="loading" class="d-flex justify-content-center my-5">
+            <c-spinner color="primary"></c-spinner>
+        </div>
+
+        <!-- Tutor sem grupo -->
+        <div *ngIf="!loading && !hasGrupoPet" class="text-center mt-4 mb-4">
+            <h4 class="text-danger">Você não está vinculado a nenhum Grupo PET!</h4>
+            <p>Apenas tutores coordenadores podem gerenciar a equipe de um Grupo PET.</p>
+        </div>
+
+        <!-- Tutor com grupo -->
+        <div *ngIf="!loading && hasGrupoPet">
+            <div *ngIf="extensionistas.length > 0">
+                <table cTable hover [responsive]="true">
+                    <thead cTableColor="light">
+                        <tr>
+                            <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                            <th scope="col" style="width: 19%; vertical-align: middle;">Nome</th>
+                            <th scope="col" style="width: 19%; vertical-align: middle;">E-mail</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Ingresso</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Bolsista</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Apagar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ext of extensionistas; index as i">
+                            <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                            <td style="vertical-align: middle;">{{ ext.user?.nome }}</td>
+                            <td style="vertical-align: middle;">{{ ext.user?.email }}</td>
+                            <td style="text-align: center; vertical-align: middle;">{{ ext.dataIngresso | date:'dd/MM/yyyy' }}</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <c-badge [color]="ext.bolsista ? 'success' : 'danger'">{{ ext.bolsista ? 'Sim' : 'Não' }}</c-badge>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <button cButton class="hyperlog-btn text-white" color="danger"
+                                    (click)="selectDeletedExtensionista(ext)" title="Apagar extensionista">
+                                    <fa-icon [icon]="faIcons.faTrash" class="cardIcon fa-lg fa-fw"></fa-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-center mt-3">
+                    <pagination
+                        [totalItems]="totalItems"
+                        (pageChanged)="pageChange($event)"
+                        [itemsPerPage]="itemsPerPage"
+                        previousText="Anterior"
+                        nextText="Próxima">
+                    </pagination>
+                </div>
+            </div>
+            <div *ngIf="extensionistas.length === 0" class="text-center mt-4 mb-4">
+                <p>Nenhum extensionista cadastrado na equipe ainda.</p>
+            </div>
+        </div>
+    </c-card-body>
+    <c-card-footer *ngIf="!loading && hasGrupoPet">
+        <div class="d-grid gap-2 d-flex justify-content-end">
+            <button cButton class="hyperlog-btn me-md-2 text-white fw-bold" color="primary" (click)="goToNew()">
+                <fa-icon [icon]="faIcons.faPlus"></fa-icon> &nbsp; Cadastrar novo extensionista
+            </button>
+        </div>
+    </c-card-footer>
+</c-card>
+
+<c-modal [visible]="deleteModalVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Remover Extensionista</h5>
+        <button cButtonClose (click)="toggleDeleteModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        Tem certeza que deseja remover este extensionista da equipe?
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton class="hyperlog-btn text-white fw-bold" color="primary" (click)="toggleDeleteModal()">
+            Cancelar
+        </button>
+        <button cButton class="hyperlog-btn text-white fw-bold" color="danger" (click)="deleteExtensionista()">
+            Remover
+        </button>
+    </c-modal-footer>
+</c-modal>

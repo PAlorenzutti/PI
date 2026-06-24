@@ -18,6 +18,7 @@ export class SearchUserComponent implements OnInit {
 
   @Input() parentForm!: FormGroup;
   @Input() searchMode: 'USER' | 'TUTOR' = 'USER';
+  @Input() marginClass: string = 'mb-4';
   @Output() onUserFound = new EventEmitter<any>();
   @Output() onUserNotFound = new EventEmitter<void>();
 

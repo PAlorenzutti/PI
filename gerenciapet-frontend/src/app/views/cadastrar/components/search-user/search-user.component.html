@@ -1,4 +1,4 @@
-<c-card class="mb-4">
+<c-card [ngClass]="marginClass">
     <c-card-header>
         <fa-icon [icon]="iconsFa.faIdCard" class="cardIcon fa-lg fa-fw"></fa-icon>
         <strong> &nbsp; {{ searchMode === 'TUTOR' ? 'Buscar Tutor' : 'Buscar Usuário' }}</strong>

@@ -5,6 +5,8 @@ import { GrupoPetService } from "../../../services/grupo-pet.service";
 import { UserService } from "../../../services/user.service";
 import GrupoPet from "../../../models/GrupoPet";
 import { CommonModule } from "@angular/common";
+import { faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-grupos-pet',
@@ -21,6 +23,7 @@ export class GruposPetComponent implements OnInit {
     public failureFlag: boolean = false;
     public selectedGrupoPet: any = null;
     public flagModalDelete: boolean = false;
+    public faIcons = { faTrash, faPenToSquare };
 
     public itemsPerPage: number; 
     public totalItems: number = 0;
@@ -34,7 +37,8 @@ export class GruposPetComponent implements OnInit {
     constructor(
         private grupoPetService: GrupoPetService, 
         private userService: UserService,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private router: Router
     ) {
         this.itemsPerPage = 10;
         this.maxPageLinks = 10;
@@ -81,6 +85,10 @@ export class GruposPetComponent implements OnInit {
 
     public searchGruposBySigla() {
         this.getGruposPet(this.currentPage);
+    }
+
+    public editGrupo(grupo: any): void {
+        this.router.navigate(['/dashboard/cadastrar/grupo-pet'], { queryParams: { sigla: grupo.sigla } });
     }
 
     public preDeleteGrupo(grupo: any): void {

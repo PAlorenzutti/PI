@@ -35,6 +35,9 @@ import { SearchUserComponent } from './components/search-user/search-user.compon
     FontAwesomeModule,
     ModalModule,
     SpinnerModule
+  ],
+  exports: [
+    SearchUserComponent
   ]
 })
 export class CadastrarModule { }

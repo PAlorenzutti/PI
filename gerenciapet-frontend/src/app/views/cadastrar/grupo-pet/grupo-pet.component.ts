@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { faCirclePlus, faIdCard, faBriefcase, faPen, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { HttpClient } from '@angular/common/http';
@@ -40,12 +40,19 @@ export class GrupoPetComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private http: HttpClient
   ) {
     this.createForm();
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['sigla']) {
+        this.liveForm.patchValue({ siglaBusca: params['sigla'] });
+        this.lookForSigla();
+      }
+    });
   }
 
   createForm() {

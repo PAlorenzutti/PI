@@ -1,5 +1,5 @@
 <div>
-	<div>
+	<div *ngIf="loggedUser?.tipoUsuario === 'ADMIN'">
 		<c-row class="align-itens-center justify-content-center" [lg]="2" [md]="2" [sm]="2">
 			<c-col lg="6" xs="12">
 				<c-widget-stat-f
@@ -29,6 +29,44 @@
 					<ng-template cTemplateId="widgetIconTemplate">
 						<fa-icon
 							[icon]="icons.faUserDoctor"
+							class="fa-lg pad-btn"
+						></fa-icon>
+					</ng-template>
+				</c-widget-stat-f>
+			</c-col>
+		</c-row>
+	</div>
+
+	<div *ngIf="loggedUser?.tipoUsuario === 'TUTOR'">
+		<c-row class="align-itens-center justify-content-center" [lg]="2" [md]="2" [sm]="2">
+			<c-col lg="6" xs="12">
+				<c-widget-stat-f
+					[title]="'Eventos Cadastrados'"
+					class="mb-3"
+					color="warning"
+					padding
+					[value]="totalEventos"
+				>
+					<ng-template cTemplateId="widgetIconTemplate">
+						<fa-icon
+							[icon]="icons.faCalendarCheck"
+							class="fa-lg pad-btn"
+						></fa-icon>
+					</ng-template>
+				</c-widget-stat-f>
+			</c-col>
+
+			<c-col lg="6" xs="12">
+				<c-widget-stat-f
+					[title]="'Extensionistas'"
+					class="mb-3"
+					color="primary"
+					padding
+					[value]="totalExtensionistas"
+				>
+					<ng-template cTemplateId="widgetIconTemplate">
+						<fa-icon
+							[icon]="icons.faUsers"
 							class="fa-lg pad-btn"
 						></fa-icon>
 					</ng-template>

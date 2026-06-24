@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.ufes.gerenciapet.backend.utils.enums.StatusEvento;
 import br.ufes.gerenciapet.backend.utils.enums.TipoEvento;
@@ -105,7 +105,7 @@ public class Evento {
      */
     @ManyToOne
     @JoinColumn(name = "grupo_pet_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private GrupoPet grupoPet;
 
     /**

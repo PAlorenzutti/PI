@@ -78,7 +78,7 @@ export class LoginComponent implements OnInit {
                     this.toggleLoginError();
                 } else if (response.status == "authentication-fail") {
                     this.loginErrorMessage =
-                        "O nome de usuário e/ou a senha está incorreto. Verifique se você digitou tudo corretamente. Caso não lembre sua senha, clique em Esqueci minha senha para recuperá-la.";
+                        "O nome de usuário e/ou a senha está incorreto. Verifique se você digitou tudo corretamente. Caso não lembre sua senha, entre em contato com a equipe do Gerencia PET.";
                     this.toggleLoginError();
                 }
             },

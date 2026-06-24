@@ -5,6 +5,7 @@ import { UserService } from "../../../services/user.service";
 import User from "../../../models/User";
 import { HttpClient } from "@angular/common/http";
 import { URL_API } from "../../../utils/url-api";
+import { faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: "app-user-viewer",
@@ -16,6 +17,7 @@ export class UserViewerComponent implements OnInit {
 
     public loggedUserTipo: string = "";
     public loggedUserHref?: string;
+    public faIcons = { faTrash, faPenToSquare };
 
 
     public users: any[] = [];
@@ -26,6 +28,7 @@ export class UserViewerComponent implements OnInit {
     };
     public flagModalEdit: boolean = false;
     public flagModalDeleteTutor: boolean = false;
+    public flagModalDeleteUser: boolean = false;
     public userToDelete: any = null;
 
     public itemsPerPage: number; // Define quantos elementos serao retornados por paginas
@@ -133,11 +136,28 @@ export class UserViewerComponent implements OnInit {
                 },
                 error: () => {
                     this.modalLoadingFlag = false;
-                    this.deleteUser(user);
+                    this.openDeleteUserModal(user);
                 }
             });
         } else {
-            this.deleteUser(user);
+            this.openDeleteUserModal(user);
+        }
+    }
+
+    public openDeleteUserModal(user: any): void {
+        this.userToDelete = user;
+        this.flagModalDeleteUser = true;
+    }
+
+    public closeDeleteUserModal(): void {
+        this.flagModalDeleteUser = false;
+        this.userToDelete = null;
+    }
+
+    public confirmDeleteUser(): void {
+        this.flagModalDeleteUser = false;
+        if (this.userToDelete) {
+            this.deleteUser(this.userToDelete);
         }
     }
 

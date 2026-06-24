@@ -1,45 +1,44 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { VisualizarRoutingModule } from './visualizar-routing.module';
-import { GruposPetComponent } from './grupos-pet/grupos-pet.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PaginationModule } from 'ngx-bootstrap/pagination';
+
+import { EventosRoutingModule } from './eventos-routing.module';
+import { EventoFormComponent } from './evento-form/evento-form.component';
+import { EventoListComponent } from './evento-list/evento-list.component';
+
 import {
   ButtonModule,
   CardModule,
-  DropdownModule,
   FormModule,
   GridModule,
   ModalModule,
   TableModule,
   BadgeModule,
-  ButtonGroupModule,
+  SpinnerModule
 } from '@coreui/angular';
-import { IconModule } from '@coreui/icons-angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @NgModule({
   declarations: [
-    GruposPetComponent
+    EventoFormComponent,
+    EventoListComponent
   ],
   imports: [
     CommonModule,
-    VisualizarRoutingModule,
+    EventosRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    PaginationModule.forRoot(),
-    CardModule,
-    GridModule,
-    FormModule,
-    TableModule,
     ButtonModule,
-    IconModule,
-    DropdownModule,
+    CardModule,
+    FormModule,
+    GridModule,
     ModalModule,
+    TableModule,
     BadgeModule,
-    ButtonGroupModule,
-    FontAwesomeModule
+    SpinnerModule,
+    FontAwesomeModule,
+    NgxMaskDirective
   ]
 })
-export class VisualizarModule { }
+export class EventosModule { }

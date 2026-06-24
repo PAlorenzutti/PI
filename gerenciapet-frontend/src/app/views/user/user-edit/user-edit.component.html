@@ -1,11 +1,11 @@
 <form cForm [formGroup]="editForm" novalidate (ngSubmit)="receiveFormData()">
-    <c-card class="bg-light">
+    <c-card class="mb-4">
         <c-card-header>
             <fa-icon [icon]="iconsFa.faUser" class="cardIcon fa-lg fa-fw"></fa-icon>
             <strong> &nbsp; Editando meus dados</strong>
         </c-card-header>
 
-        <c-card-body>
+        <c-card-body class="mb-3">
             <c-container>
                 <c-row class="d-flex align-items-center">
                     <c-col [sm]="6" *ngIf="editForm.controls['nome'] as ctrl">
@@ -48,7 +48,7 @@
                         </c-form-feedback>
                     </c-col>
                 </c-row>
-                
+
                 <c-row class="d-flex align-items-center mt-3">
                     <c-col [sm]="6" *ngIf="editForm.controls['email'] as ctrl">
                         <label cLabel for="email">E-mail</label>
@@ -94,30 +94,25 @@
                     </c-col>
                 </c-row>
             </c-container>
-            
-            <br>
-            <div class="d-grid gap-2 d-flex justify-content-end">
-                <button cButton type="submit" class="pad-btn btn-success">
-                    <fa-icon [icon]="iconsFa.faCircleCheck" class="cardIcon fa-lg fa-fw"></fa-icon>&nbsp; Atualizar
-                    cadastro
+        </c-card-body>
+        <c-card-footer>
+            <div class="d-grid gap-2 d-flex justify-content-end mt-md-2 mb-md-2">
+                <button cButton type="submit" color="success" class="hyperlog-btn text-white fw-bold">
+                    <fa-icon [icon]="iconsFa.faCircleCheck" class="fa-lg fa-fw"></fa-icon>&nbsp; Atualizar cadastro
                 </button>
             </div>
-        </c-card-body>
+        </c-card-footer>
     </c-card>
-
-    <br>
-
-    <br>
 </form>
 
 <form cForm [formGroup]="editPassForm" novalidate (ngSubmit)="receiveFormPass()">
-    <c-card class="bg-light">
+    <c-card class="mb-4">
         <c-card-header>
             <fa-icon [icon]="iconsFa.faUser" class="cardIcon fa-lg fa-fw"></fa-icon>
             <strong> &nbsp; Atualizar senha</strong>
         </c-card-header>
 
-        <c-card-body>
+        <c-card-body class="mb-3">
             <c-container>
                 <c-row>
                     <c-col *ngIf="editPassForm.controls['password'] as ctrl">
@@ -216,16 +211,14 @@
                     </c-col>
                 </c-row>
             </c-container>
-
-            <br>
-
-            <div class="d-grid gap-2 d-flex justify-content-end">
-                <button cButton type="submit" class="pad-btn btn-success">
-                    <fa-icon [icon]="iconsFa.faCircleCheck" class="cardIcon fa-lg fa-fw"></fa-icon>&nbsp; Atualizar
-                    senha
+        </c-card-body>
+        <c-card-footer>
+            <div class="d-grid gap-2 d-flex justify-content-end mt-md-2 mb-md-2">
+                <button cButton type="submit" color="success" class="hyperlog-btn text-white fw-bold">
+                    <fa-icon [icon]="iconsFa.faCircleCheck" class="fa-lg fa-fw"></fa-icon>&nbsp; Atualizar senha
                 </button>
             </div>
-        </c-card-body>
+        </c-card-footer>
     </c-card>
 
     <br>

@@ -1,0 +1,86 @@
+<!-- Carregando -->
+<div *ngIf="loading" class="d-flex justify-content-center my-5">
+    <c-spinner color="primary"></c-spinner>
+</div>
+
+<!-- Erros de Ausência de Grupo -->
+<div *ngIf="!loading && !hasGrupoPet" class="text-center mt-4 mb-4">
+    <h4 class="text-danger">Você não está vinculado a nenhum Grupo PET!</h4>
+    <p>É necessário fazer parte de um grupo para acessar a lista de eventos.</p>
+</div>
+
+<!-- Tabela de Eventos -->
+<c-card class="mb-4" *ngIf="!loading && hasGrupoPet">
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <fa-icon [icon]="faIcons.faCalendarAlt" class="cardIcon fa-lg fa-fw"></fa-icon>
+                <strong> &nbsp; Eventos do Grupo PET</strong>
+            </div>
+        </div>
+    </c-card-header>
+    <c-card-body>
+        <div *ngIf="eventos.length > 0">
+            <table cTable hover [responsive]="true">
+                <thead cTableColor="light">
+                    <tr>
+                        <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                        <th scope="col" style="width: 25%; vertical-align: middle;">Nome</th>
+                        <th scope="col" style="width: 15%; text-align: center; vertical-align: middle;">Vagas</th>
+                        <th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Carga Horária</th>
+                        <th scope="col" style="width: 15%; text-align: center; vertical-align: middle;">Status</th>
+                        <th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let ev of eventos; index as i">
+                        <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                        <td style="vertical-align: middle;">{{ ev.nome }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ ev.vagasDisponiveis }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ ev.cargaHorariaTotal }}h</td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <c-badge [color]="ev.status === 'ABERTO' ? 'success' : (ev.status === 'EM_ANDAMENTO' ? 'warning' : 'danger')">
+                                {{ ev.status === 'EM_ANDAMENTO' ? 'EM ANDAMENTO' : ev.status }}
+                            </c-badge>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <button cButton class="hyperlog-btn text-white me-2" color="warning"
+                                (click)="editEvento(ev)" title="Editar evento">
+                                <fa-icon [icon]="faIcons.faPenToSquare" class="cardIcon fa-lg fa-fw"></fa-icon>
+                            </button>
+                            <button cButton class="hyperlog-btn text-white" color="danger"
+                                (click)="confirmDelete(ev)" title="Apagar evento">
+                                <fa-icon [icon]="faIcons.faTrash" class="cardIcon fa-lg fa-fw"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="eventos.length === 0" class="text-center mt-4 mb-4">
+            <p>Nenhum evento cadastrado para o seu Grupo PET.</p>
+        </div>
+    </c-card-body>
+    <c-card-footer>
+        <div class="d-grid gap-2 d-flex justify-content-end">
+            <button cButton class="hyperlog-btn me-md-2 text-white fw-bold" color="primary" routerLink="/dashboard/eventos/novo">
+                <fa-icon [icon]="faIcons.faPlus"></fa-icon> &nbsp; Novo Evento
+            </button>
+        </div>
+    </c-card-footer>
+</c-card>
+
+<!-- MODAL DE EXCLUSÃO -->
+<c-modal [visible]="visibleDeleteModal" backdrop="static">
+    <c-modal-header>
+        <h5 cModalTitle>Remover Evento</h5>
+        <button cButtonClose (click)="closeDeleteModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        Tem certeza que deseja deletar o evento <strong>{{ eventoToDelete?.nome }}</strong>? Esta ação não pode ser desfeita.
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton class="hyperlog-btn text-white fw-bold" color="secondary" (click)="closeDeleteModal()">Cancelar</button>
+        <button cButton class="hyperlog-btn text-white fw-bold" color="danger" (click)="deleteEvento()">Deletar</button>
+    </c-modal-footer>
+</c-modal>

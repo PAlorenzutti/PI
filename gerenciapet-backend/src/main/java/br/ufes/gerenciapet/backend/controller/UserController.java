@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import br.ufes.gerenciapet.backend.model.Tutor;
 import br.ufes.gerenciapet.backend.model.TutorDTO;
 import br.ufes.gerenciapet.backend.model.User;
+import br.ufes.gerenciapet.backend.model.Extensionista;
 import br.ufes.gerenciapet.backend.repository.TutorRepository;
 import br.ufes.gerenciapet.backend.repository.UserRepository;
+import br.ufes.gerenciapet.backend.repository.ExtensionistaRepository;
 import br.ufes.gerenciapet.backend.utils.enums.TipoUsuario;
 
 /**
@@ -36,6 +38,9 @@ public class UserController {
 
     @Autowired
     TutorRepository tutorRepo;
+
+    @Autowired
+    ExtensionistaRepository extensionistaRepo;
 
     /**
      * Retorna o usuário autenticado na sessão atual.
@@ -149,6 +154,11 @@ public class UserController {
         Tutor tutor = tutorRepo.findByUserEmail(user.getEmail());
         if (tutor != null) {
             tutorRepo.delete(tutor);
+        }
+
+        Extensionista ext = extensionistaRepo.findByUserEmail(user.getEmail());
+        if (ext != null) {
+            extensionistaRepo.delete(ext);
         }
 
         if (userRepo.existsById(id)) {

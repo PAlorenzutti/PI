@@ -8,6 +8,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
@@ -32,9 +33,8 @@ public class Extensionista {
     /**
      * Usuário associado ao extensionista.
      */
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     /**
@@ -55,7 +55,7 @@ public class Extensionista {
      */
     @ManyToOne
     @JoinColumn(name = "grupo_pet_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private GrupoPet grupoPet;
 
     /**

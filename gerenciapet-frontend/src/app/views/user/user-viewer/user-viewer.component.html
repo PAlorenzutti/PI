@@ -38,21 +38,24 @@
 			</c-row>
 		</form>
 		<br>
-		<table cTable [responsive]="true">
-			<thead>
+		<table cTable hover [responsive]="true">
+			<thead cTableColor="light">
 				<tr>
-					<th scope="col">Nome</th>
-					<th scope="col">E-mail</th>
-					<th scope="col">Nível de acesso</th>
-					<th scope="col">Ação</th>
+					<th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+					<th scope="col" style="width: 25%; vertical-align: middle;">Nome</th>
+					<th scope="col" style="width: 30%; vertical-align: middle;">E-mail</th>
+					<th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Nível de acesso</th>
+					<th scope="col" style="width: 10%; text-align: center; vertical-align: middle;">Editar Cargo</th>
+					<th scope="col" style="width: 10%; text-align: center; vertical-align: middle;">Deletar</th>
 				</tr>
 			</thead>
 
-			<tbody *ngFor="let user of users">
-				<tr scope="row">
-					<td>{{ user.nome }}</td>
-					<td>{{ user.email }}</td>
-					<td>
+			<tbody>
+				<tr *ngFor="let user of users; index as i">
+					<th scope="row" style="text-align: center; vertical-align: middle;">{{ i + 1 }}</th>
+					<td style="vertical-align: middle;">{{ user.nome }}</td>
+					<td style="vertical-align: middle;">{{ user.email }}</td>
+					<td style="text-align: center; vertical-align: middle;">
 						<span
 							*ngIf="user.tipoUsuario === 'ALUNO'"
 							class="badge text-bg-light"
@@ -60,7 +63,7 @@
 						>
 						<span
 							*ngIf="user.tipoUsuario === 'ADMIN'"
-							class="badge text-bg-success"
+							class="badge text-bg-success text-white"
 							>ADMIN</span
 						>
 						<span
@@ -74,66 +77,29 @@
 							>TUTOR</span
 						>
 					</td>
-					<td>
-						<!-- EDIÇAO DE USUARIO -->
-						<c-button-group>
-							<c-dropdown [autoClose]="'outside'">
-								<button
-									cButton
-									color="info"
-									cDropdownToggle
-									[disabled]="!canManage(user)"
-									(click)="setSelectedUser(user)"
-									class="me-2"
-								>
-									<c-icon name="cil-pencil"></c-icon>
-								</button>
-							</c-dropdown>
-
-							<c-dropdown>
-								<!-- EXCLUSAO DE USUARIO  -->
-								<button
-									cButton
-									color="danger"
-									cDropdownToggle
-									[disabled]="!canManage(user)"
-								>
-									<c-icon name="cil-trash"></c-icon>
-								</button>
-								<div
-									cDropdownMenu
-									[ngStyle]="{ 'min-width.px': 200 }"
-								>
-									<form cForm class="px-4 py-0">
-										<div class="mb-3">
-											<label cLabel for="delete"
-												>Deseja realmente excluir o
-												usuário?</label
-											>
-										</div>
-										<div class="mb-3">
-											<button
-												cButton
-												class="pad-btn"
-												color="success"
-												style="margin-right: 10px"
-												(click)="preDeleteUser(user)"
-											>
-												Sim
-											</button>
-											<button
-												cButton
-												class="pad-btn"
-												color="danger"
-											>
-												Não
-											</button>
-										</div>
-									</form>
-								</div>
-							</c-dropdown>
-						</c-button-group>
-						<!-- EDIÇAO DE USUARIO -->
+					<td style="text-align: center; vertical-align: middle;">
+						<button
+							cButton
+							color="warning"
+							[disabled]="!canManage(user)"
+							(click)="setSelectedUser(user)"
+							class="hyperlog-btn text-white"
+							title="Editar nível de acesso"
+						>
+							<fa-icon [icon]="faIcons.faPenToSquare" class="cardIcon fa-lg fa-fw"></fa-icon>
+						</button>
+					</td>
+					<td style="text-align: center; vertical-align: middle;">
+						<button
+							cButton
+							color="danger"
+							class="hyperlog-btn text-white"
+							[disabled]="!canManage(user)"
+							(click)="preDeleteUser(user)"
+							title="Apagar usuário"
+						>
+							<fa-icon [icon]="faIcons.faTrash" class="cardIcon fa-lg fa-fw"></fa-icon>
+						</button>
 					</td>
 				</tr>
 			</tbody>
@@ -211,7 +177,7 @@
 		<div class="d-grid gap-2 d-flex justify-content-end">
 			<button
 				cButton
-				class="pad-btn"
+				class="hyperlog-btn text-white fw-bold"
 				(click)="closeEditModal()"
 				type="button"
 				color="primary"
@@ -240,7 +206,7 @@
 		<div class="d-grid gap-2 d-flex justify-content-end">
 			<button
 				cButton
-				class="pad-btn"
+				class="hyperlog-btn text-white fw-bold"
 				(click)="closeDeleteTutorModal()"
 				type="button"
 				color="secondary"
@@ -249,12 +215,46 @@
 			</button>
 			<button
 				cButton
-				class="pad-btn"
+				class="hyperlog-btn text-white fw-bold"
 				(click)="confirmDeleteTutor()"
 				type="button"
 				color="danger"
 			>
 				Sim, excluir Tutor
+			</button>
+		</div>
+	</c-modal-footer>
+</c-modal>
+
+<!-- Modal de Confirmação para Deletar Usuário Comum -->
+<c-modal backdrop="static" alignment="center" [visible]="flagModalDeleteUser">
+	<c-modal-header>
+		<h5 cModalTitle>Excluir Usuário</h5>
+	</c-modal-header>
+	<c-modal-body>
+		<p class="text-danger fw-bold">
+			Deseja realmente excluir o usuário {{ userToDelete?.nome }}?
+		</p>
+	</c-modal-body>
+	<c-modal-footer>
+		<div class="d-grid gap-2 d-flex justify-content-end">
+			<button
+				cButton
+				class="hyperlog-btn text-white fw-bold"
+				(click)="closeDeleteUserModal()"
+				type="button"
+				color="secondary"
+			>
+				Cancelar
+			</button>
+			<button
+				cButton
+				class="hyperlog-btn text-white fw-bold"
+				(click)="confirmDeleteUser()"
+				type="button"
+				color="danger"
+			>
+				Remover
 			</button>
 		</div>
 	</c-modal-footer>

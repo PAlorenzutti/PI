@@ -61,6 +61,22 @@ const routes: Routes = [
 					),
 				canActivate: [UserAccessGuard],
 			},
+			{
+				path: "meu-pet",
+				loadChildren: () =>
+					import("./views/meu-pet/meu-pet.module").then(
+						(m) => m.MeuPetModule
+					),
+				canActivate: [UserAccessGuard],
+			},
+			{
+				path: "eventos",
+				loadChildren: () =>
+					import("./views/eventos/eventos.module").then(
+						(m) => m.EventosModule
+					),
+				canActivate: [UserAccessGuard],
+			},
 		],
 	},
 	{

@@ -78,7 +78,7 @@ export const navItemsTutor: INavData[] = [
 	{
 		name: "Gestão do Grupo",
 		url: "dashboard/meu-pet",
-		iconComponent: { name: "cil-group" },
+		iconComponent: { name: "cil-people" },
 		children: [
 			{
 				name: "Equipe",

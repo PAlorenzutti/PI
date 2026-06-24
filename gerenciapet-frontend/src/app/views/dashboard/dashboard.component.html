@@ -1,5 +1,5 @@
 <div *ngIf="loggedUser != undefined">
-	<c-row class="align-itens-center" *ngIf="loggedUser.tipoUsuario === 'ADMIN'">
+	<c-row class="align-itens-center" *ngIf="loggedUser.tipoUsuario === 'ADMIN' || loggedUser.tipoUsuario === 'TUTOR'">
 		<c-col>
 			<app-widgets-general [loggedUser]="loggedUser">
 			</app-widgets-general>

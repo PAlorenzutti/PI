@@ -162,4 +162,10 @@ export class UserService {
             map((userObj: any) => new User(userObj))
         );
     }
+
+    public countTutores(): Observable<number> {
+        return this.http.get(`${URL_API}/api/tutor?size=1`).pipe(
+            map((response: any) => response.page.totalElements)
+        );
+    }
 }

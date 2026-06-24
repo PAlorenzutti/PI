@@ -53,6 +53,14 @@ const routes: Routes = [
 					),
 				canActivate: [UserAccessGuard],
 			},
+			{
+				path: "visualizar",
+				loadChildren: () =>
+					import("./views/visualizar/visualizar.module").then(
+						(m) => m.VisualizarModule
+					),
+				canActivate: [UserAccessGuard],
+			},
 		],
 	},
 	{

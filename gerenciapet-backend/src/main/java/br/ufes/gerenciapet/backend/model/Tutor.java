@@ -46,7 +46,7 @@ public class Tutor {
     /**
      * Usuário associado ao tutor.
      */
-    @OneToOne(orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;

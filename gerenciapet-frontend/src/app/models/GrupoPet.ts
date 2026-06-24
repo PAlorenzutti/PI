@@ -38,4 +38,14 @@ export default class GrupoPet {
             this.eventos = object.eventos;
         }
     }
+
+    public getId(): string {
+        if (this.id !== 0) return this.id.toString();
+        if (this.href !== "") {
+            let id = this.href.split("/").pop();
+            if (id === undefined) return "0";
+            else return id;
+        }
+        return "0";
+    }
 }

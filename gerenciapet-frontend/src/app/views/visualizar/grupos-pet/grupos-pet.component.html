@@ -1,0 +1,141 @@
+<c-card>
+	<!-- CASO A REQUISIÇÃO FALHE -->
+	<c-card-header *ngIf="failureFlag">
+		<svg cIcon name="cilWarning"></svg>
+		<strong> &nbsp; Falha de comunicação</strong>
+	</c-card-header>
+
+	<c-card-body class="d-flex px-4" *ngIf="failureFlag">
+		<p>
+			Infelizmente ocorreu uma falha de comunicação no sistema. Tente
+			acessar novamente ou mais tarde. Caso persista, entre em contato com
+			os desenvolvedores
+		</p>
+	</c-card-body>
+	<!-- CASO A REQUISIÇÃO FALHE -->
+
+	<c-card-header *ngIf="!failureFlag">
+		<c-icon name="cil-list"></c-icon>
+		<strong> &nbsp; Lista de Grupos PET cadastrados</strong>
+	</c-card-header>
+
+	<c-card-body *ngIf="!failureFlag">
+		<form cForm [formGroup]="searchSettingsForm">
+			<c-row class="align-items-center">
+				<c-col lg="6" md="6" sm="6" xs="12">
+					<div class="d-grid gap-2 d-flex justify-content-end">
+						<input
+							cFormControl
+							type="text"
+							placeholder="Buscar por sigla do Grupo PET"
+							formControlName="sigla"
+							(input)="searchGruposBySigla()"
+							>
+					</div>
+				</c-col>
+			</c-row>
+		</form>
+		<br>
+		<table cTable [responsive]="true">
+			<thead>
+				<tr>
+					<th scope="col">Sigla</th>
+					<th scope="col">Descrição</th>
+					<th scope="col">Ação</th>
+				</tr>
+			</thead>
+
+			<tbody *ngFor="let grupo of gruposPet">
+				<tr scope="row">
+					<td class="fw-bold">{{ grupo.sigla }}</td>
+					<td>{{ grupo.descricao }}</td>
+					<td>
+						<c-button-group>
+							<c-dropdown>
+								<!-- EXCLUSAO DE GRUPO  -->
+								<button
+									cButton
+									color="danger"
+									cDropdownToggle
+									[disabled]="!canManage()"
+                                    (click)="preDeleteGrupo(grupo)"
+								>
+									<c-icon name="cil-trash"></c-icon>
+								</button>
+							</c-dropdown>
+						</c-button-group>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</c-card-body>
+
+	<c-card-body class="d-flex justify-content-center" *ngIf="!failureFlag">
+		<pagination
+			[totalItems]="totalItems"
+			[maxSize]="maxPageLinks"
+			(pageChanged)="pageChange($event)"
+			[itemsPerPage]="itemsPerPage"
+			previousText="Anterior"
+			nextText="Próxima"
+		>
+		</pagination>
+	</c-card-body>
+</c-card>
+<br>
+
+<!-- Modal de Confirmação para Deletar Grupo PET -->
+<c-modal backdrop="static" alignment="center" [visible]="flagModalDelete">
+	<c-modal-header>
+		<h5 cModalTitle>Atenção! Exclusão de Grupo PET</h5>
+	</c-modal-header>
+	<c-modal-body>
+		<p class="text-danger fw-bold">
+			Deseja realmente excluir o Grupo PET {{ selectedGrupoPet?.sigla }}?
+		</p>
+		<p>
+			A exclusão deste Grupo removerá as associações de tutor e extensionistas. 
+		</p>
+	</c-modal-body>
+	<c-modal-footer>
+		<div class="d-grid gap-2 d-flex justify-content-end">
+			<button
+				cButton
+				class="pad-btn"
+				(click)="closeDeleteModal()"
+				type="button"
+				color="secondary"
+			>
+				Cancelar
+			</button>
+			<button
+				cButton
+				class="pad-btn"
+				(click)="confirmDeleteGrupo()"
+				type="button"
+				color="danger"
+			>
+				Sim, excluir
+			</button>
+		</div>
+	</c-modal-footer>
+</c-modal>
+
+<!-- Modal para quando os dados estiverem sendo carregados -->
+<c-modal backdrop="static" alignment="center" [visible]="modalLoadingFlag">
+	<c-modal-header>
+		<h5 cModalTitle>Carregando...</h5>
+	</c-modal-header>
+
+	<c-modal-body>
+		<p>
+			Aguarde alguns segundos enquanto os dados estão sendo carregados...
+		</p>
+
+		<div class="d-flex justify-content-center text-primary">
+			<div class="spinner-border spinner-border-lg" role="status">
+				<span class="sr-only"></span>
+			</div>
+		</div>
+	</c-modal-body>
+</c-modal>

@@ -1,3 +1,39 @@
 <div>
-    teste
+	<div>
+		<c-row class="align-itens-center justify-content-center" [lg]="2" [md]="2" [sm]="2">
+			<c-col lg="6" xs="12">
+				<c-widget-stat-f
+					[title]="'Grupos PET'"
+					class="mb-3"
+					color="info"
+					padding
+					[value]="totalGrupos"
+				>
+					<ng-template cTemplateId="widgetIconTemplate">
+						<fa-icon
+							[icon]="icons.faUsers"
+							class="fa-lg pad-btn"
+						></fa-icon>
+					</ng-template>
+				</c-widget-stat-f>
+			</c-col>
+
+			<c-col lg="6" xs="12">
+				<c-widget-stat-f
+					[title]="'Tutores'"
+					class="mb-3"
+					color="success"
+					padding
+					[value]="totalTutores"
+				>
+					<ng-template cTemplateId="widgetIconTemplate">
+						<fa-icon
+							[icon]="icons.faUserDoctor"
+							class="fa-lg pad-btn"
+						></fa-icon>
+					</ng-template>
+				</c-widget-stat-f>
+			</c-col>
+		</c-row>
+	</div>
 </div>

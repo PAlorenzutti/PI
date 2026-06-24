@@ -117,7 +117,7 @@
 												class="pad-btn"
 												color="success"
 												style="margin-right: 10px"
-												(click)="deleteUser(user)"
+												(click)="preDeleteUser(user)"
 											>
 												Sim
 											</button>
@@ -221,6 +221,45 @@
 		</div>
 	</c-modal-footer>
 </c-modal>
+
+<!-- Modal de Confirmação para Deletar Tutor com Grupo PET -->
+<c-modal backdrop="static" alignment="center" [visible]="flagModalDeleteTutor">
+	<c-modal-header>
+		<h5 cModalTitle>Atenção! Tutor Associado</h5>
+	</c-modal-header>
+	<c-modal-body>
+		<p class="text-danger fw-bold">
+			Este usuário é um Tutor e está atualmente associado como coordenador de um Grupo PET.
+		</p>
+		<p>
+			A exclusão deste usuário poderá resultar na exclusão em cascata do Grupo PET coordenado por ele (ou o grupo ficará sem tutor). 
+			Deseja <strong>realmente</strong> excluir este usuário?
+		</p>
+	</c-modal-body>
+	<c-modal-footer>
+		<div class="d-grid gap-2 d-flex justify-content-end">
+			<button
+				cButton
+				class="pad-btn"
+				(click)="closeDeleteTutorModal()"
+				type="button"
+				color="secondary"
+			>
+				Cancelar
+			</button>
+			<button
+				cButton
+				class="pad-btn"
+				(click)="confirmDeleteTutor()"
+				type="button"
+				color="danger"
+			>
+				Sim, excluir Tutor
+			</button>
+		</div>
+	</c-modal-footer>
+</c-modal>
+
 <!-- Modal para quando os dados estiverem sendo carregados -->
 <c-modal backdrop="static" alignment="center" [visible]="modalLoadingFlag">
 	<c-modal-header>

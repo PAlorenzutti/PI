@@ -144,6 +144,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
+        User user = userOptional.get();
+
+        Tutor tutor = tutorRepo.findByUserEmail(user.getEmail());
+        if (tutor != null) {
+            tutorRepo.delete(tutor);
+        }
+
         if (userRepo.existsById(id)) {
             userRepo.deleteById(id);
         }

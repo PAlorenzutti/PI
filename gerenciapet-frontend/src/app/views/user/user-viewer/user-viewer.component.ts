@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 import { PageChangedEvent } from "ngx-bootstrap/pagination";
 import { UserService } from "../../../services/user.service";
 import User from "../../../models/User";
+import { HttpClient } from "@angular/common/http";
+import { URL_API } from "../../../utils/url-api";
 
 @Component({
     selector: "app-user-viewer",
@@ -23,6 +25,8 @@ export class UserViewerComponent implements OnInit {
         tipoUsuario: "ALUNO",
     };
     public flagModalEdit: boolean = false;
+    public flagModalDeleteTutor: boolean = false;
+    public userToDelete: any = null;
 
     public itemsPerPage: number; // Define quantos elementos serao retornados por paginas
     public totalItems: number = 0; // Total de itens a ser exibidos na tabela
@@ -33,7 +37,7 @@ export class UserViewerComponent implements OnInit {
 
     public userSettingsForm: FormGroup;
 
-    constructor(private userService: UserService, private formBuilder: FormBuilder) {
+    constructor(private userService: UserService, private formBuilder: FormBuilder, private http: HttpClient) {
         this.itemsPerPage = 10;
         this.maxPageLinks = 10;
         this.currentPage = 1;
@@ -103,6 +107,50 @@ export class UserViewerComponent implements OnInit {
                     this.modalLoadingFlag = false;
                 },
             });
+    }
+
+    public preDeleteUser(user: any): void {
+        if (user.tipoUsuario === 'TUTOR') {
+            this.modalLoadingFlag = true;
+            this.http.get(`${URL_API}/api/tutor/search/findByUserEmail?email=${user.email}`).subscribe({
+                next: (tutor: any) => {
+                    if (tutor && tutor._links && tutor._links.grupoPetCoordena) {
+                        this.http.get(tutor._links.grupoPetCoordena.href).subscribe({
+                            next: (grupo: any) => {
+                                this.modalLoadingFlag = false;
+                                this.userToDelete = user;
+                                this.flagModalDeleteTutor = true;
+                            },
+                            error: () => {
+                                this.modalLoadingFlag = false;
+                                this.deleteUser(user);
+                            }
+                        });
+                    } else {
+                        this.modalLoadingFlag = false;
+                        this.deleteUser(user);
+                    }
+                },
+                error: () => {
+                    this.modalLoadingFlag = false;
+                    this.deleteUser(user);
+                }
+            });
+        } else {
+            this.deleteUser(user);
+        }
+    }
+
+    public confirmDeleteTutor(): void {
+        this.flagModalDeleteTutor = false;
+        if (this.userToDelete) {
+            this.deleteUser(this.userToDelete);
+        }
+    }
+
+    public closeDeleteTutorModal(): void {
+        this.flagModalDeleteTutor = false;
+        this.userToDelete = null;
     }
 
     public deleteUser(user: any): void {

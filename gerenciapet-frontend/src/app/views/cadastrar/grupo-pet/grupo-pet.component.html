@@ -1,0 +1,131 @@
+<form cForm novalidate [formGroup]="liveForm" (ngSubmit)="saveAddedGrupoPet()">
+
+  <c-card class="mb-4">
+      <c-card-header>
+          <fa-icon [icon]="iconsFa.faIdCard" class="cardIcon fa-lg fa-fw"></fa-icon>
+          <strong> &nbsp; Buscar Grupo PET</strong>
+      </c-card-header>
+      <c-card-body>
+          <c-container>
+              <c-row class="d-flex align-items-center">
+                  <c-col *ngIf="liveForm.controls['siglaBusca'] as ctrl">
+                      <label cLabel for="siglaBusca">Sigla do Grupo PET</label>
+                      <input id="siglaBusca" cFormControl type="text" formControlName="siglaBusca" [autofocus]="true"
+                          [valid]="isValid(ctrl)" placeholder="Ex: PET COMP" (blur)="lookForSigla()" />
+                      <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                          <ng-container *ngIf="ctrl.errors as errors">
+                              <div *ngIf="errors?.['required']">A sigla é obrigatória para busca!</div>
+                          </ng-container>
+                      </c-form-feedback>
+                  </c-col>
+              </c-row>
+          </c-container>
+      </c-card-body>
+  </c-card>
+
+  <app-search-user [parentForm]="liveForm" searchMode="TUTOR" (onUserFound)="onUserFound($event)" (onUserNotFound)="onUserNotFound()"></app-search-user>
+
+  <c-card class="mb-4" *ngIf="tutorFound && userFound">
+      <c-card-header>
+          <fa-icon [icon]="iconsFa.faIdCard" class="fa-lg fa-fw"></fa-icon>
+          <strong> &nbsp; Dados do Tutor Coordenador</strong>
+      </c-card-header>
+      <c-card-body>
+          <c-container>
+              <c-row class="d-flex align-items-center">
+                  <c-col [md]="6">
+                      <label cLabel>Nome Completo:</label>
+                      <input cFormControl type="text" [value]="userFound.nome" disabled />
+                  </c-col>
+                  <c-col [md]="3">
+                      <label cLabel>SIAPE:</label>
+                      <input cFormControl type="text" [value]="tutorFound.siape" disabled />
+                  </c-col>
+                  <c-col [md]="3">
+                      <label cLabel>Departamento:</label>
+                      <input cFormControl type="text" [value]="tutorFound.departamento" disabled />
+                  </c-col>
+              </c-row>
+          </c-container>
+      </c-card-body>
+  </c-card>
+
+  <c-card class="mb-4">
+      <c-card-header>
+          <fa-icon [icon]="iconsFa.faBriefcase" class="cardIcon fa-lg fa-fw"></fa-icon>
+          <strong> &nbsp; Dados do Grupo PET</strong>
+      </c-card-header>
+      <c-card-body>
+          <c-container>
+              <c-row class="d-flex align-items-center mb-3">
+                  <c-col *ngIf="liveForm.controls['sigla'] as ctrl">
+                      <label cLabel for="sigla">Sigla:</label>
+                      <input id="sigla" cFormControl type="text" formControlName="sigla" [valid]="isValid(ctrl)" />
+                      <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                          A sigla é obrigatória!
+                      </c-form-feedback>
+                  </c-col>
+              </c-row>
+              
+              <c-row class="d-flex align-items-center">
+                  <c-col *ngIf="liveForm.controls['descricao'] as ctrl">
+                      <label cLabel for="descricao">Descrição / Atuação:</label>
+                      <textarea id="descricao" cFormControl rows="4" formControlName="descricao" [valid]="isValid(ctrl)"></textarea>
+                      <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                          A descrição é obrigatória!
+                      </c-form-feedback>
+                  </c-col>
+              </c-row>
+
+              <div class="d-grid gap-2 d-flex justify-content-end mt-md-4">
+                  <button cButton type="submit" class="btn btn-success text-white" [disabled]="liveForm.get('sigla')?.invalid || liveForm.get('descricao')?.invalid || !tutorFound">
+                      <fa-icon [icon]="enableUpdate ? iconsFa.faFloppyDisk : iconsFa.faCirclePlus" class="fa-lg fa-fw"></fa-icon>
+                      &nbsp; <strong>{{ enableUpdate ? 'Salvar' : 'Cadastrar' }}</strong>
+                  </button>
+              </div>
+          </c-container>
+      </c-card-body>
+  </c-card>
+
+</form>
+
+<!-- REGISTER FAILED -->
+<c-modal [visible]="visibleRegisterFailed">
+  <c-modal-header>
+      <h5 cModalTitle>Ocorreu um erro!</h5>
+      <button cButtonClose (click)="closeModal()"></button>
+  </c-modal-header>
+  <c-modal-body>
+      Infelizmente a operação não pode ser realizada. Verifique as informações inseridas.<br><br>
+      <strong>Detalhe:</strong> {{ errorMessage }}
+  </c-modal-body>
+  <c-modal-footer>
+      <button cButton color="secondary" (click)="closeModal()">Fechar</button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- REGISTER SUCCESS -->
+<c-modal backdrop="static" [visible]="visibleRegisterConcluded">
+  <c-modal-header>
+      <h3 cModalTitle>Sucesso!</h3>
+      <button cButtonClose (click)="closeModal()"></button>
+  </c-modal-header>
+  <c-modal-body>
+      <div class="alert alert-success" role="alert" style="font-size: 18px">
+          Grupo PET cadastrado com sucesso! Você será redirecionado em alguns instantes.
+      </div>
+  </c-modal-body>
+</c-modal>
+
+<!-- UPDATE SUCCESS -->
+<c-modal backdrop="static" [visible]="visibleUpdateConcluded">
+  <c-modal-header>
+      <h3 cModalTitle>Sucesso!</h3>
+      <button cButtonClose (click)="closeModal()"></button>
+  </c-modal-header>
+  <c-modal-body>
+      <div class="alert alert-success" role="alert" style="font-size: 18px">
+          Dados do Grupo PET atualizados com sucesso! Você será redirecionado em alguns instantes.
+      </div>
+  </c-modal-body>
+</c-modal>

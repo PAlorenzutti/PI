@@ -1,0 +1,102 @@
+<form cForm novalidate [formGroup]="liveForm" (ngSubmit)="saveAddedTutor()">
+
+  <app-search-user [parentForm]="liveForm" searchMode="USER" (onUserFound)="onUserFound($event)" (onUserNotFound)="onUserNotFound()"></app-search-user>
+
+  <c-card class="mb-4" *ngIf="userFound">
+      <c-card-header>
+          <fa-icon [icon]="iconsFa.faUser" class="cardIcon fa-lg fa-fw"></fa-icon>
+          <strong> &nbsp; Dados Pessoais</strong>
+      </c-card-header>
+      <c-card-body>
+          <c-container>
+              <c-row class="d-flex align-items-center">
+                  <c-col [md]="8" *ngIf="liveForm.controls['name'] as ctrl">
+                      <label cLabel for="name">Nome Completo:</label>
+                      <input id="name" cFormControl type="text" formControlName="name" />
+                  </c-col>
+                  <c-col [md]="4" *ngIf="liveForm.controls['birthDate'] as ctrl">
+                      <label cLabel for="birthDate">Data de Nascimento:</label>
+                      <input id="birthDate" cFormControl type="date" formControlName="birthDate" />
+                  </c-col>
+              </c-row>
+          </c-container>
+      </c-card-body>
+  </c-card>
+
+  <c-card class="mb-4" *ngIf="userFound">
+      <c-card-header>
+          <fa-icon [icon]="iconsFa.faBriefcase" class="cardIcon fa-lg fa-fw"></fa-icon>
+          <strong> &nbsp; Dados do Tutor</strong>
+      </c-card-header>
+      <c-card-body>
+          <c-container>
+              <c-row class="d-flex align-items-center">
+                  <c-col [md]="6" *ngIf="liveForm.controls['siape'] as ctrl">
+                      <label cLabel for="siape">SIAPE:</label>
+                      <input id="siape" cFormControl type="text" formControlName="siape" [valid]="isValid(ctrl)" />
+                      <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                          O SIAPE é obrigatório!
+                      </c-form-feedback>
+                  </c-col>
+
+                  <c-col [md]="6" *ngIf="liveForm.controls['departamento'] as ctrl">
+                      <label cLabel for="departamento">Departamento:</label>
+                      <input id="departamento" cFormControl type="text" formControlName="departamento" [valid]="isValid(ctrl)" />
+                      <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                          O Departamento é obrigatório!
+                      </c-form-feedback>
+                  </c-col>
+              </c-row>
+
+              <div class="d-grid gap-2 d-flex justify-content-end mt-md-4">
+                  <button cButton type="submit" class="btn btn-success text-white" [disabled]="liveForm.invalid || !userFound">
+                      <fa-icon [icon]="enableTutorUpdate ? iconsFa.faFloppyDisk : iconsFa.faCirclePlus" class="fa-lg fa-fw"></fa-icon>
+                      &nbsp; <strong>{{ enableTutorUpdate ? 'Salvar' : 'Cadastrar' }}</strong>
+                  </button>
+              </div>
+          </c-container>
+      </c-card-body>
+  </c-card>
+
+</form>
+
+<!-- REGISTER FAILED -->
+<c-modal [visible]="visibleRegisterFailed">
+  <c-modal-header>
+      <h5 cModalTitle>Ocorreu um erro!</h5>
+      <button cButtonClose (click)="closeModal()"></button>
+  </c-modal-header>
+  <c-modal-body>
+      Infelizmente o cadastro do tutor não pode ser realizado. Verifique as informações inseridas.<br><br>
+      <strong>Detalhe:</strong> {{ errorMessage }}
+  </c-modal-body>
+  <c-modal-footer>
+      <button cButton color="secondary" (click)="closeModal()">Fechar</button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- REGISTER SUCESS -->
+<c-modal backdrop="static" [visible]="visibleRegisterConcluded">
+  <c-modal-header>
+      <h3 cModalTitle>Sucesso!</h3>
+      <button cButtonClose (click)="closeModal()"></button>
+  </c-modal-header>
+  <c-modal-footer>
+      <div class="alert alert-success" role="alert" style="font-size: 18px">
+          Cadastro do tutor realizado com sucesso! O usuário teve o acesso promovido a Tutor e já pode gerenciar um Grupo PET. Você será redirecionado em alguns instantes.
+      </div>
+  </c-modal-footer>
+</c-modal>
+
+<!-- UPDATE SUCCESS -->
+<c-modal backdrop="static" [visible]="visibleUpdateConcluded">
+  <c-modal-header>
+      <h3 cModalTitle>Sucesso!</h3>
+      <button cButtonClose (click)="closeModal()"></button>
+  </c-modal-header>
+  <c-modal-body>
+      <div class="alert alert-success" role="alert" style="font-size: 18px">
+          Dados do tutor atualizados com sucesso! Você será redirecionado em alguns instantes.
+      </div>
+  </c-modal-body>
+</c-modal>

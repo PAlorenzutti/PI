@@ -1,0 +1,25 @@
+<c-card class="mb-4">
+    <c-card-header>
+        <fa-icon [icon]="iconsFa.faIdCard" class="cardIcon fa-lg fa-fw"></fa-icon>
+        <strong> &nbsp; {{ searchMode === 'TUTOR' ? 'Buscar Tutor' : 'Buscar Usuário' }}</strong>
+    </c-card-header>
+    <c-card-body>
+        <c-container [formGroup]="parentForm">
+            <c-row class="d-flex align-items-center">
+                <c-col *ngIf="parentForm.controls['email'] as ctrl">
+                    <label cLabel for="email">E-mail do {{ searchMode === 'TUTOR' ? 'Tutor' : 'Usuário' }}</label>
+                    <input id="email" cFormControl type="email" formControlName="email" [autofocus]="true"
+                        [valid]="isValid(ctrl)" placeholder="exemplo@ufes.br" (blur)="lookForEmail()" />
+                    <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">
+                        <ng-container *ngIf="ctrl.errors as errors">
+                            <div *ngIf="errors?.['required']">O E-mail é obrigatório!</div>
+                            <div *ngIf="errors?.['email']">E-mail inválido!</div>
+                            <div *ngIf="errors?.['userNotFound']">Nenhum usuário cadastrado com este e-mail.</div>
+                            <div *ngIf="errors?.['notTutor']">Nenhum Tutor encontrado com este e-mail.</div>
+                        </ng-container>
+                    </c-form-feedback>
+                </c-col>
+            </c-row>
+        </c-container>
+    </c-card-body>
+</c-card>

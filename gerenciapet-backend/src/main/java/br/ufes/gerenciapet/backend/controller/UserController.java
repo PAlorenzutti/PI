@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import br.ufes.gerenciapet.backend.model.Tutor;
+import br.ufes.gerenciapet.backend.model.TutorDTO;
 import br.ufes.gerenciapet.backend.model.User;
+import br.ufes.gerenciapet.backend.repository.TutorRepository;
 import br.ufes.gerenciapet.backend.repository.UserRepository;
+import br.ufes.gerenciapet.backend.utils.enums.TipoUsuario;
 
 /**
  * Controlador responsável pelas operações de usuário expostas pela API.
@@ -29,6 +33,9 @@ import br.ufes.gerenciapet.backend.repository.UserRepository;
 public class UserController {
     @Autowired
     UserRepository userRepo;
+
+    @Autowired
+    TutorRepository tutorRepo;
 
     /**
      * Retorna o usuário autenticado na sessão atual.
@@ -59,6 +66,35 @@ public class UserController {
         } catch (Exception e) {
             return "{\"status\": \"db-problem\"}";
         }
+    }
+
+    /**
+     * Associa um novo tutor a um usuário existente pelo email.
+     */
+    @PostMapping("/api/user/register-tutor")
+    @Transactional
+    public ResponseEntity<?> registerTutor(@RequestBody TutorDTO tutorDto) {
+        User user = userRepo.findByEmail(tutorDto.getEmail());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"status\": \"user-not-found\"}");
+        }
+        
+        // Verifica se já não é um tutor
+        if (user.getTipoUsuario() == TipoUsuario.TUTOR) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"status\": \"already-tutor\"}");
+        }
+
+        user.setTipoUsuario(TipoUsuario.TUTOR);
+        userRepo.save(user);
+
+        Tutor tutor = new Tutor();
+        tutor.setUser(user);
+        tutor.setSiape(tutorDto.getSiape());
+        tutor.setDepartamento(tutorDto.getDepartamento());
+        
+        tutorRepo.save(tutor);
+
+        return ResponseEntity.ok("{\"status\": \"registered\"}");
     }
 
     /**
@@ -124,5 +160,18 @@ public class UserController {
     @ResponseBody
     public long countUsers() {
         return userRepo.count();
+    }
+
+    /**
+     * Retorna o usuário associado a um tutor.
+     *
+     * @param tutorId identificador do tutor.
+     * @return usuário associado.
+     */
+    @GetMapping("/api/user/by-tutor/{tutorId}")
+    public ResponseEntity<User> getUserByTutorId(@PathVariable Long tutorId) {
+        Optional<Tutor> tutor = tutorRepo.findById(tutorId);
+        return tutor.map(value -> ResponseEntity.ok(value.getUser()))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

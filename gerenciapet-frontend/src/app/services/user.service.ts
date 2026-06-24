@@ -125,24 +125,14 @@ export class UserService {
 
     public getAllPagedAndSorted(page: number, itensPerPage: number): Observable<any> {
         return this.http.get(
-            `${URL_API}/api/user?page=${page}&size=${itensPerPage}&sort=fullName`
+            `${URL_API}/api/user?page=${page}&size=${itensPerPage}&sort=nome`
         );
     }
 
-    public changeUserAccess(allowed: boolean, userHref: string): Observable<any> {
-        // Extrai o ID do usuário da URL href
-        const userId = userHref.split('/').pop();
-
-        const data = {
-            allowed: allowed,
-        };
-
-        return this.http.post(`${URL_API}/api/user/change-access/${userId}`, data);
-    }
 
     public changeUserRole(role: string, url: string): Observable<any> {
         const data = {
-            role: role,
+            tipoUsuario: role,
         };
         return this.http.patch(url, data);
     }
@@ -155,7 +145,7 @@ export class UserService {
 
     public findByFullNameContaining(fullName: string, page: number, itensPerPage: number): Observable<any> {
         return this.http.get(
-            `${URL_API}/api/user/search/findByFullNameContaining?fullName=${fullName}&page=${page}&size=${itensPerPage}&sort=date&sort=fullName`
+            `${URL_API}/api/user/search/findByNomeContainingIgnoreCase?nome=${fullName}&page=${page}&size=${itensPerPage}&sort=nome`
         );
     }
 

@@ -20,7 +20,6 @@ export class UserViewerComponent implements OnInit {
     public alterationResp: string;
     public failureFlag: boolean = false;
     public selectedUser: any = {
-        allowed: false,
         tipoUsuario: "ALUNO",
     };
     public flagModalEdit: boolean = false;
@@ -76,27 +75,6 @@ export class UserViewerComponent implements OnInit {
         this.getUsersByName(this.currentPage);
     }
 
-    public changeUserAccess(): void {
-        this.modalLoadingFlag = true;
-        this.selectedUser.allowed = !this.selectedUser.allowed;
-
-        this.userService
-            .changeUserAccess(
-                this.selectedUser.allowed,
-                this.selectedUser._links.user.href
-            )
-            .subscribe({
-                next: (response) => {
-                    this.alterationResp = "allowed-saved";
-                    this.modalLoadingFlag = false;
-                },
-                error: (error) => {
-                    this.alterationResp = "allowed-error";
-                    console.log(error);
-                    this.modalLoadingFlag = false;
-                },
-            });
-    }
 
     public setSelectedUser(user: any): void {
         this.selectedUser = user;

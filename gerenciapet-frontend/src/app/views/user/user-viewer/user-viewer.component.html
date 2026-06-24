@@ -42,52 +42,36 @@
 			<thead>
 				<tr>
 					<th scope="col">Nome</th>
-					<th scope="col">CPF</th>
 					<th scope="col">E-mail</th>
 					<th scope="col">Nível de acesso</th>
-					<th scope="col">Acesso liberado</th>
 					<th scope="col">Ação</th>
 				</tr>
 			</thead>
 
 			<tbody *ngFor="let user of users">
 				<tr scope="row">
-					<td>{{ user.fullName }}</td>
-					<td>{{ user.cpf }}</td>
+					<td>{{ user.nome }}</td>
 					<td>{{ user.email }}</td>
 					<td>
 						<span
-							*ngIf="user.role === 'USER'"
+							*ngIf="user.tipoUsuario === 'ALUNO'"
 							class="badge text-bg-light"
-							>USUÁRIO</span
+							>ALUNO</span
 						>
 						<span
-							*ngIf="user.role === 'ADMIN'"
+							*ngIf="user.tipoUsuario === 'ADMIN'"
 							class="badge text-bg-success"
 							>ADMIN</span
 						>
 						<span
-							*ngIf="user.role === 'PROFESSIONAL'"
+							*ngIf="user.tipoUsuario === 'EXTENSIONISTA'"
 							class="badge text-bg-primary"
-							>PROFISSIONAL</span
+							>EXTENSIONISTA</span
 						>
 						<span
-							*ngIf="user.role === 'SUPER'"
-							class="badge text-bg-dark"
-							>SUPER</span
-						>
-						<span
-							*ngIf="user.role === 'RECEPTIONIST'"
+							*ngIf="user.tipoUsuario === 'TUTOR'"
 							class="badge text-bg-warning"
-							>RECEPCIONISTA</span
-						>
-					</td>
-					<td>
-						<span *ngIf="user.allowed" class="badge text-bg-success"
-							>Sim</span
-						>
-						<span *ngIf="!user.allowed" class="badge text-bg-danger"
-							>Não</span
+							>TUTOR</span
 						>
 					</td>
 					<td>
@@ -175,20 +159,6 @@
 		<h5 cModalTitle>Gerenciamento de usuário</h5>
 	</c-modal-header>
 	<c-modal-body>
-		<label cLabel>Liberar acesso do usuário?</label>
-		<br />
-		<c-form-check sizing="xl" [switch]="true">
-			<input
-				cFormCheckInput
-				[checked]="selectedUser.allowed"
-				type="checkbox"
-				(click)="changeUserAccess()"
-			/>
-		</c-form-check>
-
-		<br />
-		<br />
-
 		<label cLabel>Nível de acesso do usuário:</label>
 		<br />
 
@@ -197,8 +167,8 @@
 				cFormCheckInput
 				type="radio"
 				value="ADMIN"
-				name="role"
-				[(ngModel)]="selectedUser.role"
+				name="tipoUsuario"
+				[(ngModel)]="selectedUser.tipoUsuario"
 				(ngModelChange)="changeUserRole()"
 			/>
 			<label cFormCheckLabel>Admin</label>
@@ -207,46 +177,34 @@
 			<input
 				cFormCheckInput
 				type="radio"
-				value="USER"
-				name="role"
-				[(ngModel)]="selectedUser.role"
+				value="TUTOR"
+				name="tipoUsuario"
+				[(ngModel)]="selectedUser.tipoUsuario"
 				(ngModelChange)="changeUserRole()"
 			/>
-			<label cFormCheckLabel>Usuário</label>
+			<label cFormCheckLabel>Tutor</label>
 		</c-form-check>
 		<c-form-check sizing="xl" inline>
 			<input
 				cFormCheckInput
 				type="radio"
-				value="PROFESSIONAL"
-				name="role"
-				[(ngModel)]="selectedUser.role"
+				value="EXTENSIONISTA"
+				name="tipoUsuario"
+				[(ngModel)]="selectedUser.tipoUsuario"
 				(ngModelChange)="changeUserRole()"
 			/>
-			<label cFormCheckLabel>Profissional</label>
+			<label cFormCheckLabel>Extensionista</label>
 		</c-form-check>
 		<c-form-check sizing="xl" inline>
 			<input
 				cFormCheckInput
 				type="radio"
-				value="RECEPTIONIST"
-				name="role"
-				[(ngModel)]="selectedUser.role"
+				value="ALUNO"
+				name="tipoUsuario"
+				[(ngModel)]="selectedUser.tipoUsuario"
 				(ngModelChange)="changeUserRole()"
 			/>
-			<label cFormCheckLabel>Recepcionista</label>
-		</c-form-check>
-		<c-form-check sizing="xl" inline>
-			<input
-				cFormCheckInput
-				type="radio"
-				value="SUPER"
-				name="role"
-				[(ngModel)]="selectedUser.role"
-				[disabled]="selectedUser.role !== 'SUPER'"
-				(ngModelChange)="changeUserRole()"
-			/>
-			<label cFormCheckLabel>Super</label>
+			<label cFormCheckLabel>Aluno</label>
 		</c-form-check>
 	</c-modal-body>
 	<c-modal-footer>

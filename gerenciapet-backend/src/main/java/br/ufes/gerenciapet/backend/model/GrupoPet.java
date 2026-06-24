@@ -32,7 +32,7 @@ public class GrupoPet {
     /**
      * Sigla do grupo PET.
      */
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String sigla;
 
     /**
@@ -46,7 +46,6 @@ public class GrupoPet {
      */
     @OneToOne
     @JoinColumn(name = "tutor_id")
-    @JsonIgnore
     private Tutor tutorCoordenador;
 
     /**

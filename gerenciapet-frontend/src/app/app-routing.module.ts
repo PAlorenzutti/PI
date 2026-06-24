@@ -45,6 +45,14 @@ const routes: Routes = [
 					),
 				canActivate: [UserAccessGuard],
 			},
+			{
+				path: "cadastrar",
+				loadChildren: () =>
+					import("./views/cadastrar/cadastrar.module").then(
+						(m) => m.CadastrarModule
+					),
+				canActivate: [UserAccessGuard],
+			},
 		],
 	},
 	{

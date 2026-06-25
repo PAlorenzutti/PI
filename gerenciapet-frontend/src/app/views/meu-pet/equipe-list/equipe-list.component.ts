@@ -131,14 +131,54 @@ export class EquipeListComponent implements OnInit {
       }
 
       this.loading = true;
-      this.extensionistaService.delete(extId).subscribe({
-        next: () => {
-          this.toggleDeleteModal();
-          this.loadExtensionistas(this.currentPage);
+      let userSubresourceHref = '';
+      if (this.extensionistaToDelete.user && this.extensionistaToDelete.user._links && this.extensionistaToDelete.user._links.self) {
+        userSubresourceHref = this.extensionistaToDelete.user._links.self.href;
+      } else {
+        userSubresourceHref = this.extensionistaToDelete._links.user.href;
+      }
+
+      this.userService.getUserByHref(userSubresourceHref).subscribe({
+        next: (user) => {
+          this.userService.changeUserRole('ALUNO', user.href).subscribe({
+            next: () => {
+              this.extensionistaService.delete(extId).subscribe({
+                next: () => {
+                  this.toggleDeleteModal();
+                  this.loadExtensionistas(this.currentPage);
+                },
+                error: () => {
+                  this.toggleDeleteModal();
+                  this.loadExtensionistas(this.currentPage);
+                }
+              });
+            },
+            error: () => {
+              this.extensionistaService.delete(extId).subscribe({
+                next: () => {
+                  this.toggleDeleteModal();
+                  this.loadExtensionistas(this.currentPage);
+                },
+                error: () => {
+                  this.toggleDeleteModal();
+                  this.loading = false;
+                }
+              });
+            }
+          });
         },
         error: () => {
-          this.toggleDeleteModal();
-          this.loading = false;
+          // If we can't find user, just delete extensionista
+          this.extensionistaService.delete(extId).subscribe({
+            next: () => {
+              this.toggleDeleteModal();
+              this.loadExtensionistas(this.currentPage);
+            },
+            error: () => {
+              this.toggleDeleteModal();
+              this.loading = false;
+            }
+          });
         }
       });
     }

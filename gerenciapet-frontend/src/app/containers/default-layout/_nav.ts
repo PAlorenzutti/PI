@@ -153,6 +153,11 @@ export const navItemsExtensionista: INavData[] = [
 				iconComponent: { name: "" },
 			},
 			{
+				name: "Gerenciar Eventos",
+				url: "/dashboard/eventos/gerenciar",
+				iconComponent: { name: "" },
+			},
+			{
 				name: "Controle de Frequência",
 				url: "/dashboard/eventos/frequencia",
 				iconComponent: { name: "" },

@@ -154,7 +154,14 @@ export class EquipeFormComponent implements OnInit {
       this.loading = true;
       this.extensionistaService.create(newExtensionista).subscribe({
         next: () => {
-          this.router.navigate(['/dashboard/meu-pet/equipe']);
+          this.userService.changeUserRole('EXTENSIONISTA', this.foundUser._links.self.href).subscribe({
+            next: () => {
+              this.router.navigate(['/dashboard/meu-pet/equipe']);
+            },
+            error: () => {
+              this.router.navigate(['/dashboard/meu-pet/equipe']);
+            }
+          });
         },
         error: () => {
           console.error('Erro ao cadastrar extensionista');

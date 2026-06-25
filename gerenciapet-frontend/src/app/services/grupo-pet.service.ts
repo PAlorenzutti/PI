@@ -33,4 +33,8 @@ export class GrupoPetService {
           map((response: any) => response.page.totalElements)
       );
   }
+
+  public getEventos(grupoPetId: string | number): Observable<any> {
+      return this.http.get(`${URL_API}/api/grupoPet/${grupoPetId}/eventos`);
+  }
 }

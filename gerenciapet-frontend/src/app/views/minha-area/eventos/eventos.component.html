@@ -1,0 +1,255 @@
+<c-card class="mb-4">
+  <c-card-header>
+      <strong><fa-icon [icon]="faIcons.faCheckCircle"></fa-icon> &nbsp; Eventos Matriculados</strong>
+  </c-card-header>
+  <c-card-body>
+      <div *ngIf="loadingMyInscricoes" class="text-center">Carregando seus eventos...</div>
+
+      <div *ngIf="!loadingMyInscricoes && myInscricoes.length > 0">
+          <table cTable hover [responsive]="true">
+              <thead cTableColor="light">
+                  <tr>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Evento</th>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Data de Inscrição</th>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Status</th>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Frequência (%)</th>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Ações</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let inscricao of myInscricoes">
+                      <td style="text-align: center; vertical-align: middle;">{{ inscricao.evento?.nome || 'Carregando evento...' }}</td>
+                      <td style="text-align: center; vertical-align: middle;">{{ inscricao.dataInscricao | date:'dd/MM/yyyy' }}</td>
+                      <td style="text-align: center; vertical-align: middle;">
+                          <c-badge [color]="getStatusBadgeColor(inscricao.status)">{{ getStatusLabel(inscricao.status) }}</c-badge>
+                      </td>
+                      <td style="text-align: center; vertical-align: middle;">{{ inscricao.frequencia }}%</td>
+                      <td style="text-align: center; vertical-align: middle;">
+                          <button *ngIf="inscricao.evento" cButton class="gerenciapet-btn text-white fw-bold me-2" color="primary" size="sm" title="Visualizar Evento" (click)="viewEvento(inscricao.evento)">
+                              <fa-icon [icon]="faIcons.faEye" style="color: white;"></fa-icon>
+                          </button>
+                          <button cButton class="gerenciapet-btn text-white fw-bold" color="danger" size="sm" title="Desmatricular-se" (click)="desmatricular(inscricao)">
+                              <fa-icon [icon]="faIcons.faTrash" style="color: white;"></fa-icon>
+                          </button>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      <div *ngIf="!loadingMyInscricoes && myInscricoes.length === 0" class="text-center mt-3 mb-3">
+          <p>Você ainda não está matriculado em nenhum evento.</p>
+      </div>
+  </c-card-body>
+</c-card>
+
+<!-- Seletor de Grupos PET -->
+<c-card class="mb-4" *ngIf="!selectedGrupoPet">
+  <c-card-header>
+      <strong><fa-icon [icon]="faIcons.faSearch"></fa-icon> &nbsp; Eventos Disponíveis por Grupo PET</strong>
+  </c-card-header>
+  <c-card-body>
+      <div *ngIf="loadingGrupos" class="text-center">Carregando grupos PET...</div>
+
+      <div *ngIf="!loadingGrupos && gruposPet.length > 0">
+          <table cTable hover [responsive]="true">
+              <thead cTableColor="light">
+                  <tr>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Sigla</th>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Descrição</th>
+                      <th scope="col" style="text-align: center; vertical-align: middle;">Ver Eventos</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let grupo of gruposPet">
+                      <td style="text-align: center; vertical-align: middle;">{{ grupo.sigla }}</td>
+                      <td style="text-align: center; vertical-align: middle;">{{ grupo.descricao }}</td>
+                      <td style="text-align: center; vertical-align: middle;">
+                          <button cButton class="gerenciapet-btn text-white fw-bold" color="primary" (click)="selectGrupoPet(grupo)" title="Selecionar grupo (ver eventos)">
+                              <fa-icon [icon]="faIcons.faArrowRight" class="cardIcon fa-lg fa-fw" style="color: white;"></fa-icon>
+                          </button>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+  </c-card-body>
+</c-card>
+
+<!-- Lista de Eventos do Grupo PET Selecionado -->
+<c-card class="mb-4" *ngIf="selectedGrupoPet">
+  <c-card-header>
+      <div class="d-flex justify-content-between align-items-center">
+          <div>
+              <strong><fa-icon [icon]="faIcons.faCalendarAlt"></fa-icon> &nbsp; Eventos do PET ({{ selectedGrupoPet.sigla }})</strong>
+          </div>
+          <button cButton class="gerenciapet-btn text-white fw-bold" color="secondary" size="sm" (click)="clearSelectedGrupoPet()">
+              <fa-icon [icon]="faIcons.faArrowLeft" style="color: white;"></fa-icon> &nbsp; Voltar aos Grupos
+          </button>
+      </div>
+  </c-card-header>
+  <c-card-body>
+      <div *ngIf="loadingEventos" class="text-center">Carregando eventos...</div>
+
+      <div *ngIf="!loadingEventos && eventosDisponiveis.length > 0">
+          <table cTable hover [responsive]="true">
+              <thead cTableColor="light">
+                  <tr>
+                      <th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Nome</th>
+                      <th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Vagas</th>
+                      <th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Status</th>
+                      <th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Visualizar</th>
+                      <th scope="col" style="width: 20%; text-align: center; vertical-align: middle;">Matricular-se</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let evento of eventosDisponiveis">
+                      <td style="text-align: center; vertical-align: middle;">{{ evento.nome }}</td>
+                      <td style="text-align: center; vertical-align: middle;">{{ evento.vagasDisponiveis }}</td>
+                      <td style="text-align: center; vertical-align: middle;">
+                          <c-badge [color]="getStatusBadgeColor(evento.status)">{{ getStatusLabel(evento.status) }}</c-badge>
+                      </td>
+                      <td style="text-align: center; vertical-align: middle;">
+                          <button cButton class="gerenciapet-btn text-white fw-bold" color="primary" size="sm" (click)="viewEvento(evento)" title="Visualizar Detalhes">
+                              <fa-icon [icon]="faIcons.faEye" style="color: white;"></fa-icon>
+                          </button>
+                      </td>
+                      <td style="text-align: center; vertical-align: middle;">
+                          <button cButton class="gerenciapet-btn text-white fw-bold" color="success" size="sm" (click)="matricular(evento)" title="Realizar Inscrição">
+                              <fa-icon [icon]="faIcons.faPlusCircle" style="color: white;"></fa-icon>
+                          </button>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+
+      <div *ngIf="!loadingEventos && eventosDisponiveis.length === 0" class="text-center mt-3 mb-3">
+          <p>Este Grupo PET não possui eventos abertos no momento.</p>
+      </div>
+  </c-card-body>
+</c-card>
+
+<!-- MODAL DE VISUALIZAÇÃO DE EVENTO -->
+<c-modal [visible]="viewModalVisible" size="lg">
+    <c-modal-header>
+        <h5 cModalTitle><fa-icon [icon]="faIcons.faEye"></fa-icon> &nbsp; Detalhes do Evento</h5>
+        <button cButtonClose (click)="closeViewModal()"></button>
+    </c-modal-header>
+    <c-modal-body *ngIf="selectedEventoToView">
+        <c-container>
+            <c-row class="mb-3">
+                <c-col md="6">
+                    <label cLabel>Nome do Evento:</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.nome" disabled />
+                </c-col>
+                <c-col md="3">
+                    <label cLabel>Tipo:</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.tipo" disabled />
+                </c-col>
+                <c-col md="3">
+                    <label cLabel>Status:</label>
+                    <input cFormControl type="text" [value]="getStatusLabel(selectedEventoToView.status)" disabled />
+                </c-col>
+            </c-row>
+            <c-row class="mb-3">
+                <c-col md="12">
+                    <label cLabel>Descrição:</label>
+                    <textarea cFormControl rows="3" disabled>{{ selectedEventoToView.descricao }}</textarea>
+                </c-col>
+            </c-row>
+            <c-row class="mb-3">
+                <c-col md="12">
+                    <label cLabel>Perfil do Aluno Esperado:</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.perfilAlunoEsperado" disabled />
+                </c-col>
+            </c-row>
+            <c-row class="mb-3">
+                <c-col md="3">
+                    <label cLabel>Data de Início:</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.dataInicio | date:'dd/MM/yyyy'" disabled />
+                </c-col>
+                <c-col md="3">
+                    <label cLabel>Data de Fim:</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.dataFim | date:'dd/MM/yyyy'" disabled />
+                </c-col>
+                <c-col md="6">
+                    <label cLabel>Horários:</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.horarios" disabled />
+                </c-col>
+            </c-row>
+            <c-row class="mb-3">
+                <c-col md="3">
+                    <label cLabel>Carga Horária (h):</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.cargaHorariaTotal" disabled />
+                </c-col>
+                <c-col md="3">
+                    <label cLabel>Vagas Disponíveis:</label>
+                    <input cFormControl type="text" [value]="selectedEventoToView.vagasDisponiveis" disabled />
+                </c-col>
+            </c-row>
+        </c-container>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton class="gerenciapet-btn text-white fw-bold" color="secondary" (click)="closeViewModal()">Fechar</button>
+    </c-modal-footer>
+</c-modal>
+
+<!-- MODAL DE CONFIRMAÇÃO DE MATRÍCULA -->
+<c-modal [visible]="enrollConfirmModalVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Confirmar Inscrição</h5>
+        <button cButtonClose (click)="closeConfirmModal()"></button>
+    </c-modal-header>
+    <c-modal-body *ngIf="eventoToEnroll">
+        Deseja realmente se matricular no evento <strong>"{{ eventoToEnroll.nome }}"</strong>?
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton class="gerenciapet-btn text-white fw-bold" color="secondary" (click)="closeConfirmModal()">Cancelar</button>
+        <button cButton class="gerenciapet-btn text-white fw-bold" color="success" (click)="confirmEnroll()">Confirmar</button>
+    </c-modal-footer>
+</c-modal>
+
+<!-- MODAL SUCESSO -->
+<c-modal backdrop="static" [visible]="enrollSuccessModalVisible">
+    <c-modal-header>
+        <h3 cModalTitle>Sucesso!</h3>
+        <button cButtonClose (click)="closeSuccessModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        <div class="alert alert-success" role="alert" style="font-size: 18px">
+            Matrícula realizada com sucesso!
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="primary" class="gerenciapet-btn text-white fw-bold" (click)="closeSuccessModal()">OK</button>
+    </c-modal-footer>
+</c-modal>
+
+<!-- MODAL ERRO -->
+<c-modal [visible]="enrollErrorModalVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Ocorreu um erro!</h5>
+        <button cButtonClose (click)="closeErrorModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        {{ errorMessage || 'Não foi possível realizar a operação.' }}
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="secondary" class="gerenciapet-btn text-white fw-bold" (click)="closeErrorModal()">Fechar</button>
+    </c-modal-footer>
+</c-modal>
+
+<!-- MODAL DE DESMATRÍCULA -->
+<c-modal [visible]="unenrollConfirmModalVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Confirmar Cancelamento</h5>
+        <button cButtonClose (click)="closeUnenrollConfirmModal()"></button>
+    </c-modal-header>
+    <c-modal-body *ngIf="inscricaoToUnenroll">
+        Deseja realmente cancelar sua inscrição no evento <strong>"{{ inscricaoToUnenroll.evento?.nome || 'Selecionado' }}"</strong>?
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton class="gerenciapet-btn text-white fw-bold" color="secondary" (click)="closeUnenrollConfirmModal()">Não, Voltar</button>
+        <button cButton class="gerenciapet-btn text-white fw-bold" color="danger" (click)="confirmUnenroll()">Sim, Cancelar</button>
+    </c-modal-footer>
+</c-modal>

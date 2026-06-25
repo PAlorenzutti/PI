@@ -64,7 +64,6 @@ public class Inscricao {
      */
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
     private User user;
 
     /**
@@ -72,7 +71,6 @@ public class Inscricao {
      */
     @ManyToOne
     @JoinColumn(name = "evento_id")
-    @JsonIgnore
     private Evento evento;
 
     /**

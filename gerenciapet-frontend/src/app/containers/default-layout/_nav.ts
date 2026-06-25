@@ -203,9 +203,9 @@ export const navItemsAluno: INavData[] = [
 		name: "MINHA ÁREA",
 	},
 	{
-		name: "Meus Cursos",
-		url: "/dashboard/minha-area/cursos",
-		iconComponent: { name: "cil-book" }
+		name: "Meus Eventos",
+		url: "/dashboard/minha-area/eventos",
+		iconComponent: { name: "cil-calendar" }
 	},
 	{
 		name: "Meus Certificados",

@@ -77,6 +77,14 @@ const routes: Routes = [
 					),
 				canActivate: [UserAccessGuard],
 			},
+			{
+				path: "minha-area",
+				loadChildren: () =>
+					import("./views/minha-area/minha-area.module").then(
+						(m) => m.MinhaAreaModule
+					),
+				canActivate: [UserAccessGuard],
+			},
 		],
 	},
 	{

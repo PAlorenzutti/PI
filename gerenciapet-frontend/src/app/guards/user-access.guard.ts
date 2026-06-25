@@ -28,7 +28,8 @@ export class UserAccessGuard  {
 			return true;
 		} else {
 			if (
-				state.url.includes("dashboard/usuario/editar")
+				state.url.includes("dashboard/usuario/editar") ||
+				state.url.includes("dashboard/minha-area")
 			) {
 				return true;
 			} else {

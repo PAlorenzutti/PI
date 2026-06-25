@@ -168,4 +168,30 @@ export class UserService {
             map((response: any) => response.page.totalElements)
         );
     }
+
+    public getInscricoes(userId: string | number): Observable<any> {
+        return this.http.get(`${URL_API}/api/user/${userId}/inscricoes`);
+    }
+
+    public getByUrl(url: string): Observable<any> {
+        return this.http.get(url);
+    }
+
+    public deleteByUrl(url: string): Observable<any> {
+        return this.http.delete(url);
+    }
+
+    public matricular(userId: string, eventoHref: string): Observable<any> {
+        // Extrai o ID do evento da URL
+        const parts = eventoHref.split('/');
+        const eventoId = parts[parts.length - 1];
+
+        // Chama o endpoint do nosso custom controller
+        return this.http.post(`${URL_API}/api/controle-inscricoes/matricular?userId=${userId}&eventoId=${eventoId}`, {});
+    }
+
+    public desmatricular(inscricaoId: string | number): Observable<any> {
+        // Chama o endpoint de exclusão do nosso custom controller
+        return this.http.delete(`${URL_API}/api/controle-inscricoes/desmatricular/${inscricaoId}`);
+    }
 }

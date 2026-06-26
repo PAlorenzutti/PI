@@ -174,7 +174,12 @@ export const navItemsExtensionista: INavData[] = [
 		name: "MEU DESEMPENHO",
 	},
 	{
-		name: "Certificados",
+		name: "Meus Eventos",
+		url: "/dashboard/desempenho/eventos",
+		iconComponent: { name: "cil-calendar" }
+	},
+	{
+		name: "Meus Certificados",
 		url: "/dashboard/desempenho/certificados",
 		iconComponent: { name: "cil-star" }
 	},

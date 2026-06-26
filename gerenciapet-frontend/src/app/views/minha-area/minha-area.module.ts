@@ -33,6 +33,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     PaginationModule,
     BadgeModule,
     SpinnerModule
-  ]
+  ],
+  exports: [MeusCertificadosComponent, EventosComponent]
 })
 export class MinhaAreaModule { }

@@ -85,6 +85,14 @@ const routes: Routes = [
 					),
 				canActivate: [UserAccessGuard],
 			},
+			{
+				path: "desempenho",
+				loadChildren: () =>
+					import("./views/desempenho/desempenho.module").then(
+						(m) => m.DesempenhoModule
+					),
+				canActivate: [UserAccessGuard],
+			},
 		],
 	},
 	{

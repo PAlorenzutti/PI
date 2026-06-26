@@ -103,6 +103,8 @@ public class InscricaoController {
         inscricao.setFrequencia(request.getFrequencia());
         inscricao.setDiasPresentes(request.getDiasPresentes());
         
+        atualizarStatusInscricao(inscricao);
+        
         inscricaoRepository.save(inscricao);
         
         return ResponseEntity.ok(inscricao);
@@ -119,9 +121,22 @@ public class InscricaoController {
         Inscricao inscricao = inscricaoOpt.get();
         inscricao.setNota(request.getNota());
         
+        atualizarStatusInscricao(inscricao);
+        
         inscricaoRepository.save(inscricao);
         
         return ResponseEntity.ok(inscricao);
+    }
+
+    private void atualizarStatusInscricao(Inscricao inscricao) {
+        Double nota = inscricao.getNota() != null ? inscricao.getNota() : 0.0;
+        Double frequencia = inscricao.getFrequencia() != null ? inscricao.getFrequencia() : 0.0;
+
+        if (nota >= 60.0 && frequencia >= 75.0) {
+            inscricao.setStatus(StatusInscricao.APROVADO);
+        } else {
+            inscricao.setStatus(StatusInscricao.REPROVADO);
+        }
     }
 
     static class FrequenciaRequest {

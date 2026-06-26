@@ -90,4 +90,54 @@ public class InscricaoController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/atualizar-frequencia/{id}")
+    @Transactional
+    public ResponseEntity<?> atualizarFrequencia(@PathVariable Long id, @RequestBody FrequenciaRequest request) {
+        Optional<Inscricao> inscricaoOpt = inscricaoRepository.findById(id);
+        if (!inscricaoOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Inscricao inscricao = inscricaoOpt.get();
+        inscricao.setFrequencia(request.getFrequencia());
+        inscricao.setDiasPresentes(request.getDiasPresentes());
+        
+        inscricaoRepository.save(inscricao);
+        
+        return ResponseEntity.ok(inscricao);
+    }
+
+    @PutMapping("/atualizar-nota/{id}")
+    @Transactional
+    public ResponseEntity<?> atualizarNota(@PathVariable Long id, @RequestBody NotaRequest request) {
+        Optional<Inscricao> inscricaoOpt = inscricaoRepository.findById(id);
+        if (!inscricaoOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Inscricao inscricao = inscricaoOpt.get();
+        inscricao.setNota(request.getNota());
+        
+        inscricaoRepository.save(inscricao);
+        
+        return ResponseEntity.ok(inscricao);
+    }
+
+    static class FrequenciaRequest {
+        private Double frequencia;
+        private String diasPresentes;
+
+        public Double getFrequencia() { return frequencia; }
+        public void setFrequencia(Double frequencia) { this.frequencia = frequencia; }
+        public String getDiasPresentes() { return diasPresentes; }
+        public void setDiasPresentes(String diasPresentes) { this.diasPresentes = diasPresentes; }
+    }
+
+    static class NotaRequest {
+        private Double nota;
+
+        public Double getNota() { return nota; }
+        public void setNota(Double nota) { this.nota = nota; }
+    }
 }

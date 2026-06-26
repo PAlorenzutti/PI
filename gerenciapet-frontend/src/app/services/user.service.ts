@@ -194,4 +194,12 @@ export class UserService {
         // Chama o endpoint de exclusão do nosso custom controller
         return this.http.delete(`${URL_API}/api/controle-inscricoes/desmatricular/${inscricaoId}`);
     }
+
+    public atualizarFrequencia(inscricaoId: string | number, payload: any): Observable<any> {
+        return this.http.put(`${URL_API}/api/controle-inscricoes/atualizar-frequencia/${inscricaoId}`, payload);
+    }
+
+    public atualizarNota(inscricaoId: string | number, nota: number): Observable<any> {
+        return this.http.put(`${URL_API}/api/controle-inscricoes/atualizar-nota/${inscricaoId}`, { nota });
+    }
 }

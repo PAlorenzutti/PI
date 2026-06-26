@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { EventoFormComponent } from './evento-form/evento-form.component';
 import { EventoListComponent } from './evento-list/evento-list.component';
+import { EventoFrequenciaComponent } from './evento-frequencia/evento-frequencia.component';
+import { EventoNotasComponent } from './evento-notas/evento-notas.component';
 
 const routes: Routes = [
   {
@@ -29,6 +31,20 @@ const routes: Routes = [
         component: EventoFormComponent,
         data: {
           title: 'Editar Evento'
+        }
+      },
+      {
+        path: 'frequencia',
+        component: EventoFrequenciaComponent,
+        data: {
+          title: 'Controle de Frequência'
+        }
+      },
+      {
+        path: 'notas',
+        component: EventoNotasComponent,
+        data: {
+          title: 'Lançamento de Notas'
         }
       }
     ]

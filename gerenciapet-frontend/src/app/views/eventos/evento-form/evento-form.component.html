@@ -13,7 +13,8 @@
 <form cForm novalidate [formGroup]="eventoForm" (ngSubmit)="submit()" *ngIf="!loading && hasGrupoPet">
     <c-card class="mb-4">
         <c-card-header>
-            <fa-icon [icon]="editMode ? faIcons.faPenToSquare : faIcons.faCalendarPlus" class="cardIcon fa-lg fa-fw"></fa-icon>
+            <fa-icon [icon]="editMode ? faIcons.faPenToSquare : faIcons.faCalendarPlus"
+                class="cardIcon fa-lg fa-fw"></fa-icon>
             <strong> &nbsp; {{ editMode ? 'Editar Evento' : 'Criar Novo Evento' }}</strong>
         </c-card-header>
         <c-card-body>
@@ -24,7 +25,7 @@
                         <input id="nome" cFormControl type="text" formControlName="nome" [valid]="isValid('nome')" />
                         <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">O nome é obrigatório!</c-form-feedback>
                     </c-col>
-                    
+
                     <c-col md="3" *ngIf="eventoForm.controls['tipo'] as ctrl">
                         <label cLabel for="tipo">Tipo:</label>
                         <select id="tipo" cSelect formControlName="tipo" [valid]="isValid('tipo')">
@@ -47,69 +48,90 @@
                 <c-row class="mb-3">
                     <c-col md="12" *ngIf="eventoForm.controls['descricao'] as ctrl">
                         <label cLabel for="descricao">Descrição:</label>
-                        <textarea id="descricao" cFormControl rows="3" formControlName="descricao" [valid]="isValid('descricao')"></textarea>
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">A descrição é obrigatória!</c-form-feedback>
+                        <textarea id="descricao" cFormControl rows="3" formControlName="descricao"
+                            [valid]="isValid('descricao')"></textarea>
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">A descrição é
+                            obrigatória!</c-form-feedback>
                     </c-col>
                 </c-row>
 
                 <c-row class="mb-3">
                     <c-col md="12" *ngIf="eventoForm.controls['perfilAlunoEsperado'] as ctrl">
                         <label cLabel for="perfilAlunoEsperado">Perfil do Aluno Esperado:</label>
-                        <input id="perfilAlunoEsperado" cFormControl type="text" formControlName="perfilAlunoEsperado" [valid]="isValid('perfilAlunoEsperado')" />
-                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">O perfil do aluno é obrigatório!</c-form-feedback>
+                        <input id="perfilAlunoEsperado" cFormControl type="text" formControlName="perfilAlunoEsperado"
+                            [valid]="isValid('perfilAlunoEsperado')" />
+                        <c-form-feedback *ngIf="ctrl.invalid" [valid]="false">O perfil do aluno é
+                            obrigatório!</c-form-feedback>
                     </c-col>
                 </c-row>
 
                 <c-row class="mb-3">
-                    <c-col md="3" *ngIf="eventoForm.controls['dataInicio'] as ctrl">
-                        <label cLabel for="dataInicio">Data de Início:</label>
-                        <input id="dataInicio" cFormControl type="date" formControlName="dataInicio" [valid]="isValid('dataInicio')" />
-                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">Data obrigatória!</c-form-feedback>
-                        <c-form-feedback *ngIf="ctrl.errors?.['dateExceeded']" [valid]="false">A data de início deve ser anterior à final!</c-form-feedback>
+                    <c-col md="6" *ngIf="eventoForm.controls['cargaHorariaTotal'] as ctrl">
+                        <label cLabel for="cargaHorariaTotal">Carga Horária Total (h):</label>
+                        <input id="cargaHorariaTotal" cFormControl type="number" formControlName="cargaHorariaTotal"
+                            [valid]="isValid('cargaHorariaTotal')" />
+                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">A carga horária é
+                            obrigatória!</c-form-feedback>
+                        <c-form-feedback *ngIf="ctrl.errors?.['min']" [valid]="false">Deve ser maior que
+                            0!</c-form-feedback>
                     </c-col>
 
-                    <c-col md="3" *ngIf="eventoForm.controls['dataFim'] as ctrl">
-                        <label cLabel for="dataFim">Data de Fim:</label>
-                        <input id="dataFim" cFormControl type="date" formControlName="dataFim" [valid]="isValid('dataFim')" />
-                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">Data obrigatória!</c-form-feedback>
-                        <c-form-feedback *ngIf="ctrl.errors?.['dateExceeded']" [valid]="false">A data final deve ser posterior à de início!</c-form-feedback>
-                    </c-col>
-                    
-                    <c-col md="3" *ngIf="eventoForm.controls['horaInicio'] as ctrl">
-                        <label cLabel for="horaInicio">Hora de Início:</label>
-                        <input id="horaInicio" cFormControl type="text" formControlName="horaInicio" (input)="formatHoraInput($event, 'horaInicio')" placeholder="00h00" [valid]="isValid('horaInicio')" />
-                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">Hora de início é obrigatória!</c-form-feedback>
-                        <c-form-feedback *ngIf="ctrl.errors?.['minlength']" [valid]="false">Digite o horário completo!</c-form-feedback>
-                    </c-col>
-
-                    <c-col md="3" *ngIf="eventoForm.controls['horaFim'] as ctrl">
-                        <label cLabel for="horaFim">Hora de Término:</label>
-                        <input id="horaFim" cFormControl type="text" formControlName="horaFim" (input)="formatHoraInput($event, 'horaFim')" placeholder="00h00" [valid]="isValid('horaFim')" />
-                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">Hora de término é obrigatória!</c-form-feedback>
-                        <c-form-feedback *ngIf="ctrl.errors?.['minlength']" [valid]="false">Digite o horário completo!</c-form-feedback>
-                    </c-col>
-                </c-row>
-
-                <c-row class="mb-3">
-                    <c-col md="3" *ngIf="eventoForm.controls['cargaHorariaTotal'] as ctrl">
-                        <label cLabel for="cargaHorariaTotal">Carga Horária (h):</label>
-                        <input id="cargaHorariaTotal" cFormControl type="number" formControlName="cargaHorariaTotal" [valid]="isValid('cargaHorariaTotal')" />
-                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">A carga horária é obrigatória!</c-form-feedback>
-                        <c-form-feedback *ngIf="ctrl.errors?.['min']" [valid]="false">Deve ser maior que 0!</c-form-feedback>
-                    </c-col>
-
-                    <c-col md="3" *ngIf="eventoForm.controls['vagasDisponiveis'] as ctrl">
+                    <c-col md="6" *ngIf="eventoForm.controls['vagasDisponiveis'] as ctrl">
                         <label cLabel for="vagasDisponiveis">Vagas Disponíveis:</label>
-                        <input id="vagasDisponiveis" cFormControl type="number" formControlName="vagasDisponiveis" [valid]="isValid('vagasDisponiveis')" />
-                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">A quantidade de vagas é obrigatória!</c-form-feedback>
-                        <c-form-feedback *ngIf="ctrl.errors?.['min']" [valid]="false">A quantidade deve ser maior que 0!</c-form-feedback>
+                        <input id="vagasDisponiveis" cFormControl type="number" formControlName="vagasDisponiveis"
+                            [valid]="isValid('vagasDisponiveis')" />
+                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">A quantidade de vagas é
+                            obrigatória!</c-form-feedback>
+                        <c-form-feedback *ngIf="ctrl.errors?.['min']" [valid]="false">A quantidade deve ser maior que
+                            0!</c-form-feedback>
+                    </c-col>
+                </c-row>
+
+                <c-row class="mb-3">
+                    <c-col md="6" *ngIf="eventoForm.controls['dataInicio'] as ctrl">
+                        <label cLabel for="dataInicio">Data de Início:</label>
+                        <input id="dataInicio" cFormControl type="date" formControlName="dataInicio"
+                            [valid]="isValid('dataInicio')" />
+                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">Data
+                            obrigatória!</c-form-feedback>
+                        <c-form-feedback *ngIf="ctrl.errors?.['dateExceeded']" [valid]="false">A data de início deve ser
+                            anterior à final!</c-form-feedback>
+                    </c-col>
+
+                    <c-col md="6" *ngIf="eventoForm.controls['dataFim'] as ctrl">
+                        <label cLabel for="dataFim">Data de Fim:</label>
+                        <input id="dataFim" cFormControl type="date" formControlName="dataFim"
+                            [valid]="isValid('dataFim')" />
+                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">Data
+                            obrigatória!</c-form-feedback>
+                        <c-form-feedback *ngIf="ctrl.errors?.['dateExceeded']" [valid]="false">A data final deve ser
+                            posterior à de início!</c-form-feedback>
+                    </c-col>
+                </c-row>
+
+                <c-row class="mb-3">
+                    <c-col md="6" *ngIf="eventoForm.controls['horaInicio'] as ctrl">
+                        <label cLabel for="horaInicio">Hora de Início:</label>
+                        <input id="horaInicio" cFormControl type="text" formControlName="horaInicio"
+                            (input)="formatHoraInput($event, 'horaInicio')" placeholder="00h00"
+                            [valid]="isValid('horaInicio')" />
+                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">Hora de início é
+                            obrigatória!</c-form-feedback>
+                        <c-form-feedback *ngIf="ctrl.errors?.['minlength']" [valid]="false">Digite o horário
+                            completo!</c-form-feedback>
+                    </c-col>
+
+                    <c-col md="6" *ngIf="eventoForm.controls['horaFim'] as ctrl">
+                        <label cLabel for="horaFim">Hora de Término:</label>
+                        <input id="horaFim" cFormControl type="text" formControlName="horaFim" readonly />
                     </c-col>
                 </c-row>
             </c-container>
         </c-card-body>
         <c-card-footer>
             <div class="d-grid gap-2 d-flex justify-content-end mt-md-2 mb-md-2">
-                <button cButton type="submit" class="hyperlog-btn text-white fw-bold" color="success" [disabled]="loading">
+                <button cButton type="submit" class="hyperlog-btn text-white fw-bold" color="success"
+                    [disabled]="loading">
                     <fa-icon [icon]="faIcons.faFloppyDisk" class="fa-lg fa-fw"></fa-icon>
                     &nbsp; {{ editMode ? 'Salvar Alterações' : 'Criar Evento' }}
                 </button>
@@ -130,7 +152,8 @@
         </div>
     </c-modal-body>
     <c-modal-footer>
-        <button cButton color="primary" class="hyperlog-btn text-white fw-bold" (click)="closeModalAndRedirect()">OK</button>
+        <button cButton color="primary" class="hyperlog-btn text-white fw-bold"
+            (click)="closeModalAndRedirect()">OK</button>
     </c-modal-footer>
 </c-modal>
 
@@ -144,6 +167,7 @@
         Infelizmente a operação não pode ser realizada. Verifique os dados e tente novamente.
     </c-modal-body>
     <c-modal-footer>
-        <button cButton color="secondary" class="hyperlog-btn text-white fw-bold" (click)="closeErrorModal()">Fechar</button>
+        <button cButton color="secondary" class="hyperlog-btn text-white fw-bold"
+            (click)="closeErrorModal()">Fechar</button>
     </c-modal-footer>
 </c-modal>

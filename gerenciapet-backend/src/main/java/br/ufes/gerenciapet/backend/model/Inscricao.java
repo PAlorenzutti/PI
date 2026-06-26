@@ -47,6 +47,12 @@ public class Inscricao {
     private Double frequencia;
 
     /**
+     * Datas em que o aluno esteve presente, separadas por vírgula.
+     */
+    @Column(columnDefinition = "TEXT")
+    private String diasPresentes;
+
+    /**
      * Nota registrada para o participante.
      */
     @Column(nullable = true)
@@ -124,9 +130,12 @@ public class Inscricao {
     /**
      * Define a nota do participante.
      *
-     * @param nota nota do participante.
+     * @param nota nota a ser definida.
      */
     public void setNota(Double nota) { this.nota = nota; }
+
+    public String getDiasPresentes() { return diasPresentes; }
+    public void setDiasPresentes(String diasPresentes) { this.diasPresentes = diasPresentes; }
     /**
      * Retorna o status da inscrição.
      *

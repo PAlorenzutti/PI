@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EventosRoutingModule } from './eventos-routing.module';
 import { EventoFormComponent } from './evento-form/evento-form.component';
 import { EventoListComponent } from './evento-list/evento-list.component';
+import { EventoFrequenciaComponent } from './evento-frequencia/evento-frequencia.component';
+import { EventoNotasComponent } from './evento-notas/evento-notas.component';
 
 import {
   ButtonModule,
@@ -22,7 +24,9 @@ import { NgxMaskDirective } from 'ngx-mask';
 @NgModule({
   declarations: [
     EventoFormComponent,
-    EventoListComponent
+    EventoListComponent,
+    EventoFrequenciaComponent,
+    EventoNotasComponent
   ],
   imports: [
     CommonModule,

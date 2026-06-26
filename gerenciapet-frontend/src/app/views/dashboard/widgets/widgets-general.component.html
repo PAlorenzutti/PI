@@ -74,4 +74,42 @@
 			</c-col>
 		</c-row>
 	</div>
+
+	<div *ngIf="loggedUser?.tipoUsuario === 'ALUNO' || loggedUser?.tipoUsuario === 'EXTENSIONISTA'">
+		<c-row class="align-itens-center justify-content-center" [lg]="2" [md]="2" [sm]="2">
+			<c-col lg="6" xs="12">
+				<c-widget-stat-f
+					[title]="'Eventos Inscritos'"
+					class="mb-3"
+					color="info"
+					padding
+					[value]="totalInscricoes"
+				>
+					<ng-template cTemplateId="widgetIconTemplate">
+						<fa-icon
+							[icon]="icons.faCheckToSlot"
+							class="fa-lg pad-btn"
+						></fa-icon>
+					</ng-template>
+				</c-widget-stat-f>
+			</c-col>
+
+			<c-col lg="6" xs="12">
+				<c-widget-stat-f
+					[title]="'Certificados Emitidos'"
+					class="mb-3"
+					color="success"
+					padding
+					[value]="totalCertificados"
+				>
+					<ng-template cTemplateId="widgetIconTemplate">
+						<fa-icon
+							[icon]="icons.faCertificate"
+							class="fa-lg pad-btn"
+						></fa-icon>
+					</ng-template>
+				</c-widget-stat-f>
+			</c-col>
+		</c-row>
+	</div>
 </div>

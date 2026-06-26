@@ -1,0 +1,228 @@
+<!-- Carregando -->
+<div *ngIf="loading" class="d-flex justify-content-center my-5">
+    <c-spinner color="primary"></c-spinner>
+</div>
+
+<!-- Erros de Ausência de Grupo -->
+<div *ngIf="!loading && !hasGrupoPet" class="text-center mt-4 mb-4">
+    <h4 class="text-danger">Você não tem permissão ou não gerencia nenhum Grupo PET!</h4>
+    <p>Apenas tutores vinculados a grupos podem emitir certificados.</p>
+</div>
+
+<!-- TELA PRINCIPAL: EVENTOS E EXTENSIONISTAS -->
+<div *ngIf="!loading && hasGrupoPet && !selectedEvento">
+
+    <!-- Tabela de Eventos (Alunos) -->
+    <c-card class="mb-4">
+        <c-card-header>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <fa-icon [icon]="faIcons.faUserGraduate" class="cardIcon fa-lg fa-fw"></fa-icon>
+                    <strong> &nbsp; Certificados de Horas Complementares - Eventos</strong>
+                </div>
+            </div>
+        </c-card-header>
+        <c-card-body>
+            <div *ngIf="eventos.length > 0">
+                <table cTable hover [responsive]="true">
+                    <thead cTableColor="light">
+                        <tr>
+                            <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                            <th scope="col" style="width: 19%; vertical-align: middle;">Nome</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Tipo</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Início</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Status</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let evento of eventos; index as i">
+                            <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                            <td style="vertical-align: middle;">{{ evento.nome }}</td>
+                            <td style="text-align: center; vertical-align: middle;"><c-badge color="info" class="text-white">{{ evento.tipo }}</c-badge></td>
+                            <td style="text-align: center; vertical-align: middle;">{{ evento.dataInicio | date:'dd/MM/yyyy' }}</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <c-badge [color]="evento.status === 'ABERTO' ? 'success' : (evento.status === 'EM_ANDAMENTO' ? 'warning' : 'danger')">
+                                    {{ evento.status === 'EM_ANDAMENTO' ? 'EM ANDAMENTO' : evento.status }}
+                                </c-badge>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <button cButton class="hyperlog-btn text-white" color="primary"
+                                    (click)="selecionarEvento(evento)" title="Ver Alunos Inscritos">
+                                    <fa-icon [icon]="faIcons.faCertificate" class="cardIcon fa-lg fa-fw"></fa-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf="eventos.length === 0" class="text-center mt-4 mb-4">
+                <p>Nenhum evento cadastrado para o seu Grupo PET.</p>
+            </div>
+        </c-card-body>
+    </c-card>
+
+    <!-- Tabela de Extensionistas (Horas de Extensão) -->
+    <c-card class="mb-4">
+        <c-card-header>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <fa-icon [icon]="faIcons.faUsers" class="cardIcon fa-lg fa-fw"></fa-icon>
+                    <strong> &nbsp; Certificados de Horas de Extensão - Extensionistas</strong>
+                </div>
+            </div>
+        </c-card-header>
+        <c-card-body>
+            <div *ngIf="extensionistas.length > 0">
+                <table cTable hover [responsive]="true">
+                    <thead cTableColor="light">
+                        <tr>
+                            <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                            <th scope="col" style="width: 19%; vertical-align: middle;">Nome</th>
+                            <th scope="col" style="width: 19%; vertical-align: middle;">Email</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Ingresso</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Bolsista</th>
+                            <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Emitir Certificado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let ext of extensionistas; index as i">
+                            <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                            <td style="vertical-align: middle;">{{ ext.user?.nome || ext.nome }}</td>
+                            <td style="vertical-align: middle;">{{ ext.user?.email || ext.email }}</td>
+                            <td style="text-align: center; vertical-align: middle;">{{ ext.dataIngresso | date:'dd/MM/yyyy' }}</td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <c-badge [color]="ext.bolsista ? 'success' : 'secondary'">
+                                    {{ ext.bolsista ? 'Sim' : 'Não' }}
+                                </c-badge>
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <button *ngIf="!ext.certificadoData" cButton class="hyperlog-btn text-white" color="warning"
+                                    (click)="abrirModalEmitir(ext, 'EXTENSIONISTA')" title="Emitir Certificado">
+                                    <fa-icon [icon]="faIcons.faFileSignature" class="cardIcon fa-lg fa-fw"></fa-icon>
+                                </button>
+                                
+                                <c-badge *ngIf="ext.certificadoData" color="primary">
+                                    Emitido
+                                </c-badge>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf="extensionistas.length === 0" class="text-center mt-4 mb-4">
+                <p>Nenhum extensionista vinculado ao seu Grupo PET.</p>
+            </div>
+        </c-card-body>
+    </c-card>
+</div>
+
+<!-- LISTA DE ALUNOS INSCRITOS (EVENTO SELECIONADO) -->
+<c-card class="mb-4" *ngIf="!loading && selectedEvento">
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <fa-icon [icon]="faIcons.faCertificate" class="cardIcon fa-lg fa-fw"></fa-icon>
+                <strong> &nbsp; Emitir Certificados - {{ selectedEvento.nome }}</strong>
+            </div>
+            <button cButton color="secondary" size="sm" class="hyperlog-btn text-white fw-bold" (click)="voltarParaDashboard()">
+                <fa-icon [icon]="faIcons.faArrowLeft"></fa-icon> Voltar ao Início
+            </button>
+        </div>
+    </c-card-header>
+    <c-card-body>
+        <div *ngIf="loadingInscricoes" class="d-flex justify-content-center my-4">
+            <c-spinner color="primary"></c-spinner>
+        </div>
+
+        <div *ngIf="!loadingInscricoes && inscricoes.length > 0">
+            <table cTable hover [responsive]="true">
+                <thead cTableColor="light">
+                    <tr>
+                        <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                        <th scope="col" style="width: 19%; vertical-align: middle;">Aluno (Nome)</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Inscrição</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Frequência</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Nota</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let inscricao of inscricoes; index as i">
+                        <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                        <td style="vertical-align: middle;">{{ inscricao.userData?.nome || 'N/A' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ inscricao.dataInscricao | date:'dd/MM/yyyy' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <c-badge [color]="(inscricao.frequencia || 0) >= 75 ? 'success' : 'danger'">
+                                {{ (inscricao.frequencia || 0) }}%
+                            </c-badge>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <c-badge *ngIf="inscricao.nota !== null && inscricao.nota !== undefined" [color]="inscricao.nota >= 60 ? 'success' : 'danger'">
+                                {{ inscricao.nota }}
+                            </c-badge>
+                            <span *ngIf="inscricao.nota === null || inscricao.nota === undefined" class="text-muted">-</span>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <!-- Botão se ainda não tem certificado -->
+                            <button *ngIf="!inscricao.certificadoData" cButton class="hyperlog-btn text-white" color="success"
+                                [disabled]="(inscricao.frequencia || 0) < 75 || (inscricao.nota !== null && inscricao.nota < 60)"
+                                (click)="abrirModalEmitir(inscricao, 'ALUNO')" title="Emitir Certificado">
+                                <fa-icon [icon]="faIcons.faCertificate" class="cardIcon fa-lg fa-fw"></fa-icon>
+                            </button>
+
+                            <!-- Badge se já tem certificado -->
+                            <c-badge *ngIf="inscricao.certificadoData" color="primary">
+                                Emitido
+                            </c-badge>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="!loadingInscricoes && inscricoes.length === 0" class="text-center mt-4 mb-4">
+            <p>Nenhum aluno inscrito neste evento.</p>
+        </div>
+    </c-card-body>
+</c-card>
+
+<!-- MODAL DE CONFIRMAÇÃO DE EMISSÃO -->
+<c-modal [visible]="modalVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Confirmar Emissão de Certificado</h5>
+        <button cButtonClose (click)="closeModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        <p *ngIf="emitType === 'ALUNO'">
+            Tem certeza que deseja emitir o certificado de Horas Complementares para
+            <strong>{{ targetToEmit?.userData?.nome }}</strong>?
+        </p>
+        <p *ngIf="emitType === 'EXTENSIONISTA'">
+            Tem certeza que deseja emitir o certificado de Horas de Extensão para o(a) extensionista
+            <strong>{{ targetToEmit?.user?.nome || targetToEmit?.nome }}</strong>?
+        </p>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="secondary" class="hyperlog-btn text-white fw-bold" (click)="closeModal()" [disabled]="saving">Cancelar</button>
+        <button cButton color="success" class="hyperlog-btn text-white fw-bold" (click)="confirmarEmissao()" [disabled]="saving">
+            <c-spinner *ngIf="saving" size="sm" class="me-1"></c-spinner>
+            Confirmar
+        </button>
+    </c-modal-footer>
+</c-modal>
+
+<!-- MODAL DE SUCESSO -->
+<c-modal [visible]="successModalVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Sucesso!</h5>
+        <button cButtonClose (click)="closeSuccessModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        <p class="text-success fw-bold text-center mt-3 mb-3">
+            {{ successMessage }}
+        </p>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="primary" class="hyperlog-btn text-white fw-bold" (click)="closeSuccessModal()">OK</button>
+    </c-modal-footer>
+</c-modal>

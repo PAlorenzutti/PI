@@ -202,4 +202,12 @@ export class UserService {
     public atualizarNota(inscricaoId: string | number, nota: number): Observable<any> {
         return this.http.put(`${URL_API}/api/controle-inscricoes/atualizar-nota/${inscricaoId}`, { nota });
     }
+
+    public emitirCertificadoAluno(inscricaoId: string | number): Observable<any> {
+        return this.http.post(`${URL_API}/api/controle-certificados/emitir-aluno/${inscricaoId}`, {});
+    }
+
+    public emitirCertificadoExtensionista(extensionistaId: string | number): Observable<any> {
+        return this.http.post(`${URL_API}/api/controle-certificados/emitir-extensionista/${extensionistaId}`, {});
+    }
 }

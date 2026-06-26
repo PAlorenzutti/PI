@@ -4,6 +4,7 @@ import { EventoFormComponent } from './evento-form/evento-form.component';
 import { EventoListComponent } from './evento-list/evento-list.component';
 import { EventoFrequenciaComponent } from './evento-frequencia/evento-frequencia.component';
 import { EventoNotasComponent } from './evento-notas/evento-notas.component';
+import { EventoCertificadoComponent } from './evento-certificado/evento-certificado.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,13 @@ const routes: Routes = [
         component: EventoNotasComponent,
         data: {
           title: 'Lançamento de Notas'
+        }
+      },
+      {
+        path: 'certificados',
+        component: EventoCertificadoComponent,
+        data: {
+          title: 'Emissão de Certificados'
         }
       }
     ]

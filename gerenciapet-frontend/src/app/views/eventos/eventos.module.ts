@@ -7,6 +7,7 @@ import { EventoFormComponent } from './evento-form/evento-form.component';
 import { EventoListComponent } from './evento-list/evento-list.component';
 import { EventoFrequenciaComponent } from './evento-frequencia/evento-frequencia.component';
 import { EventoNotasComponent } from './evento-notas/evento-notas.component';
+import { EventoCertificadoComponent } from './evento-certificado/evento-certificado.component';
 
 import {
   ButtonModule,
@@ -26,7 +27,8 @@ import { NgxMaskDirective } from 'ngx-mask';
     EventoFormComponent,
     EventoListComponent,
     EventoFrequenciaComponent,
-    EventoNotasComponent
+    EventoNotasComponent,
+    EventoCertificadoComponent
   ],
   imports: [
     CommonModule,

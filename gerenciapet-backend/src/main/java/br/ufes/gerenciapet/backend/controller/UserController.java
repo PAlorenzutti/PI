@@ -76,6 +76,10 @@ public class UserController {
             }
         }
 
+        if (user.getMatricula() != null && user.getMatricula().trim().isEmpty()) {
+            user.setMatricula(null);
+        }
+
         try {
             userRepo.save(user);
             return "{\"status\": \"registered\"}";

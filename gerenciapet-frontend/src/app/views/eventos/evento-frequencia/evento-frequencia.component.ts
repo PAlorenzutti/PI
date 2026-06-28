@@ -121,14 +121,24 @@ export class EventoFrequenciaComponent implements OnInit {
       
       const diasPresentesMarcados = inscricao.diasPresentes ? inscricao.diasPresentes.split(',') : [];
 
+      let diasPermitidos = [0,1,2,3,4,5,6]; 
+      
+      if (this.selectedEvento.tipo === 'CURSO' && this.selectedEvento.horarios.includes('|')) {
+        const metadados = this.selectedEvento.horarios.split('|')[0].trim();
+        diasPermitidos = metadados.split(',').map((num: string) => parseInt(num));
+      }
       let currentDate = new Date(d1.getTime());
+      
       while (currentDate <= d2) {
-        const dataLocalStr = `${currentDate.getFullYear()}-${(currentDate.getMonth()+1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
         
-        this.diasEvento.push({
-          data: dataLocalStr,
-          checked: diasPresentesMarcados.includes(dataLocalStr)
-        });
+        if (diasPermitidos.includes(currentDate.getDay())) {
+            const dataLocalStr = `${currentDate.getFullYear()}-${(currentDate.getMonth()+1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+            
+            this.diasEvento.push({
+              data: dataLocalStr,
+              checked: diasPresentesMarcados.includes(dataLocalStr)
+            });
+        }
         
         currentDate.setDate(currentDate.getDate() + 1);
       }

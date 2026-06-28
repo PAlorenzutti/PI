@@ -68,12 +68,19 @@
                 <c-row class="mb-3">
                     <c-col md="6" *ngIf="eventoForm.controls['cargaHorariaTotal'] as ctrl">
                         <label cLabel for="cargaHorariaTotal">Carga Horária Total (h):</label>
-                        <input id="cargaHorariaTotal" cFormControl type="number" formControlName="cargaHorariaTotal"
-                            [valid]="isValid('cargaHorariaTotal')" />
-                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">A carga horária é
-                            obrigatória!</c-form-feedback>
-                        <c-form-feedback *ngIf="ctrl.errors?.['min']" [valid]="false">Deve ser maior que
-                            0!</c-form-feedback>
+                        <input id="cargaHorariaTotal" cFormControl type="number" formControlName="cargaHorariaTotal" [valid]="isValid('cargaHorariaTotal')" />
+                        
+                        <!-- Os erros que já existiam -->
+                        <c-form-feedback *ngIf="ctrl.errors?.['required']" [valid]="false">A carga horária é obrigatória!</c-form-feedback>
+                        <c-form-feedback *ngIf="ctrl.errors?.['min']" [valid]="false">Deve ser maior que 0!</c-form-feedback>
+                        
+                        <!-- NOVO ERRO (O WARNING) -->
+                        <c-form-feedback *ngIf="ctrl.errors?.['cargaMuitoPequena']" [valid]="false">
+                            Carga horária muito pequena para as datas escolhidas! Estique as horas ou diminua o prazo.
+                        </c-form-feedback>
+                        <c-form-feedback *ngIf="ctrl.errors?.['cargaMuitoGrande']" [valid]="false">
+                            Impossível! A carga horária exige mais de 24 horas por dia. Aumente o prazo do curso.
+                        </c-form-feedback>
                     </c-col>
 
                     <c-col md="6" *ngIf="eventoForm.controls['vagasDisponiveis'] as ctrl">
@@ -124,6 +131,49 @@
                     <c-col md="6" *ngIf="eventoForm.controls['horaFim'] as ctrl">
                         <label cLabel for="horaFim">Hora de Término:</label>
                         <input id="horaFim" cFormControl type="text" formControlName="horaFim" readonly />
+                    </c-col>
+                </c-row>
+                <c-row class="mb-3" *ngIf="eventoForm.get('tipo')?.value === 'CURSO'" formGroupName="diasSemana">
+                    <c-col md="12">
+                        <label cLabel>Dias da Semana:</label>
+                        <div class="mt-2">
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" id="seg" formControlName="segunda" />
+                                <label cFormCheckLabel for="seg">Seg</label>
+                            </c-form-check>
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" id="ter" formControlName="terca" />
+                                <label cFormCheckLabel for="ter">Ter</label>
+                            </c-form-check>
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" id="qua" formControlName="quarta" />
+                                <label cFormCheckLabel for="qua">Qua</label>
+                            </c-form-check>
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" id="qui" formControlName="quinta" />
+                                <label cFormCheckLabel for="qui">Qui</label>
+                            </c-form-check>
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" id="sex" formControlName="sexta" />
+                                <label cFormCheckLabel for="sex">Sex</label>
+                            </c-form-check>
+                            
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" id="sab" formControlName="sabado" />
+                                <label cFormCheckLabel for="sab">Sáb</label>
+                            </c-form-check>
+                            
+                            <c-form-check inline>
+                                <input cFormCheckInput type="checkbox" id="dom" formControlName="domingo" />
+                                <label cFormCheckLabel for="dom">Dom</label>
+                            </c-form-check>
+                        </div>
+                        <div class="text-danger mt-2" *ngIf="eventoForm.get('diasSemana')?.hasError('noDaySelected')">
+                            Por favor, selecione pelo menos um dia da semana para o curso!
+                        </div>
+                        <div class="text-danger mt-2" *ngIf="eventoForm.get('diasSemana')?.hasError('semDiasNoPeriodo')">
+                            Atenção: Os dias da semana marcados não existem no intervalo de datas selecionado!
+                        </div>
                     </c-col>
                 </c-row>
             </c-container>

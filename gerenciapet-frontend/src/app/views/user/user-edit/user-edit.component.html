@@ -73,7 +73,14 @@
                 <c-row class="d-flex align-items-center mt-3">
                     <c-col [sm]="6" *ngIf="user?.tipoUsuario !== 'TUTOR' && editForm.controls['isEstudanteUfes'].value && editForm.controls['matricula'] as ctrl">
                         <label cLabel for="matricula">Matrícula</label>
-                        <input id="matricula" cFormControl type="text" formControlName="matricula" placeholder="Ex: 2021101234" />
+                        <input cFormControl id="matricula" type="text" formControlName="matricula" placeholder="Ex: 2021101234" autocomplete="off"
+                            [valid]="ctrl.touched && ctrl.valid ? true : (submitted || ctrl.touched) && ctrl.invalid ? false : undefined" />
+                        <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+                            <ng-container *ngIf="ctrl.errors as errors">
+                                <div *ngIf="errors['required']">A matrícula é obrigatória! para estudanes da UFES</div>
+                                <div *ngIf="errors['pattern']">A matrícula deve é composta por 10 números. Ex: 2020101637</div>
+                            </ng-container>
+                        </c-form-feedback>
                     </c-col>
 
                     <c-col [sm]="6" *ngIf="user?.tipoUsuario === 'EXTENSIONISTA' && editForm.controls['bolsista'] as ctrl">
@@ -263,6 +270,24 @@
     </c-modal-footer>
 </c-modal>
 
+<c-modal id="responseModal" [visible]="editConflictErrorVisible" (visibleChange)="handleEditConflictError($event)">
+    <c-modal-header>
+        <h3 cModalTitle>Erro ao salvar dados</h3>
+        <button (click)="toggleEditConflictError()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <div class="alert alert-danger" role="alert" style="font-size: 18px">
+            Erro em atualizar os dados, verifique os campos e tente novamente!
+            Se o erro persistir, entre em contato com os administradores do
+            sistema.
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button (click)="toggleEditConflictError()" cButton color="danger" class="pad-btn">
+            Fechar
+        </button>
+    </c-modal-footer>
+</c-modal>
 <!--MODAL DE CONFIRMAÇÃO PARA ATUALIZAR A SENHA-->
 <!--MODAL DE ERRO EM ATUALIZAR A SENHA-->
 <!--MODAL DE SUCESSO EM ATUALIZAR A SENHA-->

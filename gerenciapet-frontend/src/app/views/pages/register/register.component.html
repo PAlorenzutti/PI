@@ -72,7 +72,14 @@
                             <c-row class="mb-3" *ngIf="registerForm.controls['isEstudanteUfes'].value">
                                 <label cCol [sm]="4" cLabel="col" for="matricula">Matrícula</label>
                                 <c-col [sm]="8" *ngIf="registerForm.controls['matricula'] as ctrl">
-                                    <input cFormControl id="matricula" type="text" formControlName="matricula" placeholder="Ex: 2021101234" autocomplete="off" />
+                                    <input cFormControl id="matricula" type="text" formControlName="matricula" placeholder="Ex: 2021101234" autocomplete="off"
+                                        [valid]="ctrl.touched && ctrl.valid ? true : (submitted || ctrl.touched) && ctrl.invalid ? false : undefined" />
+                                    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+                                        <ng-container *ngIf="ctrl.errors as errors">
+                                            <div *ngIf="errors['required']">A matrícula é obrigatória!</div>
+                                            <div *ngIf="errors['pattern']">A matrícula deve ser composta por 10 números. Ex: 2023201637</div>
+                                        </ng-container>
+                                    </c-form-feedback>
                                 </c-col>
                             </c-row>
                             <c-row class="mb-3">
@@ -294,6 +301,26 @@
                 </button>
             </c-modal-footer>
         </c-modal>
+        <!--MODAL DE ERRO DE MATRÍCULA DUPLICADA-->
+        <c-modal id="responseModal" [visible]="RegisterMatriculaErrorVisible" (visibleChange)="handleRegisterMatriculaError($event)">
+            <c-modal-header>
+                <h3 cModalTitle>Erro ao se cadastrar</h3>
+                <button (click)="toggleRegisterMatriculaError()" cButtonClose></button>
+            </c-modal-header>
+            <c-modal-body>
+                <div class="alert alert-danger" role="alert" style="font-size: 18px">
+                    A matrícula que você está tentando utilizar já está
+                    cadastrada no sistema. Por favor, verifique se você já possui
+                    uma conta ou digite a matrícula correta.
+                </div>
+            </c-modal-body>
+            <c-modal-footer>
+                <button (click)="toggleRegisterMatriculaError()" cButton color="danger" class="pad-btn">
+                    Fechar
+                </button>
+            </c-modal-footer>
+        </c-modal>
+        
         <!--MODAL DE ERRO NO ENVIO DE E-MAIL-->
         <!-- <c-modal [visible]="SendEmailErrorVisible" (visibleChange)="handleSendEmailError($event)">
             <c-modal-header>

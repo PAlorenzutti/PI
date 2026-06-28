@@ -63,6 +63,23 @@ public class UserController {
     @PostMapping("/api-open/user-register")
     @ResponseBody
     public String userRegister(@RequestBody User user) {
+
+        if (Boolean.TRUE.equals(user.getIsEstudanteUfes())){
+            String matricula = user.getMatricula(); 
+
+            if (matricula == null || !matricula.matches("^\\d{4}[1-2]\\d{5}$")){
+                return "{\"status\": \"invalid-matricula\"}"; //Matricula é invalida!
+            }
+
+            if (userRepo.findByMatricula(user.getMatricula()) != null){
+                return "{\"status\": \"matricula-in-use\"}"; //Erro de matricula!
+            }
+        }
+
+        if (user.getMatricula() != null && user.getMatricula().trim().isEmpty()) {
+            user.setMatricula(null);
+        }
+
         try {
             userRepo.save(user);
             return "{\"status\": \"registered\"}";

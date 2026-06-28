@@ -1,0 +1,146 @@
+<!-- Carregando -->
+<div *ngIf="loading" class="d-flex justify-content-center my-5">
+    <c-spinner color="primary"></c-spinner>
+</div>
+
+<!-- Erros de Ausência de Grupo -->
+<div *ngIf="!loading && !hasGrupoPet" class="text-center mt-4 mb-4">
+    <h4 class="text-danger">Você não tem permissão ou não está vinculado a nenhum Grupo PET!</h4>
+    <p>Apenas extensionistas vinculados a grupos podem gerenciar a frequência de eventos.</p>
+</div>
+
+<!-- Tabela de Eventos -->
+<c-card class="mb-4" *ngIf="!loading && hasGrupoPet && !selectedEvento">
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <fa-icon [icon]="faIcons.faClipboardList" class="cardIcon fa-lg fa-fw"></fa-icon>
+                <strong> &nbsp; Controle de Frequência - Meus Eventos</strong>
+            </div>
+        </div>
+    </c-card-header>
+    <c-card-body>
+        <div *ngIf="eventos.length > 0">
+            <table cTable hover [responsive]="true">
+                <thead cTableColor="light">
+                    <tr>
+                        <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                        <th scope="col" style="width: 19%; vertical-align: middle;">Nome</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Tipo</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Início</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Status</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let evento of eventos; index as i">
+                        <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                        <td style="vertical-align: middle;">{{ evento.nome }}</td>
+                        <td style="text-align: center; vertical-align: middle;"><c-badge color="info" class="text-white">{{ evento.tipo }}</c-badge></td>
+                        <td style="text-align: center; vertical-align: middle;">{{ evento.dataInicio | date:'dd/MM/yyyy' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <c-badge [color]="evento.status === 'ABERTO' ? 'success' : (evento.status === 'EM_ANDAMENTO' ? 'warning' : 'danger')">
+                                {{ evento.status === 'EM_ANDAMENTO' ? 'EM ANDAMENTO' : evento.status }}
+                            </c-badge>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <button cButton class="hyperlog-btn text-white" color="primary"
+                                (click)="selecionarEvento(evento)" title="Lançar Frequência">
+                                <fa-icon [icon]="faIcons.faClipboardList" class="cardIcon fa-lg fa-fw"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="eventos.length === 0" class="text-center mt-4 mb-4">
+            <p>Nenhum evento cadastrado para o seu Grupo PET.</p>
+        </div>
+    </c-card-body>
+</c-card>
+
+<!-- LISTA DE ALUNOS INSCRITOS -->
+<c-card class="mb-4" *ngIf="!loading && selectedEvento">
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <fa-icon [icon]="faIcons.faClipboardList" class="cardIcon fa-lg fa-fw"></fa-icon>
+                <strong> &nbsp; Frequência - {{ selectedEvento.nome }}</strong>
+            </div>
+            <button cButton color="secondary" size="sm" class="hyperlog-btn text-white fw-bold" (click)="voltarParaEventos()">
+                <fa-icon [icon]="faIcons.faArrowLeft"></fa-icon> Voltar aos Eventos
+            </button>
+        </div>
+    </c-card-header>
+    <c-card-body>
+        <div *ngIf="loadingInscricoes" class="d-flex justify-content-center my-4">
+            <c-spinner color="primary"></c-spinner>
+        </div>
+        
+        <div *ngIf="!loadingInscricoes && inscricoes.length > 0">
+            <table cTable hover [responsive]="true">
+                <thead cTableColor="light">
+                    <tr>
+                        <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                        <th scope="col" style="width: 19%; vertical-align: middle;">Aluno (Nome)</th>
+                        <th scope="col" style="width: 19%; vertical-align: middle;">Email</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Inscrição</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Frequência</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let inscricao of inscricoes; index as i">
+                        <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                        <td style="vertical-align: middle;">{{ inscricao.userData?.nome || 'N/A' }}</td>
+                        <td style="vertical-align: middle;">{{ inscricao.userData?.email || 'N/A' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ inscricao.dataInscricao | date:'dd/MM/yyyy' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <c-badge [color]="(inscricao.frequencia || 0) >= 75 ? 'success' : (inscricao.frequencia || 0) > 0 ? 'warning' : 'secondary'">
+                                {{ (inscricao.frequencia || 0) }}%
+                            </c-badge>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <button cButton class="hyperlog-btn text-white" color="info"
+                                (click)="abrirModalFrequencia(inscricao)" title="Presenças">
+                                <fa-icon [icon]="faIcons.faCheckSquare" class="cardIcon fa-lg fa-fw"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="!loadingInscricoes && inscricoes.length === 0" class="text-center mt-4 mb-4">
+            <p>Nenhum aluno inscrito neste evento.</p>
+        </div>
+    </c-card-body>
+</c-card>
+
+<!-- MODAL DE FREQUENCIA -->
+<c-modal [visible]="modalVisible" size="lg">
+    <c-modal-header>
+        <h5 cModalTitle>Presenças de {{ selectedInscricao?.userData?.nome }}</h5>
+        <button cButtonClose (click)="closeModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        <p class="text-muted">Marque os dias em que o aluno esteve presente no evento.</p>
+        <div class="list-group">
+            <label class="list-group-item d-flex gap-3" *ngFor="let dia of diasEvento" style="cursor: pointer;">
+                <input class="form-check-input flex-shrink-0" type="checkbox" [checked]="dia.checked" (change)="togglePresenca(dia)" style="font-size: 1.375em;">
+                <span class="pt-1 form-checked-content">
+                    <strong>Dia {{ dia.data | date:'dd/MM/yyyy' }}</strong>
+                    <span class="d-block text-muted small">
+                        {{ dia.checked ? 'Presente' : 'Ausente' }}
+                    </span>
+                </span>
+            </label>
+        </div>
+        <div *ngIf="diasEvento.length === 0" class="alert alert-warning mt-3">
+            O evento não possui datas válidas configuradas.
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="secondary" class="hyperlog-btn text-white fw-bold" (click)="closeModal()">Cancelar</button>
+        <button cButton color="primary" class="hyperlog-btn text-white fw-bold" (click)="salvarFrequencia()">Salvar Frequência</button>
+    </c-modal-footer>
+</c-modal>

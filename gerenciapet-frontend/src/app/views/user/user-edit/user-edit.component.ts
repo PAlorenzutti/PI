@@ -128,6 +128,7 @@ export class UserEditComponent implements OnInit {
         });
 
         this.editForm.get('cpf')?.disable();
+        this.editForm.get('bolsista')?.disable();
     }
 
     ngOnInit() {

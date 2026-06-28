@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.ufes.gerenciapet.backend.utils.enums.StatusEvento;
@@ -112,6 +113,7 @@ public class Evento {
      * Inscrições vinculadas ao evento.
      */
     @OneToMany(mappedBy = "evento", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Inscricao> inscricoes = new ArrayList<>();
 
     /**

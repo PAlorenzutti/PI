@@ -62,10 +62,55 @@ export class EventoFormComponent implements OnInit {
       dataInicio: ['', [Validators.required]],
       dataFim: ['', [Validators.required]],
       horaInicio: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5)]],
-      horaFim: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5)]],
+      horaFim: [{value: '', disabled: true}, [Validators.required]],
       tipo: [TipoEvento.CURSO, [Validators.required]],
       status: [StatusEvento.ABERTO, [Validators.required]]
     }, { validators: this.dateLessThan('dataInicio', 'dataFim') });
+
+    this.eventoForm.valueChanges.subscribe(() => {
+      this.calculateHoraFim();
+    });
+  }
+
+  calculateHoraFim() {
+    const dataInicio = this.eventoForm.get('dataInicio')?.value;
+    const dataFim = this.eventoForm.get('dataFim')?.value;
+    const carga = this.eventoForm.get('cargaHorariaTotal')?.value;
+    const horaInicio = this.eventoForm.get('horaInicio')?.value;
+
+    if (!dataInicio || !dataFim || !carga || !horaInicio || horaInicio.length !== 5) {
+      this.eventoForm.get('horaFim')?.setValue('', { emitEvent: false });
+      return;
+    }
+
+    const d1 = new Date(dataInicio);
+    const d2 = new Date(dataFim);
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return;
+
+    let diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 3600 * 24)) + 1;
+    if (diffDays <= 0) diffDays = 1;
+
+    const dailyHours = carga / diffDays;
+
+    const parts = horaInicio.split('h');
+    if (parts.length !== 2) return;
+    
+    const startH = parseInt(parts[0], 10);
+    const startM = parseInt(parts[1], 10);
+    if (isNaN(startH) || isNaN(startM)) return;
+
+    const startTotalMinutes = startH * 60 + startM;
+    const addedMinutes = Math.round(dailyHours * 60);
+
+    const endTotalMinutes = startTotalMinutes + addedMinutes;
+    
+    const endH = Math.floor(endTotalMinutes / 60) % 24;
+    const endM = endTotalMinutes % 60;
+
+    const endHStr = endH.toString().padStart(2, '0');
+    const endMStr = endM.toString().padStart(2, '0');
+    
+    this.eventoForm.get('horaFim')?.setValue(`${endHStr}h${endMStr}`, { emitEvent: false });
   }
 
   dateLessThan(from: string, to: string) {
@@ -228,7 +273,7 @@ export class EventoFormComponent implements OnInit {
     if (this.eventoForm.invalid || (!this.grupoHref && !this.editMode)) return;
 
     this.loading = true;
-    const payload: any = { ...this.eventoForm.value };
+    const payload: any = { ...this.eventoForm.getRawValue() };
     
     // Convert to full ISO or local time handling could be placed here if needed.
     // The native date input returns YYYY-MM-DD.

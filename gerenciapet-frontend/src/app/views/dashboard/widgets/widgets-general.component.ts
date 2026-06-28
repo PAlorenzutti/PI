@@ -16,11 +16,14 @@ import {
     faSprayCan,
     faUserDoctor,
     faUsers,
-    faCalendarCheck
+    faCalendarCheck,
+    faCertificate,
+    faCheckToSlot
 } from "@fortawesome/free-solid-svg-icons";
 import { UserService } from "../../../services/user.service";
 import { GrupoPetService } from "../../../services/grupo-pet.service";
 import { TutorService } from "../../../services/tutor.service";
+import { URL_API } from "../../../utils/url-api";
 
 @Component({
     selector: "app-widgets-general",
@@ -41,7 +44,9 @@ export class WidgetsGeneralComponent implements OnInit {
         faUserDoctor,
         faBandage,
         faSprayCan,
-        faCalendarCheck
+        faCalendarCheck,
+        faCertificate,
+        faCheckToSlot
     };
     /**********************************************************************/
 
@@ -50,6 +55,9 @@ export class WidgetsGeneralComponent implements OnInit {
 
     public totalEventos: number | undefined;
     public totalExtensionistas: number | undefined;
+
+    public totalInscricoes: number | undefined;
+    public totalCertificados: number | undefined;
 
     @Input()
     public loggedUser!: User;
@@ -105,6 +113,20 @@ export class WidgetsGeneralComponent implements OnInit {
                     this.totalEventos = 0;
                     this.totalExtensionistas = 0;
                 }
+            });
+        } else if (this.loggedUser?.tipoUsuario === 'ALUNO' || this.loggedUser?.tipoUsuario === 'EXTENSIONISTA') {
+            this.userService.getInscricoes(this.loggedUser.getId()).subscribe({
+                next: (res: any) => {
+                    this.totalInscricoes = res._embedded?.inscricoes ? res._embedded.inscricoes.length : (res._embedded?.inscricao ? res._embedded.inscricao.length : 0);
+                },
+                error: () => this.totalInscricoes = 0
+            });
+
+            this.http.get<any>(`${URL_API}/api/certificado/search/findByUser_Email?email=${this.loggedUser.email}`).subscribe({
+                next: (res: any) => {
+                    this.totalCertificados = res._embedded?.certificados ? res._embedded.certificados.length : (res._embedded?.certificado ? res._embedded.certificado.length : 0);
+                },
+                error: () => this.totalCertificados = 0
             });
         }
     }

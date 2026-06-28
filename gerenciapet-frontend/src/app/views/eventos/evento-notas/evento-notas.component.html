@@ -1,0 +1,142 @@
+<!-- Carregando -->
+<div *ngIf="loading" class="d-flex justify-content-center my-5">
+    <c-spinner color="primary"></c-spinner>
+</div>
+
+<!-- Erros de Ausência de Grupo -->
+<div *ngIf="!loading && !hasGrupoPet" class="text-center mt-4 mb-4">
+    <h4 class="text-danger">Você não tem permissão ou não está vinculado a nenhum Grupo PET!</h4>
+    <p>Apenas extensionistas vinculados a grupos podem gerenciar as notas dos eventos.</p>
+</div>
+
+<!-- Tabela de Eventos -->
+<c-card class="mb-4" *ngIf="!loading && hasGrupoPet && !selectedEvento">
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <fa-icon [icon]="faIcons.faStar" class="cardIcon fa-lg fa-fw"></fa-icon>
+                <strong> &nbsp; Lançamento de Notas - Meus Eventos</strong>
+            </div>
+        </div>
+    </c-card-header>
+    <c-card-body>
+        <div *ngIf="eventos.length > 0">
+            <table cTable hover [responsive]="true">
+                <thead cTableColor="light">
+                    <tr>
+                        <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                        <th scope="col" style="width: 19%; vertical-align: middle;">Nome</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Tipo</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Início</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Status</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let evento of eventos; index as i">
+                        <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                        <td style="vertical-align: middle;">{{ evento.nome }}</td>
+                        <td style="text-align: center; vertical-align: middle;"><c-badge color="info" class="text-white">{{ evento.tipo }}</c-badge></td>
+                        <td style="text-align: center; vertical-align: middle;">{{ evento.dataInicio | date:'dd/MM/yyyy' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <c-badge [color]="evento.status === 'ABERTO' ? 'success' : (evento.status === 'EM_ANDAMENTO' ? 'warning' : 'danger')">
+                                {{ evento.status === 'EM_ANDAMENTO' ? 'EM ANDAMENTO' : evento.status }}
+                            </c-badge>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <button cButton class="hyperlog-btn text-white" color="primary"
+                                (click)="selecionarEvento(evento)" title="Lançar Notas">
+                                <fa-icon [icon]="faIcons.faStar" class="cardIcon fa-lg fa-fw"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="eventos.length === 0" class="text-center mt-4 mb-4">
+            <p>Nenhum evento cadastrado para o seu Grupo PET.</p>
+        </div>
+    </c-card-body>
+</c-card>
+
+<!-- LISTA DE ALUNOS INSCRITOS -->
+<c-card class="mb-4" *ngIf="!loading && selectedEvento">
+    <c-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <fa-icon [icon]="faIcons.faStar" class="cardIcon fa-lg fa-fw"></fa-icon>
+                <strong> &nbsp; Notas - {{ selectedEvento.nome }}</strong>
+            </div>
+            <button cButton color="secondary" size="sm" class="hyperlog-btn text-white fw-bold" (click)="voltarParaEventos()">
+                <fa-icon [icon]="faIcons.faArrowLeft"></fa-icon> Voltar aos Eventos
+            </button>
+        </div>
+    </c-card-header>
+    <c-card-body>
+        <div *ngIf="loadingInscricoes" class="d-flex justify-content-center my-4">
+            <c-spinner color="primary"></c-spinner>
+        </div>
+        
+        <div *ngIf="!loadingInscricoes && inscricoes.length > 0">
+            <table cTable hover [responsive]="true">
+                <thead cTableColor="light">
+                    <tr>
+                        <th scope="col" style="width: 5%; text-align: center; vertical-align: middle;">#</th>
+                        <th scope="col" style="width: 19%; vertical-align: middle;">Aluno (Nome)</th>
+                        <th scope="col" style="width: 19%; vertical-align: middle;">Email</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Data de Inscrição</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Nota</th>
+                        <th scope="col" style="width: 19%; text-align: center; vertical-align: middle;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let inscricao of inscricoes; index as i">
+                        <th scope="row" style="text-align: center; vertical-align: middle">{{ i + 1 }}</th>
+                        <td style="vertical-align: middle;">{{ inscricao.userData?.nome || 'N/A' }}</td>
+                        <td style="vertical-align: middle;">{{ inscricao.userData?.email || 'N/A' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ inscricao.dataInscricao | date:'dd/MM/yyyy' }}</td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <span *ngIf="inscricao.nota === null || inscricao.nota === undefined" class="text-muted">Não lançada</span>
+                            <c-badge *ngIf="inscricao.nota !== null && inscricao.nota !== undefined" [color]="inscricao.nota >= 60 ? 'success' : 'danger'">
+                                {{ inscricao.nota }}
+                            </c-badge>
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">
+                            <button cButton class="hyperlog-btn text-white" color="info"
+                                (click)="abrirModalNota(inscricao)" title="Lançar Nota">
+                                <fa-icon [icon]="faIcons.faEdit" class="cardIcon fa-lg fa-fw"></fa-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="!loadingInscricoes && inscricoes.length === 0" class="text-center mt-4 mb-4">
+            <p>Nenhum aluno inscrito neste evento.</p>
+        </div>
+    </c-card-body>
+</c-card>
+
+<!-- MODAL DE NOTA -->
+<c-modal [visible]="modalVisible">
+    <c-modal-header>
+        <h5 cModalTitle>Nota de {{ selectedInscricao?.userData?.nome }}</h5>
+        <button cButtonClose (click)="closeModal()"></button>
+    </c-modal-header>
+    <c-modal-body>
+        <div class="mb-3">
+            <label class="form-label">Nota do Aluno (0 a 100)</label>
+            <input type="number" class="form-control" [(ngModel)]="novaNota" min="0" max="100" placeholder="Ex: 85" />
+            <div class="form-text text-danger" *ngIf="novaNota !== null && (novaNota < 0 || novaNota > 100)">
+                A nota deve ser entre 0 e 100.
+            </div>
+        </div>
+    </c-modal-body>
+    <c-modal-footer>
+        <button cButton color="secondary" class="hyperlog-btn text-white fw-bold" (click)="closeModal()" [disabled]="saving">Cancelar</button>
+        <button cButton color="primary" class="hyperlog-btn text-white fw-bold" (click)="salvarNota()" [disabled]="saving || novaNota === null || novaNota < 0 || novaNota > 100">
+            <c-spinner *ngIf="saving" size="sm" class="me-1"></c-spinner>
+            Salvar Nota
+        </button>
+    </c-modal-footer>
+</c-modal>

@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -57,6 +58,14 @@ public class Certificado {
     @JoinColumn(name = "inscricao_id")
     @JsonIgnore
     private Inscricao inscricao;
+
+    /**
+     * Usuário que originou o certificado (para casos onde não há inscrição, como horas de extensão).
+     */
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     /**
      * Retorna o identificador do certificado.
@@ -118,4 +127,7 @@ public class Certificado {
      * @param inscricao inscrição vinculada.
      */
     public void setInscricao(Inscricao inscricao) { this.inscricao = inscricao; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

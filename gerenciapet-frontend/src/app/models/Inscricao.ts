@@ -14,6 +14,7 @@ export default class Inscricao {
     public evento?: Evento;
     public certificado?: Certificado;
     public href: string = '';
+    public diasPresentes: string = '';
 
     constructor(object?: any) {
         if (object !== undefined) {
@@ -33,6 +34,8 @@ export default class Inscricao {
         } else {
             this.href = object.href ?? '';
         }
+
+        this.diasPresentes = object.diasPresentes ?? '';
 
         if (object.user) {
             this.user = new User(object.user);

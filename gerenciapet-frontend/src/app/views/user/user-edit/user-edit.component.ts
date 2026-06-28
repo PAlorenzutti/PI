@@ -24,6 +24,7 @@ export class UserEditComponent implements OnInit {
     public extensionistaUrl?: string;
     public editErrorVisible: boolean = false;
     public editSuccessVisible: boolean = false;
+    public editConflictErrorVisible: boolean = false;
 
     /**************************ICONS USED ******************************/
 
@@ -85,6 +86,18 @@ export class UserEditComponent implements OnInit {
         });
 
         this.formControls = Object.keys(this.editForm.controls);
+
+        // Adiciona validadores dinamicamente apenas se for estudante
+        this.editForm.get('isEstudanteUfes')?.valueChanges.subscribe(isEstudante => {
+            const matriculaControl = this.editForm.get('matricula');
+            if (isEstudante) {
+                matriculaControl?.setValidators([Validators.required, Validators.pattern('^\\d{4}[1-2]\\d{5}$')]);
+            } else {
+                matriculaControl?.clearValidators();
+                matriculaControl?.setValue('');
+            }
+            matriculaControl?.updateValueAndValidity();
+        });
 
         this.editPassForm = this.formBuilder.group({
             password: ["", [Validators.required]],
@@ -221,9 +234,18 @@ export class UserEditComponent implements OnInit {
                             this.responseRegisterFlag = "success";
                             this.toggleEditSuccess();
                         },
-                        error: () => {
+                        error: (error) => {
+
+
                             this.responseRegisterFlag = "error";
                             this.toggleEditError();
+                            
+                            if (error.status === 409) {
+                                this.toggleEditConflictError();
+                            } else {
+                                this.responseRegisterFlag = "error";
+                                this.toggleEditError();
+                            }
                         }
                     });
                 } else if (this.user.tipoUsuario === 'EXTENSIONISTA' && this.extensionistaUrl) {
@@ -246,8 +268,12 @@ export class UserEditComponent implements OnInit {
                 }
             },
             error: (error) => {
-                this.responseRegisterFlag = "error";
-                this.toggleEditError();
+                if (error.status === 409) {
+                    this.toggleEditConflictError();
+                } else {
+                    this.responseRegisterFlag = "error";
+                    this.toggleEditError();
+                }
             },
         });
     }
@@ -326,5 +352,11 @@ export class UserEditComponent implements OnInit {
 
     toggleConfirmPasswordVisibility() {
         this.showConfirmPassword = !this.showConfirmPassword;
+    }
+    public handleEditConflictError(event: any) {
+        this.editConflictErrorVisible = event;
+    }
+    public toggleEditConflictError() {
+        this.editConflictErrorVisible = !this.editConflictErrorVisible;
     }
 }

@@ -68,6 +68,7 @@ export class RegisterComponent {
     public SendEmailErrorVisible = false;
     public showPassword = false;
     public showConfirmPassword = false;
+    public RegisterMatriculaErrorVisible = false;
 
     public createForm() {
         this.registerForm = this.formBuilder.group(
@@ -108,6 +109,18 @@ export class RegisterComponent {
             { validators: [PasswordValidators.confirmPassword] }
         );
         this.formControls = Object.keys(this.registerForm.controls);
+
+        // Adiciona validadores dinamicamente apenas se for estudante
+        this.registerForm.get('isEstudanteUfes')?.valueChanges.subscribe(isEstudante => {
+            const matriculaControl = this.registerForm.get('matricula');
+            if (isEstudante) {
+                matriculaControl?.setValidators([Validators.required, Validators.pattern('^\\d{4}[1-2]\\d{5}$')]);
+            } else {
+                matriculaControl?.clearValidators();
+                matriculaControl?.setValue('');
+            }
+            matriculaControl?.updateValueAndValidity();
+        });
     }
 
     isValid(ctrl: AbstractControl<any, any>) {
@@ -160,6 +173,10 @@ export class RegisterComponent {
                         // this.toggleSendEmailError();
                         this.onReset();
                     }
+                    else if (response.status === "matricula-in-use") {
+                        this.toggleRegisterInProgressVisible();
+                        this.toggleRegisterMatriculaError();
+                    }
                 },
             });
         }
@@ -211,5 +228,13 @@ export class RegisterComponent {
 
     toggleConfirmPasswordVisibility() {
         this.showConfirmPassword = !this.showConfirmPassword;
+    }
+
+    toggleRegisterMatriculaError(){
+        this.RegisterMatriculaErrorVisible = !this.RegisterMatriculaErrorVisible;
+    }
+
+    public handleRegisterMatriculaError(event: any) {
+        this.RegisterMatriculaErrorVisible = event;
     }
 }

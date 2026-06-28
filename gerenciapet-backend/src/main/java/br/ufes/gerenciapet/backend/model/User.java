@@ -110,9 +110,9 @@ public class User implements UserDetails {
     private TipoUsuario tipoUsuario;
 
     /**
-     * Matrícula acadêmica do usuário, quando aplicável.
+     * Matrícula acadêmica do usuário, quando aplicável. No caso tem de ser única!
      */
-    @Column(nullable = true, length = 20)
+    @Column(nullable = true, length = 20, unique=true)
     private String matricula;
 
     /**

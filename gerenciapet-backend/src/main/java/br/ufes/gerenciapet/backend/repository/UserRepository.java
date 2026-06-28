@@ -26,6 +26,14 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
      */
     User findByEmail(@Param("email") String email);
 
+        /**
+     * Busca um usuário pela matricula.
+     *
+     * @param matricula matricula única do usuário.
+     * @return usuário encontrado ou {@code null} quando não houver cadastro.
+     */
+    User findByMatricula(@Param("matricula") String matricula);
+
     /**
      * Busca usuários cujo nome contenha o trecho informado, ignorando
      * diferenças entre maiúsculas e minúsculas.

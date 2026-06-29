@@ -64,11 +64,26 @@ export class EventoFormComponent implements OnInit {
       horaInicio: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5)]],
       horaFim: [{value: '', disabled: true}, [Validators.required]],
       tipo: [TipoEvento.CURSO, [Validators.required]],
-      status: [StatusEvento.ABERTO, [Validators.required]]
-    }, { validators: this.dateLessThan('dataInicio', 'dataFim') });
+      status: [StatusEvento.ABERTO, [Validators.required]],
+      diasSemana: this.formBuilder.group({
+        segunda: [false],
+        terca: [false],
+        quarta: [false],
+        quinta: [false],
+        sexta: [false],
+        sabado: [false],
+        domingo: [false]
+      })
+    }, { validators: [this.dateLessThan('dataInicio', 'dataFim'), this.requireDaysForCurso()]});
 
     this.eventoForm.valueChanges.subscribe(() => {
-      this.calculateHoraFim();
+
+      if (this.eventoForm.get('tipo')?.value !== TipoEvento.CURSO){
+        this.calculateHoraFim();
+      }
+      else{
+        this.calculaHoraFimCurso();
+      }
     });
   }
 
@@ -113,6 +128,98 @@ export class EventoFormComponent implements OnInit {
     this.eventoForm.get('horaFim')?.setValue(`${endHStr}h${endMStr}`, { emitEvent: false });
   }
 
+  calculaHoraFimCurso() {
+    const dataInicioStr = this.eventoForm.get('dataInicio')?.value;
+    const dataFimStr = this.eventoForm.get('dataFim')?.value;
+    const cargaTotal = this.eventoForm.get('cargaHorariaTotal')?.value;
+    const horaInicioStr = this.eventoForm.get('horaInicio')?.value;
+    const dias = this.eventoForm.get('diasSemana')?.value; // Pega o grupo de checkboxes
+
+    if (!dataInicioStr || !dataFimStr || !cargaTotal || !horaInicioStr || horaInicioStr.length !== 5 || !dias) {
+      this.eventoForm.get('horaFim')?.setValue('', { emitEvent: false });
+      return;
+    }
+
+    const dataInicio = new Date(dataInicioStr + 'T00:00:00');
+    const dataFim = new Date(dataFimStr + 'T00:00:00');
+
+    if (isNaN(dataInicio.getTime()) || isNaN(dataFim.getTime()) || dataInicio > dataFim) {
+      return;
+    }
+
+    const diasSelecionados = [
+      dias.domingo, 
+      dias.segunda, 
+      dias.terca, 
+      dias.quarta, 
+      dias.quinta, 
+      dias.sexta, 
+      dias.sabado
+    ];
+
+    let totalAulas = 0;
+    let dataAtual = new Date(dataInicio);
+
+    while (dataAtual <= dataFim) {
+      const diaDaSemana = dataAtual.getDay(); // Retorna de 0 a 6
+      
+      if (diasSelecionados[diaDaSemana]) {
+        totalAulas++; // Contabiliza que haverá aula neste dia!
+      }
+      
+      dataAtual.setDate(dataAtual.getDate() + 1);
+    }
+
+    // Não escolheu nenhum dia, aborte!
+    if (totalAulas === 0) {
+      this.eventoForm.get('diasSemana')?.setErrors({ semDiasNoPeriodo: true });
+      this.eventoForm.get('horaFim')?.setValue('', { emitEvent: false }); 
+      return;
+    }
+    else{ //Tem que adicionar um negócio aqui, não lembro o nome direito!
+      
+    }
+
+    const horasPorDia = cargaTotal / totalAulas;
+
+    if (horasPorDia < 0.5) {
+      // Carga horária baixa demais para os dias escolhidos!
+      this.eventoForm.get('cargaHorariaTotal')?.setErrors({ cargaMuitoPequena: true });
+      this.eventoForm.get('horaFim')?.setValue('', { emitEvent: false }); 
+      return; 
+    } else {
+      const errors = this.eventoForm.get('cargaHorariaTotal')?.errors;
+      if (errors) {
+        delete errors['cargaMuitoPequena'];
+        this.eventoForm.get('cargaHorariaTotal')?.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    }
+    if (horasPorDia > 24) {
+      this.eventoForm.get('cargaHorariaTotal')?.setErrors({ cargaMuitoGrande: true });
+      this.eventoForm.get('horaFim')?.setValue('', { emitEvent: false });
+      return;
+    }
+
+    const parts = horaInicioStr.split('h');
+    const startH = parseInt(parts[0], 10);
+    const startM = parseInt(parts[1], 10);
+    if (isNaN(startH) || isNaN(startM)) return;
+
+    const startTotalMinutes = (startH * 60) + startM;
+    const addedMinutes = Math.round(horasPorDia * 60);
+
+    const endTotalMinutes = startTotalMinutes + addedMinutes;
+    
+    const endH = Math.floor(endTotalMinutes / 60) % 24;
+    const endM = endTotalMinutes % 60;
+
+    const endHStr = endH.toString().padStart(2, '0');
+    const endMStr = endM.toString().padStart(2, '0');
+    
+    // Atualiza o campo final travado na tela do usuário
+    this.eventoForm.get('horaFim')?.setValue(`${endHStr}h${endMStr}`, { emitEvent: false });
+  }
+
   dateLessThan(from: string, to: string) {
     return (group: FormGroup): {[key: string]: any} | null => {
       let f = group.controls[from];
@@ -141,6 +248,28 @@ export class EventoFormComponent implements OnInit {
       return null;
     }
   }
+  //Função validadora dos dias do curso!
+  requireDaysForCurso(){
+    return (group: FormGroup): {[key: string]: any} | null => {
+      const tipo = group.controls['tipo']?.value;
+      const diasGroup = group.controls['diasSemana'];
+      //Caso não seja um curso, só ignoramos!
+      if (tipo !== 'CURSO' || !diasGroup) {
+        if (diasGroup?.hasError('noDaySelected')) diasGroup.setErrors(null);
+        return null;
+      }
+      //Caso seja um curso, verificamos se foi marcado ao menos um dia
+      const dias = diasGroup.value;
+      const temAlgumMarcado = Object.values(dias).some(valor => valor === true);
+      if (!temAlgumMarcado) {
+        diasGroup.setErrors({ noDaySelected: true }); 
+        return { requireDays: true }; 
+      } else {
+        diasGroup.setErrors(null); 
+        return null;
+      }
+    }
+  }
 
   checkUserGrupoPetAndLoad() {
     const loggedUser = this.userService.getLoggedUser?.();
@@ -160,7 +289,12 @@ export class EventoFormComponent implements OnInit {
             let hInicio = '';
             let hFim = '';
             if (evento.horarios) {
-              const parts = evento.horarios.split(' às ');
+              let stringHorarios = evento.horarios;
+                if (stringHorarios.includes('|')) {
+                stringHorarios = stringHorarios.split('|')[1].trim(); 
+              }
+              
+              const parts = stringHorarios.split(' às ');
               if (parts.length === 2) {
                 hInicio = parts[0].replace('h', '');
                 hFim = parts[1].replace('h', '');
@@ -280,7 +414,22 @@ export class EventoFormComponent implements OnInit {
     if (payload.dataInicio) payload.dataInicio = new Date(payload.dataInicio).toISOString();
     if (payload.dataFim) payload.dataFim = new Date(payload.dataFim).toISOString();
 
-    payload.horarios = `${payload.horaInicio} às ${payload.horaFim}`;
+    if (this.eventoForm.get('tipo')?.value === 'CURSO') {
+      const dias = this.eventoForm.get('diasSemana')?.value;
+      const numerosDias = [];
+      if (dias.domingo) numerosDias.push(0);
+      if (dias.segunda) numerosDias.push(1);
+      if (dias.terca) numerosDias.push(2);
+      if (dias.quarta) numerosDias.push(3);
+      if (dias.quinta) numerosDias.push(4);
+      if (dias.sexta) numerosDias.push(5);
+      if (dias.sabado) numerosDias.push(6);
+      
+      payload.horarios = `${numerosDias.join(',')} | ${payload.horaInicio} às ${payload.horaFim}`;
+    } else {
+      payload.horarios = `${payload.horaInicio} às ${payload.horaFim}`;
+    }
+
     delete payload.horaInicio;
     delete payload.horaFim;
     

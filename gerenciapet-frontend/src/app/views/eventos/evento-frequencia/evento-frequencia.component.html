@@ -117,7 +117,10 @@
 </c-card>
 
 <!-- MODAL DE FREQUENCIA -->
-<c-modal [visible]="modalVisible" size="lg">
+<c-modal
+    [visible]="modalVisible"
+    (visibleChange)="handleModalVisibleChange($event)"
+    size="lg">
     <c-modal-header>
         <h5 cModalTitle>Presenças de {{ selectedInscricao?.userData?.nome }}</h5>
         <button cButtonClose (click)="closeModal()"></button>

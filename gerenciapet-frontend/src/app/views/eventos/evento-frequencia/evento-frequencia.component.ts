@@ -148,8 +148,16 @@ export class EventoFrequenciaComponent implements OnInit {
   }
 
   closeModal() {
-    this.modalVisible = false;
-    this.selectedInscricao = null;
+    this.handleModalVisibleChange(false);
+  }
+
+  handleModalVisibleChange(visible: boolean) {
+    this.modalVisible = visible;
+
+    if (!visible) {
+      this.selectedInscricao = null;
+      this.diasEvento = [];
+    }
   }
 
   togglePresenca(dia: any) {
